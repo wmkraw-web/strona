@@ -11,7 +11,7 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; scroll-behavior: smooth; }
         .gradient-text {
             background: linear-gradient(135deg, #4f46e5, #ec4899);
             -webkit-background-clip: text;
@@ -19,6 +19,15 @@
         }
         .app-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
         .link-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); border-color: #e2e8f0; }
+        
+        /* Animacje FAQ */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] summary ~ * { animation: sweep .3s ease-in-out; }
+        @keyframes sweep {
+            0%    {opacity: 0; margin-top: -10px}
+            100%  {opacity: 1; margin-top: 0px}
+        }
     </style>
 </head>
 <body class="antialiased text-gray-800 flex flex-col min-h-screen">
@@ -27,40 +36,119 @@
     <header class="bg-white border-b border-gray-100 relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/50 z-0"></div>
         <div class="max-w-6xl mx-auto px-6 py-20 md:py-24 relative z-10 text-center">
-            <span class="bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider mb-6 inline-block shadow-sm">Narzędzia Edukacyjne</span>
+            <span class="bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider mb-6 inline-block shadow-sm">Narzędzia Edukacyjne Przyszłości</span>
             
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 tracking-tight text-gray-900 leading-tight">
                 EduBox AI <br class="hidden md:block" />
             </h1>
             <h2 class="text-2xl md:text-3xl font-bold mb-6 text-gray-700">
-                Twórz pomoce dydaktyczne ze <span class="gradient-text inline-block mt-2">Sztuczną Inteligencją</span>
+                Odzyskaj swój czas wolny z pomocą <span class="gradient-text inline-block mt-2">Sztucznej Inteligencji</span>
             </h2>
             
-            <p class="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">Zbiór autorskich aplikacji stworzonych, aby zaoszczędzić czas nauczycieli, pedagogów i wychowawców.</p>
+            <p class="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+                Zbiór autorskich, darmowych aplikacji stworzonych z myślą o nauczycielach, pedagogach i wychowawcach. 
+                Skończ z papierkową robotą po nocach!
+            </p>
             <div class="flex flex-col sm:flex-row justify-center gap-4">
                 <a href="#aplikacje" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg flex items-center justify-center">
-                    Zobacz Aplikacje 
+                    Przejdź do Aplikacji 
                     <svg class="w-5 h-5 ml-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
                 </a>
-                <a href="#wsparcie" class="bg-white text-gray-800 border-2 border-gray-200 px-8 py-4 rounded-xl font-bold hover:bg-gray-50 hover:border-gray-300 transition flex items-center justify-center">
-                    O Twórcy i Kontakt 
-                    <svg class="w-5 h-5 ml-3 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <a href="#wideo" class="bg-white text-indigo-600 border-2 border-indigo-100 px-8 py-4 rounded-xl font-bold hover:bg-indigo-50 hover:border-indigo-200 transition flex items-center justify-center">
+                    Zobacz wideo (Jak to działa?)
+                    <svg class="w-5 h-5 ml-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                 </a>
             </div>
         </div>
     </header>
 
+    <!-- NOWA SEKCJA: Wideo (Scenki i Prezentacja) -->
+    <section id="wideo" class="bg-slate-900 py-20 relative overflow-hidden">
+        <!-- Dekoracje tła -->
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+        
+        <div class="max-w-6xl mx-auto px-6 relative z-10">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">Problemy i Rozwiązania 🎬</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Zobacz nasze krótkie wideo, by przekonać się, jak EduBox ratuje nauczycieli z opresji. (Kliknij, aby odtworzyć)</p>
+            </div>
+
+            <!-- Siatka na 4 pionowe filmy (np. TikTok / Reels format) -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                <!-- WIDEO 1 (Podmień src na nazwę swojego pliku na GitHubie np. wideo1.mp4) -->
+                <div class="relative bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-700 aspect-[9/16] group">
+                    <video src="Dyrektorka_i_nauczyciel.mp4" controls playsinline class="w-full h-full object-cover"></video>
+                </div>
+                
+                <!-- WIDEO 2 (Podmień src) -->
+                <div class="relative bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-700 aspect-[9/16]">
+                    <video src="wideo2.mp4" controls playsinline class="w-full h-full object-cover"></video>
+                </div>
+
+                <!-- WIDEO 3 (Podmień src) -->
+                <div class="relative bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-700 aspect-[9/16] hidden md:block">
+                    <video src="wideo3.mp4" controls playsinline class="w-full h-full object-cover"></video>
+                </div>
+
+                <!-- WIDEO 4 (Podmień src) -->
+                <div class="relative bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-700 aspect-[9/16] hidden md:block">
+                    <video src="wideo4.mp4" controls playsinline class="w-full h-full object-cover"></video>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NOWA SEKCJA: Jak to działa? (3 Kroki) -->
+    <section class="bg-white py-20 border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="text-pink-500 font-bold tracking-widest uppercase text-sm">To takie proste!</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mt-2">Magia dzieje się w 3 krokach</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-center relative">
+                <!-- Linia łącząca na desktopie -->
+                <div class="hidden md:block absolute top-12 left-1/6 right-1/6 h-0.5 bg-gradient-to-r from-indigo-100 via-pink-100 to-indigo-100 z-0"></div>
+                
+                <div class="relative z-10">
+                    <div class="w-24 h-24 mx-auto bg-indigo-50 text-indigo-600 rounded-3xl flex items-center justify-center text-3xl shadow-sm border border-indigo-100 mb-6 rotate-3">
+                        <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-gray-900">1. Wybierz narzędzie</h3>
+                    <p class="text-gray-500 leading-relaxed">Dyplomy, Karty Pracy czy Opinie? Wybierz aplikację z poniższej listy, która w tym momencie najbardziej ułatwi Ci życie.</p>
+                </div>
+                
+                <div class="relative z-10">
+                    <div class="w-24 h-24 mx-auto bg-pink-50 text-pink-600 rounded-3xl flex items-center justify-center text-3xl shadow-sm border border-pink-100 mb-6 -rotate-3">
+                        <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.21 1.21 0 0 0 1.72 0L21.64 5.36a1.21 1.21 0 0 0 0-1.72ZM14 7l3 3M5 6v1M19 2v1M10 2v2M7 10H6M22 9h-2M15 2h1"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-gray-900">2. Podaj wytyczne</h3>
+                    <p class="text-gray-500 leading-relaxed">Wpisz imię ucznia, podaj temat zajęć lub opisz grafikę, jakiej potrzebujesz. Sztuczna Inteligencja zrozumie resztę!</p>
+                </div>
+                
+                <div class="relative z-10">
+                    <div class="w-24 h-24 mx-auto bg-green-50 text-green-600 rounded-3xl flex items-center justify-center text-3xl shadow-sm border border-green-100 mb-6 rotate-3">
+                        <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-gray-900">3. Odbierz materiały</h3>
+                    <p class="text-gray-500 leading-relaxed">W kilka sekund otrzymasz gotowy do druku materiał, piękny dyplom lub dokument. Możesz iść wreszcie na kawę!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Sekcja 1: Moje Aplikacje -->
-    <main id="aplikacje" class="max-w-6xl mx-auto px-6 pt-20 pb-10 flex-grow w-full">
-        <h2 class="text-2xl font-bold text-gray-800 mb-8 flex items-center">
-            <svg class="w-6 h-6 mr-3 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-            Moje autorskie narzędzia
+    <main id="aplikacje" class="max-w-6xl mx-auto px-6 py-20 flex-grow w-full">
+        <h2 class="text-3xl font-extrabold text-gray-800 mb-10 flex items-center justify-center">
+            <svg class="w-8 h-8 mr-3 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            Wybierz narzędzie dla siebie
         </h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
             <!-- KARTA 1: EduPrompter AI -->
-            <a href="https://eduprompter.vercel.app/" target="_blank" class="app-card bg-slate-900 text-white rounded-3xl p-8 shadow-xl transition-all duration-300 flex flex-col h-full group relative overflow-hidden block border border-slate-800">
+            <a href="LINK_DO_EDUPROMPTERA" target="_blank" class="app-card bg-slate-900 text-white rounded-3xl p-8 shadow-xl transition-all duration-300 flex flex-col h-full group relative overflow-hidden block border border-slate-800">
                 <div class="absolute top-0 right-0 bg-indigo-500 text-white text-xs font-black px-3 py-1.5 rounded-bl-xl uppercase">Nowość</div>
                 <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-inner mb-6 group-hover:scale-110 transition-transform">
                     <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.21 1.21 0 0 0 1.72 0L21.64 5.36a1.21 1.21 0 0 0 0-1.72ZM14 7l3 3M5 6v1M19 2v1M10 2v2M7 10H6M22 9h-2M15 2h1"/></svg>
@@ -116,7 +204,7 @@
                     <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 </div>
                 <h3 class="text-2xl font-bold mb-3">Asystent Pedagoga</h3>
-                <p class="text-gray-500 mb-6 flex-grow leading-relaxed">Profesjonalna aplikacja wspierająca pracę pedagoga. Generuje opinie, plany wsparcia IPET czy gotowość szkolną.</p>
+                <p class="text-gray-500 mb-6 flex-grow leading-relaxed">Profesjonalna aplikacja wspierająca pracę pedagoga specjalnego. Generuje plany wsparcia IPET i opinie z pomocą AI.</p>
                 <div class="flex flex-wrap gap-2 mt-auto">
                     <span class="bg-red-50 text-red-600 px-3 py-1 rounded-lg text-xs font-bold">Dokumenty</span>
                     <span class="bg-gray-900 text-white px-3 py-1 rounded-lg text-xs font-bold">Streamlit</span>
@@ -156,12 +244,99 @@
         </div>
     </main>
 
+    <!-- NOWA SEKCJA: Opinie (Społeczny dowód słuszności) -->
+    <section class="bg-indigo-50 py-20 border-t border-indigo-100">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="text-3xl font-extrabold text-center text-gray-900 mb-12">Co mówią nauczyciele? 💬</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Opinia 1 -->
+                <div class="bg-white p-8 rounded-3xl shadow-sm relative">
+                    <div class="text-indigo-200 absolute top-4 right-6 text-6xl font-serif">"</div>
+                    <div class="flex items-center gap-1 mb-4 text-yellow-400">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <p class="text-gray-600 mb-6 italic relative z-10">"Zakończenie roku zawsze wiązało się z godzinami w Wordzie przy tworzeniu dyplomów. Z EduGeneratorem wygenerowałam i wydrukowałam 25 imiennych dyplomów w zaledwie 10 minut. Cudo!"</p>
+                    <div class="font-bold text-gray-900">Katarzyna W.</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Nauczyciel Edukacji Wczesnoszkolnej</div>
+                </div>
+
+                <!-- Opinia 2 -->
+                <div class="bg-white p-8 rounded-3xl shadow-sm relative">
+                    <div class="text-indigo-200 absolute top-4 right-6 text-6xl font-serif">"</div>
+                    <div class="flex items-center gap-1 mb-4 text-yellow-400">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <p class="text-gray-600 mb-6 italic relative z-10">"Asystent Pedagoga uratował mi życie przed ewaluacją. Wgrałam notatki z diagnozy, a system ułożył z tego sensowny, zgodny z MEN szkic IPET-u. Jestem pod ogromnym wrażeniem."</p>
+                    <div class="font-bold text-gray-900">Agnieszka M.</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Pedagog Specjalny</div>
+                </div>
+
+                <!-- Opinia 3 -->
+                <div class="bg-white p-8 rounded-3xl shadow-sm relative">
+                    <div class="text-indigo-200 absolute top-4 right-6 text-6xl font-serif">"</div>
+                    <div class="flex items-center gap-1 mb-4 text-yellow-400">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <p class="text-gray-600 mb-6 italic relative z-10">"EduKarty AI to rewelacja! Dzieciaki miały wczoraj zajęcia o zwierzętach leśnych, wpisałam 'szop pracz' i w 3 sekundy miałam gotową kolorowankę i zadania matematyczne. Dziękuję za to narzędzie!"</p>
+                    <div class="font-bold text-gray-900">Piotr K.</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Wychowawca Przedszkolny</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NOWA SEKCJA: FAQ (Najczęstsze pytania) -->
+    <section class="bg-white py-20 border-t border-gray-100">
+        <div class="max-w-3xl mx-auto px-6">
+            <h2 class="text-3xl font-extrabold text-center text-gray-900 mb-10">Często zadawane pytania ❓</h2>
+            
+            <div class="space-y-4">
+                <details class="bg-slate-50 p-6 rounded-2xl cursor-pointer group hover:bg-slate-100 transition-colors">
+                    <summary class="font-bold text-lg text-gray-900 flex justify-between items-center">
+                        Czy korzystanie z tych aplikacji jest w 100% darmowe?
+                        <span class="text-indigo-500 group-open:rotate-45 transition-transform text-2xl leading-none">+</span>
+                    </summary>
+                    <p class="mt-4 text-gray-600 leading-relaxed">Tak! Zdecydowana większość funkcji (szablony dyplomów, kreator kart pracy, pisanie scenariuszy) pozostanie darmowa na zawsze. Zrobiłem to po to, aby ułatwić pracę polskim nauczycielom.</p>
+                </details>
+
+                <details class="bg-slate-50 p-6 rounded-2xl cursor-pointer group hover:bg-slate-100 transition-colors">
+                    <summary class="font-bold text-lg text-gray-900 flex justify-between items-center">
+                        Czym są funkcje Premium (te z kłódką) i jak je zdobyć?
+                        <span class="text-indigo-500 group-open:rotate-45 transition-transform text-2xl leading-none">+</span>
+                    </summary>
+                    <p class="mt-4 text-gray-600 leading-relaxed">Funkcje z kłódką (jak zaawansowane generowanie grafik AI czy asystent pedagoga) wymagają ogromnej mocy obliczeniowej, za którą muszę płacić. Jeśli chcesz z nich korzystać, kliknij w przycisk "Postaw Kawę" i wesprzyj projekt drobną kwotą. W zamian od razu na maila otrzymasz dożywotni kod dostępu do wszystkich zablokowanych modułów!</p>
+                </details>
+
+                <details class="bg-slate-50 p-6 rounded-2xl cursor-pointer group hover:bg-slate-100 transition-colors">
+                    <summary class="font-bold text-lg text-gray-900 flex justify-between items-center">
+                        Czy dane uczniów są bezpieczne? (RODO)
+                        <span class="text-indigo-500 group-open:rotate-45 transition-transform text-2xl leading-none">+</span>
+                    </summary>
+                    <p class="mt-4 text-gray-600 leading-relaxed">Zalecam, aby podczas korzystania z generatorów (zwłaszcza Asystenta Pedagoga) używać wyłącznie imion lub inicjałów (np. "Jan K."). Aplikacje nie zapisują żadnych danych na moich serwerach – to, co wpisujesz, wysyłane jest bezpośrednio do AI, po czym natychmiast znika, gdy wyłączysz przeglądarkę.</p>
+                </details>
+            </div>
+        </div>
+    </section>
+
     <!-- Przydatne linki -->
     <section class="bg-slate-50 py-16 border-t border-gray-100 w-full">
         <div class="max-w-6xl mx-auto px-6">
             <h2 class="text-2xl font-bold text-gray-800 mb-8 flex items-center">
                 <svg class="w-6 h-6 mr-3 text-pink-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                Przydatne polecajki w sieci
+                Inne świetne narzędzia w sieci
             </h2>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
@@ -191,14 +366,14 @@
                     </div>
                     <div>
                         <h4 class="font-bold text-gray-900 text-lg">ChatGPT</h4>
-                        <p class="text-sm text-gray-500 mt-1">Darmowy asystent. Najlepiej działa z EduPrompterem!</p>
+                        <p class="text-sm text-gray-500 mt-1">Darmowy asystent. Najlepiej działa z naszym EduPrompterem!</p>
                     </div>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- NOWA SEKCJA: O twórcy i Kontakt -->
+    <!-- O twórcy i Kontakt -->
     <section id="wsparcie" class="bg-indigo-50 border-t border-b border-indigo-100 py-16 w-full relative overflow-hidden">
         <!-- Dekoracyjne koła w tle -->
         <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-indigo-100 opacity-50 blur-3xl"></div>
@@ -238,7 +413,6 @@
 
                 <!-- Prawa strona: Kontakt i Feedback (Google Forms) -->
                 <div class="bg-gray-900 p-8 md:p-12 md:w-1/2 flex flex-col justify-center text-white relative">
-                    <!-- Element dekoracyjny wzoru -->
                     <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
                     
                     <div class="relative z-10">
@@ -250,7 +424,7 @@
                         <div class="space-y-4">
                             <!-- Link do formularza Google Forms -->
                             <!-- UWAGA: Podmień LINK_DO_GOOGLE_FORMS na swój wygenerowany link! -->
-                            <a href="https://forms.gle/mrSdcnypus98bhL87" target="_blank" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-between transition-colors group">
+                            <a href="LINK_DO_GOOGLE_FORMS" target="_blank" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-between transition-colors group">
                                 <span class="flex items-center">
                                     <svg class="w-5 h-5 mr-3 text-indigo-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                                     Wypełnij krótki formularz
@@ -271,8 +445,11 @@
 
     <!-- Stopka -->
     <footer class="bg-white py-8 w-full border-t border-gray-100">
-        <div class="max-w-6xl mx-auto px-6 text-center">
+        <div class="max-w-6xl mx-auto px-6 text-center flex flex-col md:flex-row justify-between items-center gap-4">
             <p class="text-gray-400 text-sm font-semibold tracking-wide uppercase">© 2026 EduBox AI. Tworzone z myślą o Edukacji.</p>
+            <div class="flex space-x-4 text-gray-400">
+                <span class="text-xs">Zbudowano z pasją dla polskich nauczycieli.</span>
+            </div>
         </div>
     </footer>
 

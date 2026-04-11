@@ -4,39 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>EduBox AI - Darmowe Narzędzia i Aplikacje dla Nauczycieli</title>
-    <meta name="description" content="EduBox AI to zbiór darmowych narzędzi dla nauczycieli i pedagogów. Generuj dyplomy, karty pracy, IPET i scenariusze z pomocą Sztucznej Inteligencji. Zaoszczędź swój czas!">
-    <meta name="keywords" content="narzędzia dla nauczycieli, darmowe karty pracy, generator dyplomów, asystent pedagoga, IPET, WOPFU, sztuczna inteligencja w edukacji, materiały dydaktyczne, przedszkole, szkoła, kolorowanki do druku">
+    <title>EduBox AI - Twój Cyfrowy Niezbędnik Nauczyciela</title>
+    <meta name="description" content="EduBox AI to zbiór darmowych narzędzi dla nauczycieli i pedagogów. Generuj dyplomy, karty pracy, IPET i scenariusze z pomocą Sztucznej Inteligencji.">
+    <meta name="keywords" content="narzędzia dla nauczycieli, darmowe karty pracy, generator dyplomów, asystent pedagoga, IPET, WOPFU, sztuczna inteligencja w edukacji">
     <meta name="author" content="Twórca EduBox AI">
-    <meta name="robots" content="index, follow">
-
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="EduBox AI - Oszczędź czas z AI w Edukacji">
-    <meta property="og:description" content="Skończ z papierkową robotą! Darmowe generatory dyplomów, kart pracy i dokumentów szkolnych. Wejdź i przetestuj.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1200&auto=format&fit=crop">
-    <meta property="og:image:alt" content="Materiały edukacyjne i biurko nauczyciela">
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "EduBox AI",
-      "operatingSystem": "Web",
-      "applicationCategory": "EducationalApplication",
-      "description": "Zbiór darmowych narzędzi opartych o Sztuczną Inteligencję dla nauczycieli i pedagogów. Generatory dyplomów, kart pracy, planów IPET oraz scenariuszy.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "PLN"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "ratingCount": "124"
-      }
-    }
-    </script>
-
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/_vercel/insights/script.js"></script>
 
@@ -52,22 +24,15 @@
         
         .app-card { transition: all 0.4s ease; }
         .app-card:hover { transform: translateY(-8px); box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
-        .link-card { transition: all 0.3s ease; }
-        .link-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); border-color: #e2e8f0; }
         
+        .link-card { transition: all 0.3s ease; border: 1px solid #f1f5f9; }
+        .link-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: #e0e7ff; }
+
         .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         .reveal-delay-1 { transition-delay: 0.1s; }
         .reveal-delay-2 { transition-delay: 0.2s; }
         .reveal-delay-3 { transition-delay: 0.3s; }
-        
-        details > summary { list-style: none; outline: none; }
-        details > summary::-webkit-details-marker { display: none; }
-        details[open] summary ~ * { animation: sweep .4s ease-in-out; }
-        @keyframes sweep {
-            0%    {opacity: 0; transform: translateY(-10px)}
-            100%  {opacity: 1; transform: translateY(0)}
-        }
         
         .sticky-nav {
             backdrop-filter: blur(12px);
@@ -78,7 +43,8 @@
 </head>
 <body class="antialiased text-gray-800 flex flex-col min-h-screen">
 
-    <nav class="fixed top-0 left-0 right-0 z-50 sticky-nav py-4 px-6 transition-all duration-300" id="navbar">
+    <!-- NAWIGACJA -->
+    <nav class="fixed top-0 left-0 right-0 z-50 sticky-nav py-4 px-6" id="navbar">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-2 font-extrabold text-xl tracking-tight text-gray-900 cursor-pointer" onclick="window.scrollTo(0,0)">
                 <svg class="w-6 h-6 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
@@ -86,11 +52,11 @@
             </div>
             
             <div class="hidden md:flex space-x-8 text-sm font-semibold text-gray-600">
-                <a href="#jak-to-dziala" class="hover:text-indigo-600 transition-colors">Jak to działa?</a>
                 <a href="#aplikacje" class="hover:text-indigo-600 transition-colors">Aplikacje</a>
+                <a href="#polecane" class="hover:text-indigo-600 transition-colors">Polecane AI</a>
                 <a href="#opinie" class="hover:text-indigo-600 transition-colors">Opinie</a>
                 <a href="#artykul" class="hover:text-indigo-600 transition-colors">Czytelnia</a>
-                <a href="#wsparcie" class="hover:text-indigo-600 transition-colors">Wsparcie & Kontakt</a>
+                <a href="#wsparcie" class="hover:text-indigo-600 transition-colors">Kontakt</a>
             </div>
             
             <a href="https://buycoffee.to/magiccolor" target="_blank" class="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 px-4 py-2 rounded-xl font-bold shadow-sm transition-transform active:scale-95 text-sm flex items-center">
@@ -100,39 +66,36 @@
         </div>
     </nav>
 
-    <header class="bg-white relative overflow-hidden pt-24 pb-20 md:pt-32 md:pb-24">
+    <!-- HERO -->
+    <header class="bg-white relative overflow-hidden pt-24 pb-20 md:pt-32 md:pb-24 border-b border-slate-50">
         <div class="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/50 z-0"></div>
-        <div class="max-w-6xl mx-auto px-6 relative z-10 text-center reveal">
-            <span class="bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider mb-6 inline-block shadow-sm">Narzędzia Edukacyjne Przyszłości</span>
+        <div class="max-w-6xl mx-auto px-6 relative z-10 text-center reveal active">
+            <span class="bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider mb-6 inline-block shadow-sm">Zintegrowany System AI dla Nauczycieli</span>
             
             <h1 class="text-4xl md:text-5xl lg:text-7xl font-extrabold mb-4 tracking-tight text-gray-900 leading-tight">
-                Zyskaj czas wolny z <br class="hidden md:block" /> <span class="gradient-text">Sztuczną Inteligencją</span>
+                Odzyskaj czas na to,<br/>co <span class="gradient-text">najważniejsze.</span>
             </h1>
             <h2 class="text-xl md:text-2xl font-semibold mb-8 text-gray-600 max-w-3xl mx-auto leading-relaxed mt-6">
-                Zbiór darmowych, autorskich aplikacji stworzonych z myślą o nauczycielach, pedagogach i wychowawcach. Skończ z papierkową robotą po nocach!
+                Zautomatyzuj nudną papierkową robotę. EduBox AI to darmowy pakiet narzędzi, które piszą scenariusze, opinie i materiały dydaktyczne w kilka sekund.
             </h2>
             
-            <div class="flex flex-col sm:flex-row justify-center gap-4 reveal reveal-delay-1">
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
                 <a href="#aplikacje" class="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg flex items-center justify-center hover:-translate-y-1">
-                    Przejdź do Aplikacji 
-                    <svg class="w-5 h-5 ml-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                    Zobacz Narzędzia 🚀
                 </a>
-                <a href="#wideo" class="bg-white text-indigo-600 border-2 border-indigo-100 px-8 py-4 rounded-xl font-bold hover:bg-indigo-50 hover:border-indigo-200 transition flex items-center justify-center hover:-translate-y-1">
-                    Zobacz jak to działa
-                    <svg class="w-5 h-5 ml-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <a href="https://buycoffee.to/magiccolor" target="_blank" class="bg-white text-indigo-600 border-2 border-indigo-100 px-8 py-4 rounded-xl font-bold hover:bg-indigo-50 transition flex items-center justify-center hover:-translate-y-1">
+                    Wesprzyj Projekt ☕
                 </a>
             </div>
         </div>
     </header>
 
+    <!-- VIDEO SECTION -->
     <section id="wideo" class="bg-slate-900 py-20 relative overflow-hidden">
-        <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-        
         <div class="max-w-6xl mx-auto px-6 relative z-10">
             <div class="text-center mb-12 reveal">
-                <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">Problemy i Rozwiązania 🎬</h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">Zobacz nasze krótkie wideo, by przekonać się, jak EduBox ratuje nauczycieli z opresji.</p>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">Zobacz magię w akcji! 🎬</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Przekonaj się, jak w zaledwie kilkanaście sekund powstają gotowe materiały na Twoje zajęcia.</p>
             </div>
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -161,181 +124,154 @@
                 </div>
                 <div>
                     <div class="text-5xl font-black text-emerald-400 mb-2"><span class="counter" data-target="100">0</span>%</div>
-                    <div class="text-slate-400 font-semibold uppercase tracking-wider text-sm">Zadowolenia Nauczycieli</div>
+                    <div class="text-slate-400 font-semibold uppercase tracking-wider text-sm">Polska Podstawa Programowa</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="jak-to-dziala" class="bg-white py-24 border-b border-gray-100">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="text-center mb-16 reveal">
-                <span class="text-pink-500 font-bold tracking-widest uppercase text-sm">To takie proste!</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mt-2">Magia dzieje się w 3 krokach</h2>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-center relative">
-                <div class="hidden md:block absolute top-12 left-1/6 right-1/6 h-0.5 bg-gradient-to-r from-indigo-100 via-pink-100 to-indigo-100 z-0"></div>
-                
-                <div class="relative z-10 reveal reveal-delay-1">
-                    <div class="w-24 h-24 mx-auto bg-indigo-50 text-indigo-600 rounded-3xl flex items-center justify-center shadow-sm border border-indigo-100 mb-6 rotate-3">
-                        <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-gray-900">1. Wybierz narzędzie</h3>
-                    <p class="text-gray-500 leading-relaxed">Scenariusze, Karty Pracy czy Opinie? Wybierz aplikację z listy, która najbardziej ułatwi Ci dzisiejszy dzień.</p>
-                </div>
-                
-                <div class="relative z-10 reveal reveal-delay-2">
-                    <div class="w-24 h-24 mx-auto bg-pink-50 text-pink-600 rounded-3xl flex items-center justify-center shadow-sm border border-pink-100 mb-6 -rotate-3">
-                        <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.21 1.21 0 0 0 1.72 0L21.64 5.36a1.21 1.21 0 0 0 0-1.72ZM14 7l3 3M5 6v1M19 2v1M10 2v2M7 10H6M22 9h-2M15 2h1"/></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-gray-900">2. Podaj wytyczne</h3>
-                    <p class="text-gray-500 leading-relaxed">Wpisz temat zajęć, imię ucznia lub opisz grafikę. AI zajmie się całą żmudną strukturą.</p>
-                </div>
-                
-                <div class="relative z-10 reveal reveal-delay-3">
-                    <div class="w-24 h-24 mx-auto bg-green-50 text-green-600 rounded-3xl flex items-center justify-center shadow-sm border border-green-100 mb-6 rotate-3">
-                        <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-gray-900">3. Odbierz materiały</h3>
-                    <p class="text-gray-500 leading-relaxed">W kilka sekund otrzymasz profesjonalny dokument lub materiał gotowy do druku i edycji.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
+    <!-- GRID APLIKACJI -->
     <main id="aplikacje" class="max-w-6xl mx-auto px-6 py-24 flex-grow w-full">
         <h2 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-12 flex items-center justify-center reveal">
-            <svg class="w-8 h-8 mr-3 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
             Wybierz narzędzie dla siebie
         </h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
             <a href="https://generator-scenariuszy.vercel.app/" target="_blank" class="app-card bg-slate-900 text-white rounded-3xl p-8 shadow-xl flex flex-col h-full group relative overflow-hidden block border-2 border-emerald-500/30 reveal reveal-delay-1">
-                <div class="absolute top-0 right-0 bg-emerald-500 text-white text-xs font-black px-3 py-1.5 rounded-bl-xl uppercase tracking-widest">HIT! PRO</div>
+                <div class="absolute top-0 right-0 bg-emerald-600 text-white text-[10px] font-black px-3 py-1.5 rounded-bl-xl uppercase tracking-widest">HIT! PRO</div>
                 <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-inner mb-6 group-hover:scale-110 transition-transform">
-                    <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/></svg>
                 </div>
                 <h3 class="text-2xl font-bold mb-3">Scenariusz AI PRO</h3>
-                <p class="text-slate-400 mb-6 flex-grow leading-relaxed">Kompletny generator scenariuszy zajęć zgodnych z polską podstawą programową. Podział na minuty, cele operacyjne i eksport do plików Word (.docx).</p>
-                <div class="flex flex-wrap gap-2 mt-auto">
-                    <span class="bg-emerald-900/50 text-emerald-300 px-3 py-1 rounded-lg text-xs font-bold border border-emerald-800">Eksport Word</span>
-                    <span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-lg text-xs font-bold border border-slate-700 flex items-center">
-                        <svg class="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Oś Czasu
-                    </span>
+                <p class="text-slate-400 mb-6 flex-grow leading-relaxed">Kompletny generator scenariuszy zajęć. Tworzy cele operacyjne, podział na minuty, integrację treści i uwagi SPE. Eksportuje gotowe pliki do Worda!</p>
+                <div class="flex items-center text-emerald-400 font-bold text-xs uppercase tracking-widest pt-4 border-t border-slate-800">
+                    Otwórz Kombajn Scenariuszy
                 </div>
             </a>
 
-            <a href="https://eduprompter.vercel.app/" class="app-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm flex flex-col h-full group relative overflow-hidden block reveal reveal-delay-2">
-                <div class="absolute top-0 right-0 bg-indigo-500 text-white text-xs font-black px-3 py-1.5 rounded-bl-xl uppercase">Nowość</div>
-                <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-inner mb-6 group-hover:scale-110 transition-transform">
-                    <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.21 1.21 0 0 0 1.72 0L21.64 5.36a1.21 1.21 0 0 0 0-1.72ZM14 7l3 3M5 6v1M19 2v1M10 2v2M7 10H6M22 9h-2M15 2h1"/></svg>
-                </div>
-                <h3 class="text-2xl font-bold mb-3 text-gray-900">EduPrompter AI</h3>
-                <p class="text-gray-500 mb-6 flex-grow leading-relaxed">Kreator precyzyjnych poleceń. Nakieruj ChatGPT lub Suno na właściwe tory i otrzymuj perfekcyjne wierszyki oraz piosenki!</p>
-                <div class="flex flex-wrap gap-2 mt-auto">
-                    <span class="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg text-xs font-bold">Prompting</span>
-                    <span class="bg-pink-100 text-pink-700 px-3 py-1 rounded-lg text-xs font-bold">Suno AI</span>
-                </div>
-            </a>
-
-            <a href="https://kreator-kart-pracy.vercel.app/" target="_blank" class="app-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm flex flex-col h-full group relative overflow-hidden block reveal reveal-delay-3">
-                <div class="absolute top-0 right-0 bg-green-100 text-green-700 text-xs font-black px-3 py-1.5 rounded-bl-xl uppercase">Darmowe + PRO</div>
-                <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-inner mb-6 group-hover:scale-110 transition-transform">
-                    <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <a href="https://kreator-kart-pracy.vercel.app/" target="_blank" class="app-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm flex flex-col h-full group relative overflow-hidden block reveal reveal-delay-2">
+                <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-inner mb-6 group-hover:scale-110 transition-transform text-white">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5zM4 13a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6zM16 13a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-6z"/></svg>
                 </div>
                 <h3 class="text-2xl font-bold mb-3 text-gray-900">EduKarty AI</h3>
-                <p class="text-gray-500 mb-6 flex-grow leading-relaxed">Buduj edukacyjne karty pracy jak z klocków LEGO! Dodawaj równania, szlaczki i unikalne kolorowanki AI bez tła.</p>
-                <div class="flex flex-wrap gap-2 mt-auto">
-                    <span class="bg-orange-50 text-orange-600 px-3 py-1 rounded-lg text-xs font-bold">Karty Pracy</span>
-                    <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-lg text-xs font-bold">Moduły AI</span>
+                <p class="text-gray-500 mb-6 flex-grow leading-relaxed">Buduj karty pracy jak z klocków LEGO. Matematyka obrazkowa, szlaczki i unikalne kolorowanki generowane przez AI bez tła.</p>
+                <div class="flex items-center text-orange-600 font-bold text-xs uppercase tracking-widest pt-4 border-t border-gray-50">
+                    Stwórz Kartę Pracy
                 </div>
             </a>
 
-            <a href="https://edugenerator.vercel.app/" target="_blank" class="app-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm flex flex-col h-full group relative overflow-hidden block reveal reveal-delay-1">
-                <div class="absolute top-0 right-0 bg-green-100 text-green-700 text-xs font-black px-3 py-1.5 rounded-bl-xl uppercase">Darmowe + PRO</div>
-                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-inner mb-6 group-hover:scale-110 transition-transform">
-                    <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526M20 7a8 8 0 1 1-16 0 8 8 0 0 1 16 0z"/><circle cx="12" cy="7" r="3"/></svg>
+            <a href="https://edugenerator.vercel.app/" target="_blank" class="app-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm flex flex-col h-full group relative overflow-hidden block reveal reveal-delay-3">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-inner mb-6 group-hover:scale-110 transition-transform text-white">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526M20 7a8 8 0 1 1-16 0 8 8 0 0 1 16 0z"/><circle cx="12" cy="7" r="3"/></svg>
                 </div>
                 <h3 class="text-2xl font-bold mb-3 text-gray-900">EduGenerator</h3>
-                <p class="text-gray-500 mb-6 flex-grow leading-relaxed">Stwórz piękne dyplomy i girlandy w minutę. Wykorzystaj asystenta AI do narysowania ozdób pasujących do Twojego tematu.</p>
-                <div class="flex flex-wrap gap-2 mt-auto">
-                    <span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-xs font-bold">Dyplomy</span>
-                    <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg text-xs font-bold">Grafika AI</span>
+                <p class="text-gray-500 mb-6 flex-grow leading-relaxed">Dyplomy i girlandy gotowe do druku w 60 sekund. Wybieraj piękne motywy lub poproś AI o narysowanie unikalnej ozdoby.</p>
+                <div class="flex items-center text-indigo-600 font-bold text-xs uppercase tracking-widest pt-4 border-t border-gray-50">
+                    Generuj Dyplom
                 </div>
             </a>
 
-            <a href="https://asystent-pedagoga-specjalnego-dokumenty.streamlit.app" target="_blank" class="app-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm flex flex-col h-full group relative overflow-hidden block reveal reveal-delay-2">
-                <div class="absolute top-0 right-0 bg-yellow-100 text-yellow-700 text-xs font-black px-3 py-1.5 rounded-bl-xl uppercase flex items-center">
-                    <svg class="w-3 h-3 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3y-3.5L15.5 7.5z"/></svg> Wymaga Kodu
-                </div>
-                <div class="w-16 h-16 bg-gradient-to-br from-teal-400 to-emerald-500 rounded-2xl flex items-center justify-center shadow-inner mb-6 group-hover:scale-110 transition-transform">
-                    <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <a href="https://asystent-pedagoga-specjalnego-dokumenty.streamlit.app" target="_blank" class="app-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm flex flex-col h-full group relative overflow-hidden block reveal reveal-delay-1">
+                <div class="w-16 h-16 bg-gradient-to-br from-teal-400 to-emerald-500 rounded-2xl flex items-center justify-center shadow-inner mb-6 group-hover:scale-110 transition-transform text-white">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 21v-2a4 4 0 0 0-3-3.87"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 </div>
                 <h3 class="text-2xl font-bold mb-3 text-gray-900">Asystent Pedagoga</h3>
-                <p class="text-gray-500 mb-6 flex-grow leading-relaxed">Profesjonalne wsparcie w tworzeniu IPET i opinii. Wgraj PDF z diagnozą, a AI ułoży propozycję planu wsparcia.</p>
-                <div class="flex flex-wrap gap-2 mt-auto">
-                    <span class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg text-xs font-bold">IPET / WOPFU</span>
-                    <span class="bg-slate-900 text-white px-3 py-1 rounded-lg text-xs font-bold">Streamlit</span>
+                <p class="text-gray-500 mb-6 flex-grow leading-relaxed">Pisz IPET-y, WOPFU i opinie o uczniach 10x szybciej. AI analizuje Twoje uwagi i układa je w profesjonalny dokument.</p>
+                <div class="flex items-center text-emerald-600 font-bold text-xs uppercase tracking-widest pt-4 border-t border-gray-50">
+                    Otwórz Dokumenty SPE
                 </div>
             </a>
 
-            <a href="https://magic-color-ai-dla-dzieci.streamlit.app/" target="_blank" class="app-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm flex flex-col h-full group relative overflow-hidden block reveal reveal-delay-3">
-                <div class="absolute top-0 right-0 bg-green-100 text-green-700 text-xs font-black px-3 py-1.5 rounded-bl-xl uppercase">Darmowe + PRO</div>
-                <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center shadow-inner mb-6 group-hover:scale-110 transition-transform">
-                    <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.92 0 1.68-.75 1.68-1.68 0-.44-.18-.84-.44-1.12-.29-.3-.44-.65-.44-1.12 0-.93.75-1.68 1.68-1.68h2.08c3.1 0 5.68-2.52 5.68-5.68C22 6.48 17.52 2 12 2z"/><path d="M7 10h.01"/><path d="M11 6h.01"/><path d="M15 6h.01"/><path d="M19 10h.01"/></svg>
+            <a href="https://magic-color-ai-dla-dzieci.streamlit.app/" target="_blank" class="app-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm flex flex-col h-full group relative overflow-hidden block reveal reveal-delay-2">
+                <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center shadow-inner mb-6 group-hover:scale-110 transition-transform text-white">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.92 0 1.68-.75 1.68-1.68 0-.44-.18-.84-.44-1.12-.29-.3-.44-.65-.44-1.12 0-.93.75-1.68 1.68-1.68h2.08c3.1 0 5.68-2.52 5.68-5.68C22 6.48 17.52 2 12 2z"/><path d="M7 10h.01"/><path d="M11 6h.01"/><path d="M15 6h.01"/><path d="M19 10h.01"/></svg>
                 </div>
                 <h3 class="text-2xl font-bold mb-3 text-gray-900">Magic Color AI</h3>
-                <p class="text-gray-500 mb-6 flex-grow leading-relaxed">Inteligentny generator kolorowanek. Wpisz dowolny pomysł, a AI narysuje unikalną kolorowankę w 3 sekundy. Idealne na zajęcia plastyczne!</p>
-                <div class="flex flex-wrap gap-2 mt-auto">
-                    <span class="bg-pink-50 text-pink-600 px-3 py-1 rounded-lg text-xs font-bold">Kolorowanki</span>
-                    <span class="bg-rose-100 text-rose-700 px-3 py-1 rounded-lg text-xs font-bold">Grafika AI</span>
+                <p class="text-gray-500 mb-6 flex-grow leading-relaxed">Wpisz dowolny pomysł, a AI narysuje unikalną kolorowankę. Ty wybierasz wiek dziecka i poziom detali. Idealne na plastykę!</p>
+                <div class="flex items-center text-pink-600 font-bold text-xs uppercase tracking-widest pt-4 border-t border-gray-50">
+                    Rysuj Kolorowankę
                 </div>
             </a>
 
-            <a href="https://kreator-ikon.vercel.app/" class="app-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm flex flex-col h-full group relative overflow-hidden block reveal reveal-delay-1">
-                <div class="absolute top-0 right-0 bg-green-100 text-green-700 text-xs font-black px-3 py-1.5 rounded-bl-xl uppercase">Darmowe + PRO</div>
-                <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-inner mb-6 group-hover:scale-110 transition-transform">
-                    <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            <a href="https://kreator-ikon.vercel.app/" target="_blank" class="app-card bg-white rounded-3xl p-8 border border-gray-100 shadow-sm flex flex-col h-full group relative overflow-hidden block reveal reveal-delay-3">
+                <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-inner mb-6 group-hover:scale-110 transition-transform text-white">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </div>
                 <h3 class="text-2xl font-bold mb-3 text-gray-900">Kreator Ikon PRO</h3>
-                <p class="text-gray-500 mb-6 flex-grow leading-relaxed">Twórz piękne ikony folderów na podstawie emoji lub opisów AI. Automatyczne usuwanie tła dla idealnego wyglądu.</p>
-                <div class="flex flex-wrap gap-2 mt-auto">
-                    <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-lg text-xs font-bold">Personalizacja</span>
-                    <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-lg text-xs font-bold">Usunięte Tło</span>
+                <p class="text-gray-500 mb-6 flex-grow leading-relaxed">Twórz profesjonalne ikony folderów i przedmiotów. Magiczna gumka AI usunie tło, aby ikona wyglądała idealnie w systemie Windows.</p>
+                <div class="flex items-center text-indigo-600 font-bold text-xs uppercase tracking-widest pt-4 border-t border-gray-50">
+                    Zmień swoje Ikony
                 </div>
             </a>
 
         </div>
     </main>
 
-    <section id="opinie" class="bg-indigo-50 py-24 border-t border-indigo-100">
+    <!-- NOWA SEKCJA: POLECANE LINKI AI -->
+    <section id="polecane" class="bg-indigo-50 py-24 border-t border-indigo-100">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Przydatne narzędzia zewnętrzne 🌐</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">Sztuczna Inteligencja, z której korzystamy każdego dnia i którą szczerze polecamy.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- LINK 1: Chmurka AI -->
+                <a href="https://chmurka.ai/" target="_blank" class="link-card bg-white p-8 rounded-[2rem] flex items-start gap-5 reveal reveal-delay-1">
+                    <div class="text-4xl">☁️</div>
+                    <div>
+                        <h4 class="font-bold text-lg text-gray-900 mb-1">Chmurka.ai</h4>
+                        <p class="text-sm text-gray-500 leading-relaxed">Polski, przyjazny asystent AI. Idealny do szybkich pomysłów i pracy z tekstami po polsku.</p>
+                    </div>
+                </a>
+                
+                <!-- LINK 2: Chat GPT -->
+                <a href="https://chat.openai.com/" target="_blank" class="link-card bg-white p-8 rounded-[2rem] flex items-start gap-5 reveal reveal-delay-2">
+                    <div class="text-4xl">🤖</div>
+                    <div>
+                        <h4 class="font-bold text-lg text-gray-900 mb-1">ChatGPT</h4>
+                        <p class="text-sm text-gray-500 leading-relaxed">Najpopularniejszy model językowy na świecie. Niezastąpiony mózg dla każdego nauczyciela.</p>
+                    </div>
+                </a>
+                
+                <!-- LINK 3: Suno AI -->
+                <a href="https://suno.com/" target="_blank" class="link-card bg-white p-8 rounded-[2rem] flex items-start gap-5 reveal reveal-delay-3">
+                    <div class="text-4xl">🎵</div>
+                    <div>
+                        <h4 class="font-bold text-lg text-gray-900 mb-1">Suno AI</h4>
+                        <p class="text-sm text-gray-500 leading-relaxed">Wygeneruj w 5 sekund gotową piosenkę na każdy temat. Prawdziwy hit na zajęcia muzyczne!</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- OPINIE -->
+    <section id="opinie" class="bg-white py-24">
         <div class="max-w-6xl mx-auto px-6">
             <h2 class="text-3xl md:text-4xl font-extrabold text-center text-gray-900 mb-16 reveal">Co mówią nauczyciele? 💬</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-3xl shadow-sm relative reveal reveal-delay-1 hover:-translate-y-2 transition-transform">
-                    <div class="text-indigo-200 absolute top-4 right-6 text-6xl font-serif">"</div>
-                    <p class="text-gray-600 mb-6 italic relative z-10">"Zakończenie roku zawsze wiązało się z godzinami w Wordzie. Z EduGeneratorem wygenerowałam 25 dyplomów w 10 minut. Cudo!"</p>
-                    <div class="font-bold text-gray-900">Katarzyna W.</div>
-                    <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Nauczyciel Wczesnoszkolny</div>
+                <div class="bg-indigo-50 p-8 rounded-3xl shadow-sm relative reveal reveal-delay-1">
+                    <p class="text-gray-600 mb-6 italic">"EduGenerator to złoto! Zrobiłam dyplomy dla całej grupy 25 dzieci w 10 minut. Wcześniej zajmowało mi to całe popołudnie."</p>
+                    <div class="font-bold text-gray-900">Anna M.</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Nauczycielka Przedszkola</div>
                 </div>
-                <div class="bg-white p-8 rounded-3xl shadow-sm relative reveal reveal-delay-2 hover:-translate-y-2 transition-transform">
-                    <div class="text-indigo-200 absolute top-4 right-6 text-6xl font-serif">"</div>
-                    <p class="text-gray-600 mb-6 italic relative z-10">"Scenariusz AI PRO to absolutny przełom. Podział na fazy i cele dobrane idealnie pod polską podstawę. Polecam!"</p>
-                    <div class="font-bold text-gray-900">Agnieszka M.</div>
+                <div class="bg-indigo-50 p-8 rounded-3xl shadow-sm relative reveal reveal-delay-2">
+                    <p class="text-gray-600 mb-6 italic">"Scenariusz AI PRO to absolutny przełom. Cele i metody są dobrane idealnie pod polską podstawę. Polecam każdemu!"</p>
+                    <div class="font-bold text-gray-900">Krzysztof P.</div>
                     <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Pedagog Specjalny</div>
                 </div>
-                <div class="bg-white p-8 rounded-3xl shadow-sm relative reveal reveal-delay-3 hover:-translate-y-2 transition-transform">
-                    <div class="text-indigo-200 absolute top-4 right-6 text-6xl font-serif">"</div>
-                    <p class="text-gray-600 mb-6 italic relative z-10">"EduKarty AI z kolorowankami bez tła to jedyne takie narzędzie. Dzieci uwielbiają zadania z obrazkami, które sama wymyślam."</p>
-                    <div class="font-bold text-gray-900">Piotr K.</div>
-                    <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Wychowawca Przedszkolny</div>
+                <div class="bg-indigo-50 p-8 rounded-3xl shadow-sm relative reveal reveal-delay-3">
+                    <p class="text-gray-600 mb-6 italic">"EduKarty AI z kolorowankami bez tła to jedyne takie narzędzie. Dzieci uwielbiają zadania z obrazkami, które same wymyślamy."</p>
+                    <div class="font-bold text-gray-900">Joanna S.</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Wychowawczyni Klas 1-3</div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- ARTYKUŁ -->
     <section id="artykul" class="bg-white py-24 border-t border-gray-100">
         <div class="max-w-4xl mx-auto px-6 reveal">
             <div class="text-center mb-12">
@@ -344,31 +280,29 @@
             </div>
             <div class="text-lg text-gray-600 leading-relaxed space-y-6">
                 <p>EduBox AI to nie tylko zestaw narzędzi. To Twoja tarcza przeciwko wypaleniu zawodowemu i zbędnej biurokracji. Każda aplikacja została zaprojektowana tak, by oszczędzać czas, który możesz poświęcić na to, co najważniejsze – na budowanie relacji z Twoimi uczniami.</p>
-                <div class="bg-indigo-50 p-8 rounded-2xl border border-indigo-100 my-10 italic text-indigo-900 shadow-inner text-center">
-                    "AI w edukacji to jak posiadanie prywatnego sekretarza. Wykonuje żmudną pracę, byś Ty mógł skupić się na nauczaniu z pasją."
-                </div>
+                <p>Pisanie IPET-ów, tworzenie szlaczków czy wymyślanie 20 podobnych zadań matematycznych to zadania, w których komputer radzi sobie świetnie. Ty masz dzięki temu więcej czasu na nauczanie z pasją.</p>
             </div>
         </div>
     </section>
 
+    <!-- WSPARCIE -->
     <section id="wsparcie" class="bg-indigo-50 border-t border-b border-indigo-100 py-20 relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-64 h-64 rounded-full bg-indigo-100 opacity-50 blur-3xl"></div>
         <div class="max-w-5xl mx-auto px-6 relative z-10 reveal">
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+            <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden flex flex-col md:flex-row border border-indigo-100">
                 <div class="p-8 md:p-12 md:w-1/2">
-                    <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Cześć! Jestem twórcą EduBox AI</h2>
-                    <p class="text-gray-600 mb-6">Projekt powstał z pasji do edukacji. Chcę dać każdemu nauczycielowi darmowe narzędzia, które odciążą go w "papierkowej robocie".</p>
-                    <div class="bg-amber-50 p-6 rounded-2xl border border-amber-100">
-                        <p class="text-sm text-amber-800 mb-4 font-bold">Chcesz Kod Premium? Postaw "wirtualną kawę" i odblokuj wszystkie funkcje PRO!</p>
-                        <a href="https://buycoffee.to/magiccolor" target="_blank" class="inline-flex w-full items-center justify-center space-x-2 bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 px-6 py-3 rounded-xl font-bold transition shadow-sm hover:shadow-md">
-                            Postaw Kawę ☕
+                    <h2 class="text-3xl font-extrabold text-gray-900 mb-4 tracking-tight">Cześć! Jestem twórcą EduBox AI</h2>
+                    <p class="text-gray-600 mb-8 leading-relaxed">Projekt powstał z pasji do edukacji i technologii. Chcę dać każdemu nauczycielowi darmowe narzędzia, które odciążą go w codziennych obowiązkach.</p>
+                    <div class="bg-amber-50 p-6 rounded-3xl border border-amber-100">
+                        <p class="text-sm text-amber-800 mb-4 font-bold">Chcesz Kod Premium? Postaw "wirtualną kawę" i odblokuj wszystkie zaawansowane funkcje PRO we wszystkich aplikacjach!</p>
+                        <a href="https://buycoffee.to/magiccolor" target="_blank" class="inline-flex w-full items-center justify-center space-x-2 bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 px-6 py-4 rounded-2xl font-bold transition shadow-sm hover:shadow-md active:scale-95">
+                            Wspieram projekt (Kawa) ☕
                         </a>
                     </div>
                 </div>
-                <div class="bg-gray-900 p-8 md:p-12 md:w-1/2 flex flex-col justify-center text-white relative">
-                    <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
-                    <h3 class="text-2xl font-bold mb-3 relative z-10">Masz pomysł? Napisz!</h3>
-                    <a href="mailto:edubox.ai@gmail.com" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-6 rounded-xl text-center transition-colors relative z-10">
+                <div class="bg-gray-900 p-8 md:p-12 md:w-1/2 flex flex-col justify-center text-white">
+                    <h3 class="text-2xl font-bold mb-4">Masz pomysł? Napisz!</h3>
+                    <p class="text-slate-400 mb-8">Czekam na Twoje sugestie, jakie jeszcze narzędzie mogłoby Ci pomóc w pracy.</p>
+                    <a href="mailto:edubox.ai@gmail.com" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-6 rounded-2xl text-center transition-colors">
                         edubox.ai@gmail.com
                     </a>
                 </div>
@@ -376,52 +310,54 @@
         </div>
     </section>
 
-    <footer class="bg-white py-8 w-full border-t border-gray-100">
+    <footer class="bg-white py-12 w-full border-t border-gray-100">
         <div class="max-w-6xl mx-auto px-6 text-center">
-            <p class="text-gray-400 text-sm font-semibold uppercase">© 2026 EduBox AI. Wspieramy polską edukację.</p>
+            <p class="text-gray-400 text-sm font-semibold uppercase tracking-widest">© 2026 EduBox AI. Wspieramy polską edukację przyszłości.</p>
         </div>
     </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Animacja pojawiania się elementów (Reveal)
             const reveals = document.querySelectorAll('.reveal');
             const revealOnScroll = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('active');
-                        observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.15 });
+            }, { threshold: 0.1 });
             reveals.forEach(reveal => revealOnScroll.observe(reveal));
 
+            // Animacja liczników
             const counters = document.querySelectorAll('.counter');
             let hasAnimated = false;
             const animateCounters = () => {
                 counters.forEach(counter => {
                     const target = +counter.getAttribute('data-target');
-                    const increment = target / 125;
+                    const increment = target / 100;
                     let current = 0;
                     const updateCounter = () => {
                         current += increment;
                         if (current < target) {
                             counter.innerText = Math.ceil(current).toLocaleString('pl-PL');
-                            requestAnimationFrame(updateCounter);
-                        } else { counter.innerText = target.toLocaleString('pl-PL'); }
+                            setTimeout(updateCounter, 20);
+                        } else {
+                            counter.innerText = target.toLocaleString('pl-PL');
+                        }
                     };
                     updateCounter();
                 });
             };
+
             const statsSection = document.getElementById('stats');
-            if(statsSection) {
-                const statsObserver = new IntersectionObserver((entries) => {
-                    if (entries[0].isIntersecting && !hasAnimated) {
-                        animateCounters();
-                        hasAnimated = true;
-                    }
-                }, { threshold: 0.5 });
-                statsObserver.observe(statsSection);
-            }
+            const statsObserver = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting && !hasAnimated) {
+                    animateCounters();
+                    hasAnimated = true;
+                }
+            }, { threshold: 0.5 });
+            if (statsSection) statsObserver.observe(statsSection);
         });
     </script>
 </body>

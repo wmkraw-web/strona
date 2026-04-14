@@ -125,9 +125,17 @@
                                 ref={videoRef}
                                 src="powitanie.mp4" 
                                 autoPlay 
-                                loop 
-                                muted 
+                                loop={isMuted} 
+                                muted={isMuted} 
                                 playsInline
+                                onEnded={() => {
+                                    // Gdy film dojdzie do końca, zwijamy go i wracamy do cichej pętli
+                                    setIsMuted(true);
+                                    if (videoRef.current) {
+                                        videoRef.current.muted = true;
+                                        videoRef.current.play(); 
+                                    }
+                                }}
                                 className="w-full h-full object-cover"
                                 poster="https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=200&auto=format&fit=crop"
                             />

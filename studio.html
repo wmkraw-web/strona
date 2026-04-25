@@ -106,33 +106,43 @@
                 let systemPrompt = "";
                 let userPrompt = "";
                 let aiTemperature = 0.5;
-                let useJsonMode = true; // Zmienna sterująca formatem
+                let useJsonMode = true;
 
                 if (mode === 'song') {
                     // WYŁĄCZAMY JSON DLA PIOSENEK! AI ma pisać luźno jako artysta.
                     useJsonMode = false;
                     aiTemperature = 0.6; // Idealna temperatura do rymów
                     
-                    systemPrompt = `Jesteś wybitnym polskim autorem tekstów piosenek edukacyjnych dla dzieci w stylu Jana Brzechwy i Juliana Tuwima. Jesteś mistrzem idealnych, dokładnych rymów.
-ZASADY KRYTYCZNE (ZŁAMANIE ICH TO BŁĄD):
-1. Rymy na końcu wersów muszą być CZYSTE i IDEALNE (np. smok/krok, woda/zgoda, dzieci/śmieci). Żadnych rymów "na siłę".
-2. Rytm: każdy wers w zwrotce musi mieć podobną liczbę sylab (np. 8 sylab), by łatwo się to śpiewało.
-3. Układ tekstu musi być w formacie: [Zwrotka 1], [Refren], [Zwrotka 2], [Refren].
-4. ZWRÓĆ ODPOWIEDŹ DOKŁADNIE W TAKIM FORMACIE, Z TYMI TRZEMA LINIJKAMI NA GÓRZE:
+                    // PROSTY, BEZBŁĘDNY PROMPT PO POLSKU (Bez meta-kodu i angielskiego)
+                    systemPrompt = `Jesteś wybitnym autorem tekstów piosenek dla dzieci.
+Twoim zadaniem jest napisanie edukacyjnej, rytmicznej piosenki w 100% po polsku.
 
-TYTUŁ: (tutaj wymyśl wesoły polski tytuł)
-STYL: (tutaj wypisz tagi muzyczne po angielsku, np. Upbeat happy kids pop)
+ZASADY:
+1. Piosenka musi mieć idealne, proste rymy (AABB lub ABAB), np. woda/zgoda, krok/smok.
+2. Zwróć tylko i wyłącznie gotowy tekst według poniższego szablonu. Żadnych wstępów i komentarzy.
+
+FORMAT ODPOWIEDZI (Skopiuj ten format dokładnie):
+TYTUŁ: [Wymyśl polski, wesoły tytuł piosenki]
+STYL: [Wpisz 4 angielskie tagi muzyczne, np. upbeat pop, happy, kids music]
 TEKST:
-(tutaj wstaw wybitny polski tekst piosenki, z odstępami między zwrotkami)`;
+[Zwrotka 1]
+(4 linijki rymowanego tekstu)
 
-                    userPrompt = `Temat piosenki: ${params.topic}. 
+[Refren]
+(4 linijki rymowanego tekstu)
+
+[Zwrotka 2]
+(4 linijki rymowanego tekstu)
+
+[Refren]
+(4 linijki rymowanego tekstu)`;
+
+                    userPrompt = `Napisz wesołą piosenkę dla dzieci. 
+Temat: ${params.topic}. 
 Dla kogo: ${params.age}. 
-Gatunek muzyczny: ${params.style}. 
-
-Napisz piosenkę. Pamiętaj o dokładnych rymach AABB lub ABAB! Nie używaj żadnego formatowania JSON, napisz to po prostu tekstem według zaleconego szablonu.`;
+Gatunek muzyczny: ${params.style}.`;
                 } 
                 else if (mode === 'escape') {
-                    // JSON Zostaje dla gier
                     useJsonMode = true;
                     aiTemperature = 0.4;
                     systemPrompt = `Jesteś kreatywnym polskim nauczycielem tworzącym angażujące gry terenowe (Escape Roomy) w klasie. Odpowiadaj WYŁĄCZNIE w formacie JSON. Całość tekstu wewnątrz JSON musi być po POLSKU.
@@ -148,7 +158,6 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "intro", "riddl
                     userPrompt = `Temat edukacyjny: ${params.topic}. Wiek uczestników: ${params.age}. Miejsce ukrywania wskazówek: ${params.location}. Ułóż 4 zagadki tematyczne po polsku, które dzieci muszą rozwiązać współpracując. Podaj sprytne, ale bezpieczne kryjówki.`;
                 }
                 else if (mode === 'tiktok') {
-                    // JSON Zostaje dla scenariuszy
                     useJsonMode = true;
                     aiTemperature = 0.4;
                     systemPrompt = `Jesteś polskim reżyserem form wideo (TikTok, Reels) tworzącym śmieszne scenariusze edukacyjne dla uczniów. Odpowiadaj WYŁĄCZNIE w formacie JSON. Całość scenariusza musi być po POLSKU.
@@ -166,7 +175,6 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                 }
 
                 try {
-                    // Budowa ładunku - dodajemy format JSON tylko tam, gdzie to potrzebne
                     const payload = { 
                         messages: [
                             { role: "system", content: systemPrompt },
@@ -192,8 +200,8 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                     let text = await res.text();
                     
                     if (mode === 'song') {
-                        // RĘCZNY, NIEZNISZCZALNY PARSER DLA PIOSENEK (Koniec z błędami JSON!)
-                        let title = "Piosenka Edukacyjna";
+                        // RĘCZNY, NIEZNISZCZALNY PARSER DLA PIOSENEK
+                        let title = "Twoja Piosenka";
                         let suno_prompt = "Upbeat children song";
                         let lyrics = "Wystąpił błąd w pisaniu tekstu. Spróbuj ponownie.";
 
@@ -210,16 +218,15 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                         if (textSplit.length > 1) {
                             lyrics = textSplit[1].trim();
                         } else {
-                            // Jeśli AI zapomniało słowa "TEKST:", po prostu ucinamy dwie pierwsze linijki
+                            // Awaryjne ucięcie pierwszych linijek jeśli AI zgubi słowo "TEKST:"
                             lyrics = text.replace(/TYTU[ŁL]:[^\n]+\n/i, '').replace(/(STYL|PROMPT):[^\n]+\n/i, '').trim();
                         }
 
                         setGeneratedData({ title, suno_prompt, lyrics });
                         setIsGenerating(false);
-                        return; // Kończymy funkcję tutaj dla piosenki
+                        return;
                     }
 
-                    // Jeśli to Escape Room lub TikTok, zostaje stara logika JSON
                     let jsonStr = text.replace(/```json/gi, '').replace(/```/g, '').trim();
                     const start = jsonStr.indexOf('{');
                     const end = jsonStr.lastIndexOf('}');
@@ -247,7 +254,7 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                     
                 } catch (error) {
                     console.error("Błąd AI:", error); 
-                    showToast('Serwer był chwilowo zajęty i źle ułożył tekst. Spróbuj kliknąć "Generuj" ponownie.');
+                    showToast('Serwer był chwilowo zajęty. Spróbuj kliknąć "Generuj" ponownie.');
                 } finally { 
                     setIsGenerating(false); 
                 }
@@ -266,7 +273,6 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
             return (
                 <div className="min-h-screen flex flex-col relative bg-slate-50 overflow-x-hidden">
                     
-                    {/* POWIADOMIENIE (TOAST) */}
                     {toastMessage && (
                         <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] bg-slate-800 text-white px-6 py-3 rounded-2xl shadow-2xl font-bold text-sm animate-toast flex items-center gap-3 border border-slate-700">
                             <Icon name="AlertCircle" size={18} className="text-amber-400" />
@@ -274,20 +280,18 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                         </div>
                     )}
 
-                    {/* EKRAN ŁADOWANIA */}
                     {isGenerating && (
                         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-[100] flex flex-col items-center justify-center text-white">
                             <div className="bg-white p-8 rounded-3xl flex flex-col items-center space-y-5 max-w-sm text-slate-800 shadow-2xl">
                                 <div className={`w-16 h-16 border-8 border-t-transparent rounded-full animate-spin`} style={{ borderTopColor: mode === 'song' ? '#d946ef' : mode === 'escape' ? '#f59e0b' : '#06b6d4', borderRightColor: '#f1f5f9', borderBottomColor: '#f1f5f9', borderLeftColor: '#f1f5f9'}}></div>
                                 <div className="text-center">
-                                    <h3 className="text-xl font-black mb-1">Piszę i rymuję...</h3>
-                                    <p className="text-xs text-slate-500 font-medium">Szukam idealnych słów (ok. 10 sekund).</p>
+                                    <h3 className="text-xl font-black mb-1">Piszę scenariusz...</h3>
+                                    <p className="text-xs text-slate-500 font-medium">To potrwa około 10 sekund.</p>
                                 </div>
                             </div>
                         </div>
                     )}
 
-                    {/* NAWIGACJA */}
                     <nav className="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center print-hidden sticky top-0 z-50 shadow-sm">
                         <div className="flex items-center space-x-3 font-black text-xl tracking-tight text-slate-800">
                             <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-2.5 rounded-xl text-white shadow-lg">
@@ -310,7 +314,6 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
 
                     <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full print:block print:p-0">
                         
-                        {/* PANEL LEWY - KONFIGURACJA */}
                         <div className="lg:col-span-4 space-y-6 print-hidden">
                             
                             <div className="bg-white p-2 rounded-2xl shadow-sm border border-slate-200 flex gap-2">

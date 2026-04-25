@@ -116,22 +116,30 @@
                 const userPrompt = `Tekst źródłowy: "${sourceText}". \nWiek ucznia: ${params.age}. \nRozmiar porcji: ${params.chunkSize}. \nProszę o przetworzenie tekstu zgodnie z zasadami chunkingu.`;
 
                 try {
-                    const res = await fetch('/api/chat', {
+                    // ZMIANA: Bezpośrednie połączenie przeglądarki z AI omija 10-sekundowy limit Vercela!
+                    const res = await fetch('https://text.pollinations.ai/', {
                         method: 'POST', 
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ prompt: userPrompt, system: systemPrompt })
+                        body: JSON.stringify({ 
+                            messages: [
+                                { role: "system", content: systemPrompt },
+                                { role: "user", content: userPrompt }
+                            ],
+                            model: "openai",
+                            temperature: 0.3,
+                            seed: Math.floor(Math.random() * 10000)
+                        })
                     });
                     
-                    if (!res.ok) throw new Error("Błąd serwera");
+                    if (!res.ok) throw new Error("Błąd serwera AI");
                     
-                    const data = await res.json();
-                    let text = data.text;
+                    let text = await res.text();
                     const start = text.indexOf('{');
                     const end = text.lastIndexOf('}');
                     setChunkedData(JSON.parse(text.substring(start, end + 1)));
                 } catch (error) {
                     console.error(error); 
-                    alert("Serwer przeciążony. Spróbuj ponownie za chwilę.");
+                    alert("Przepraszamy, serwery AI są w tej chwili bardzo obciążone. Spróbuj ponownie za kilka sekund.");
                 } finally { 
                     setIsGenerating(false); 
                 }
@@ -140,13 +148,11 @@
             const exportToWord = () => {
                 if(!chunkedData) return;
                 const content = document.getElementById('print-container').innerHTML;
-                // Szybki cleanup klas Tailwindowych dla Worda
                 const cleanContent = content.replace(/class="[^"]*"/g, '');
                 
                 const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Mikro-Lekcja: ${chunkedData.title}</title><style>body {font-family: Arial, sans-serif; font-size: 14pt; line-height: 1.5; color: #1e293b;} h1 {font-size: 22pt; color: #4f46e5; text-align: center;} h2 {font-size: 16pt; color: #6366f1; border-bottom: 2px solid #e0e7ff; padding-bottom: 5px; margin-top: 20px;} .chunk { border: 1px solid #e2e8f0; padding: 15px; margin-bottom: 20px; border-radius: 8px; background-color: #f8fafc;} b {color: #1e293b;} .summary { background-color: #ecfdf5; padding: 15px; border-left: 5px solid #10b981; } .quiz { background-color: #fef2f2; padding: 15px; border-left: 5px solid #ef4444; }</style></head><body>`;
                 const footer = `</body></html>`;
                 
-                // Generowanie ładnego HTML dla Worda
                 let wordHtml = `<h1>${chunkedData.title}</h1>`;
                 chunkedData.chunks.forEach(chunk => {
                     let contentText = chunk.content;
@@ -173,17 +179,13 @@
                 link.click();
             };
 
-            // Helper function to highlight keywords safely
             const renderContentWithHighlights = (text, keywords) => {
                 if (!params.highlightKeywords || !keywords || keywords.length === 0) return text;
-                
                 let resultText = text;
-                // Sort keywords by length descending to replace longer phrases first
                 [...keywords].sort((a,b) => b.length - a.length).forEach(kw => {
                     const regex = new RegExp(`\\b(${kw})\\b`, 'gi');
                     resultText = resultText.replace(regex, '<strong>$1</strong>');
                 });
-                
                 return <span dangerouslySetInnerHTML={{ __html: resultText }} />;
             };
 
@@ -196,7 +198,7 @@
                                 <div className="w-16 h-16 border-8 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
                                 <div className="text-center">
                                     <h3 className="text-xl font-black mb-1">Analizuję tekst...</h3>
-                                    <p className="text-xs text-slate-500 font-medium">Dzielę ścianę tekstu na przyjazne mikro-porcje.</p>
+                                    <p className="text-xs text-slate-500 font-medium">To może potrwać do 25 sekund. Proszę czekać...</p>
                                 </div>
                             </div>
                         </div>
@@ -228,7 +230,6 @@
                         {/* PANEL LEWY - KONFIGURACJA */}
                         <div className="lg:col-span-4 space-y-6 print-hidden">
                             
-                            {/* Wprowadzanie tekstu */}
                             <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-4">
                                 <div className="flex justify-between items-center border-b pb-3">
                                     <h2 className="font-bold text-sm uppercase tracking-widest text-indigo-900 flex items-center gap-2">
@@ -251,7 +252,6 @@
                                 </div>
                             </div>
 
-                            {/* Konfiguracja */}
                             <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-5">
                                 <h2 className="font-bold text-sm uppercase tracking-widest border-b pb-3 text-indigo-900 flex items-center gap-2">
                                     <Icon name="SplitSquare" size={18} className="text-indigo-500"/> Ustawienia Redukcji
@@ -305,11 +305,10 @@
                             </div>
                         </div>
 
-                        {/* PANEL PRAWY - WYNIK (CHUNKI) */}
+                        {/* PANEL PRAWY - WYNIK */}
                         <div className="lg:col-span-8 flex justify-center items-start overflow-x-auto pb-10">
                             <div className={`bg-white w-full max-w-[210mm] min-h-[297mm] shadow-2xl p-8 md:p-14 text-slate-900 transition-colors duration-500 ${dyslexiaMode ? 'dyslexia-mode' : 'chunk-content'}`} id="print-container">
                                 
-                                {/* Pasek narzędzi nad wynikiem */}
                                 <div className="flex flex-col sm:flex-row justify-between items-center mb-8 pb-6 border-b-2 border-slate-100 print-hidden gap-4">
                                     <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-2xl border border-slate-200">
                                         <div className="pl-3 pr-1 text-xs font-bold text-slate-600 uppercase tracking-widest flex items-center gap-2">

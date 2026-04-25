@@ -15,7 +15,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800;900&display=swap');
         
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; overflow-x: hidden; scroll-behavior: smooth;}
-        .text-gradient { background: linear-gradient(135deg, #4f46e5 0%, #ec4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .text-gradient { background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); }
         .app-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid #f1f5f9; }
         .app-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px -15px rgba(79, 70, 229, 0.15); border-color: #e0e7ff; }
@@ -78,8 +78,137 @@
             { title: 'EduPrompter AI', desc: 'Kreator profesjonalnych poleceń (promptów) na zajęcia. Posiada wbudowanego tłumacza tagów na angielski.', url: 'https://eduprompter.vercel.app/', color: 'bg-cyan-100 text-cyan-600', icon: <><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></> },
             { title: 'Magic Color AI', desc: 'Wpisz dowolny pomysł, a AI narysuje unikalną kolorowankę. Wybierz wiek i poziom detali.', url: 'https://magic-color-ai-dla-dzieci.streamlit.app/', badge: 'PRO', color: 'bg-pink-100 text-pink-600', icon: <><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.92 0 1.68-.75 1.68-1.68 0-.44-.18-.84-.44-1.12-.29-.3-.44-.65-.44-1.12 0-.93.75-1.68 1.68-1.68h2.08c3.1 0 5.68-2.52 5.68-5.68C22 6.48 17.52 2 12 2z"/><path d="M7 10h.01"/><path d="M11 6h.01"/><path d="M15 6h.01"/><path d="M19 10h.01"/></> },
             { title: 'Kreator Ikon PRO', desc: 'Twórz ikony folderów (.ICO) dla Windows. Magiczna gumka usunie tło z każdego obrazka.', url: 'https://kreator-ikon.vercel.app/', color: 'bg-slate-200 text-slate-600', icon: <><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></> },
-            { title: 'EduBoxPro Studio', desc: 'Zaawansowany kombajn narzędzi AI. Profesjonalny generator promptów Wideo i Grafiki oraz interaktywne gry.', url: 'studio.html', badge: 'NOWOŚĆ', color: 'bg-indigo-100 text-indigo-900', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.21 1.21 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>' },
-             ];
+            { title: 'EduBoxPro Studio', desc: 'Zaawansowany kombajn narzędzi AI. Profesjonalny generator promptów Wideo i Grafiki oraz interaktywne gry.', url: 'studio.html', badge: 'NOWOŚĆ', color: 'bg-indigo-100 text-indigo-900', icon: <><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.21 1.21 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></> }
+        ];
+
+        // --- KOMPONENTY Z ETAPU 1 ---
+
+        const HeroSection = () => {
+            return (
+                <header className="relative pt-40 pb-20 px-6 text-center border-b border-slate-100 overflow-hidden bg-gradient-to-b from-blue-50 to-white">
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4=')] opacity-50 z-0"></div>
+                    <div className="max-w-5xl mx-auto relative z-10">
+                        <Reveal>
+                            <div className="inline-flex items-center justify-center p-2 mb-6 bg-blue-100 text-blue-800 rounded-full text-xs font-black uppercase tracking-widest shadow-sm">
+                                ✨ Twój Osobisty Asystent Dydaktyczny AI
+                            </div>
+                            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
+                                Odzyskaj <span className="text-blue-600">10 godzin</span> w tygodniu.<br className="hidden md:block"/>
+                                Zostaw biurokrację AI.
+                            </h1>
+                            <p className="mt-4 text-lg md:text-xl text-slate-600 max-w-3xl mx-auto mb-10 leading-relaxed">
+                                EduBox Pro AI to inteligentna platforma dla nauczycieli i pedagogów. Generuj konspekty, karty pracy, dyplomy i dokumentację IPET w 5 sekund. Odzyskaj czas na to, co naprawdę ważne – na pracę z uczniem.
+                            </p>
+                            <div className="flex flex-col sm:flex-row justify-center gap-4">
+                                <a href="#aplikacje" className="px-8 py-4 bg-blue-600 text-white rounded-xl font-bold text-lg hover:bg-blue-700 transition shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center">
+                                    Przetestuj za darmo 🚀
+                                </a>
+                                <a href="#wideo" className="px-8 py-4 bg-white text-blue-600 border-2 border-blue-100 rounded-xl font-bold text-lg hover:bg-blue-50 transition flex items-center justify-center">
+                                    Zobacz jak to działa ▶
+                                </a>
+                            </div>
+                            <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-sm font-bold text-slate-500">
+                                <div className="flex items-center"><span className="text-green-500 mr-2">✔️</span> Zgodne z wytycznymi MEN</div>
+                                <div className="flex items-center"><span className="text-green-500 mr-2">✔️</span> Bezpieczne dane (RODO)</div>
+                            </div>
+                        </Reveal>
+                    </div>
+                </header>
+            );
+        };
+
+        const FeaturesSection = () => {
+            const features = [
+                {
+                    icon: "📝",
+                    title: "Kreator Dokumentacji (IPET/WOPFU)",
+                    description: "Koniec z wielogodzinnym pisaniem opinii. Wpisz hasłowo mocne i słabe strony ucznia, a AI wygeneruje profesjonalny, wielostronicowy dokument urzędowy gotowy do druku."
+                },
+                {
+                    icon: "🏛️",
+                    title: "Gotowce: Edukacja Obywatelska",
+                    description: "Bądź gotowy na nowe przedmioty w 2025. Błyskawicznie generuj pełne konspekty zajęć, quizy i materiały o praworządności czy higienie cyfrowej."
+                },
+                {
+                    icon: "🧠",
+                    title: "Narzędzia Neuroinkluzywne (SPE)",
+                    description: "Masz w klasie uczniów z ADHD lub dysleksją? Nasz algorytm stosuje metodę 'chunkingu' – dzieli trudny tekst na mikro-lekcje i tworzy jasne instrukcje."
+                }
+            ];
+
+            return (
+                <section className="py-24 bg-white relative z-10 border-b border-slate-100">
+                    <div className="max-w-6xl mx-auto px-6">
+                        <Reveal>
+                            <div className="text-center mb-16">
+                                <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight">Rozwiązujemy realne problemy</h2>
+                                <p className="mt-4 text-lg text-slate-500 font-medium">Narzędzia zaprojektowane przez edukatorów, dla edukatorów.</p>
+                            </div>
+                        </Reveal>
+                        <div className="grid md:grid-cols-3 gap-8">
+                            {features.map((feature, index) => (
+                                <Reveal key={index} delay={index * 150}>
+                                    <div className="p-8 bg-slate-50 rounded-[2rem] hover:shadow-xl hover:-translate-y-2 transition-all border border-slate-100 h-full">
+                                        <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mb-6 text-3xl border border-slate-100">
+                                            {feature.icon}
+                                        </div>
+                                        <h3 className="text-xl font-bold text-slate-900 mb-3 leading-tight">{feature.title}</h3>
+                                        <p className="text-slate-500 leading-relaxed text-sm">
+                                            {feature.description}
+                                        </p>
+                                    </div>
+                                </Reveal>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const TrustSection = () => {
+            return (
+                <section className="py-24 bg-slate-900 text-white relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiMzMzQxNTUiLz48L3N2Zz4=')] opacity-20"></div>
+                    <div className="max-w-6xl mx-auto px-6 relative z-10">
+                        <Reveal>
+                            <div className="text-center mb-16">
+                                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">Technologia w służbie pedagogiki</h2>
+                                <p className="mt-4 text-slate-400 text-lg">Spełniamy najbardziej rygorystyczne normy unijne i oświatowe.</p>
+                            </div>
+                        </Reveal>
+                        <div className="grid md:grid-cols-3 gap-10 text-center">
+                            <Reveal delay={100}>
+                                <div className="p-6">
+                                    <div className="text-5xl mb-6">🔒</div>
+                                    <h3 className="text-xl font-bold mb-3">100% Prywatności Uczniów</h3>
+                                    <p className="text-slate-400 text-sm leading-relaxed">
+                                        Gwarantujemy, że żadne dane wpisywane do systemu (np. w kreatorze IPET) NIE SĄ wykorzystywane do trenowania zewnętrznych modeli AI. Zgodność z RODO.
+                                    </p>
+                                </div>
+                            </Reveal>
+                            <Reveal delay={200}>
+                                <div className="p-6">
+                                    <div className="text-5xl mb-6">🤝</div>
+                                    <h3 className="text-xl font-bold mb-3">Asystent, nie zastępstwo</h3>
+                                    <p className="text-slate-400 text-sm leading-relaxed">
+                                        EduBox wspiera ideę "Human-in-the-loop". Algorytm proponuje rozwiązania metodyczne, ale to Ty, jako certyfikowany pedagog, podejmujesz ostateczne decyzje.
+                                    </p>
+                                </div>
+                            </Reveal>
+                            <Reveal delay={300}>
+                                <div className="p-6">
+                                    <div className="text-5xl mb-6">👁️</div>
+                                    <h3 className="text-xl font-bold mb-3">Zgodność z WCAG 2.2</h3>
+                                    <p className="text-slate-400 text-sm leading-relaxed">
+                                        Platforma jest przygotowywana na wymogi Europejskiego Aktu o Dostępności (2025). Przejrzysty interfejs wspierający osoby z neuroatypowościami.
+                                    </p>
+                                </div>
+                            </Reveal>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
 
         // --- WIDGET WIDEO POWITALNEGO ---
         const VideoGreeting = () => {
@@ -102,26 +231,19 @@
 
             return (
                 <div className="fixed bottom-6 left-6 z-[100] flex flex-col items-start group">
-                    {/* Dymek z tekstem, gdy wideo odtwarza się z dźwiękiem */}
                     {!isMuted && (
                         <div className="bg-white text-indigo-900 border border-indigo-100 text-xs font-bold py-3 px-4 rounded-2xl rounded-bl-sm shadow-xl mb-3 max-w-[220px] leading-relaxed animate-[reveal_0.3s_ease-out]">
                             "Witamy na EduBox AI! Skorzystaj z naszego chatbota po prawej stronie, odpowie od razu. Jeśli czegoś brakuje, napisz do nas!"
                         </div>
                     )}
-                    {/* Zachęta do kliknięcia (tylko gdy jest wyciszone) */}
                     {isMuted && (
                         <div className="absolute left-[85px] top-2 bg-pink-500 text-white text-[10px] font-bold py-1.5 px-3 rounded-2xl rounded-tl-sm shadow-lg whitespace-nowrap animate-bounce pointer-events-none">
                             Kliknij i posłuchaj! 🔊
                         </div>
                     )}
-                    
                     <div className="relative">
                         <button onClick={() => setIsClosed(true)} className="absolute -top-2 -right-2 bg-white text-slate-400 hover:text-slate-700 w-6 h-6 rounded-full shadow-md flex items-center justify-center z-10 text-xs font-bold transition-colors">✕</button>
-                        
-                        <div 
-                            onClick={handleToggleMute}
-                            className={`relative overflow-hidden shadow-2xl cursor-pointer transition-all duration-500 ease-in-out ${isMuted ? 'w-20 h-20 rounded-full border-4 border-white hover:scale-105' : 'w-36 h-48 rounded-2xl border-4 border-indigo-500'}`}
-                        >
+                        <div onClick={handleToggleMute} className={`relative overflow-hidden shadow-2xl cursor-pointer transition-all duration-500 ease-in-out ${isMuted ? 'w-20 h-20 rounded-full border-4 border-white hover:scale-105' : 'w-36 h-48 rounded-2xl border-4 border-indigo-500'}`}>
                             <video 
                                 ref={videoRef}
                                 src="powitanie.mp4" 
@@ -130,17 +252,12 @@
                                 muted={isMuted} 
                                 playsInline
                                 onEnded={() => {
-                                    // Gdy film dojdzie do końca, zwijamy go i wracamy do cichej pętli
                                     setIsMuted(true);
-                                    if (videoRef.current) {
-                                        videoRef.current.muted = true;
-                                        videoRef.current.play(); 
-                                    }
+                                    if (videoRef.current) { videoRef.current.muted = true; videoRef.current.play(); }
                                 }}
                                 className="w-full h-full object-cover"
                                 poster="https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=200&auto=format&fit=crop"
                             />
-                            {/* Ikonka głośniczka przekreślonego na małym podglądzie */}
                             {isMuted && (
                                 <div className="absolute inset-0 bg-black/20 flex items-center justify-center transition-opacity hover:bg-black/40">
                                     <svg className="w-8 h-8 text-white drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><line x1="3" y1="3" x2="21" y2="21" stroke="white" strokeWidth="2" strokeLinecap="round"/></svg>
@@ -169,7 +286,7 @@
 
         const EduBotChat = () => {
             const [isOpen, setIsOpen] = useState(false);
-            const [messages, setMessages] = useState([{ sender: 'ai', text: 'Cześć! Jestem EduBot 🤖 Twój osobisty asystent. W czym mogę Ci dzisiaj pomóc? Szukasz pomocy przy dyplomach, kartach pracy, czy IPETach?' }]);
+            const [messages, setMessages] = useState([{ sender: 'ai', text: 'Cześć! Jestem EduBot 🤖 Twój osobisty asystent. Szukasz pomocy przy dyplomach, kartach pracy, czy IPETach?' }]);
             const [inputText, setInputText] = useState('');
             const messagesEndRef = useRef(null);
 
@@ -198,32 +315,32 @@
                 <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
                     {isOpen && (
                         <div className="bg-white w-[calc(100vw-48px)] sm:w-[350px] h-[450px] rounded-3xl shadow-2xl border border-slate-200 mb-4 flex flex-col overflow-hidden">
-                            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 flex items-center justify-between text-white shadow-md z-10">
+                            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 flex items-center justify-between text-white shadow-md z-10">
                                 <div className="flex items-center gap-3">
                                     <div className="bg-white/20 p-1.5 rounded-full"><BotAvatar className="w-8 h-8"/></div>
                                     <div>
                                         <h3 className="font-bold leading-tight">EduBot Concierge</h3>
-                                        <p className="text-[10px] text-indigo-100 uppercase tracking-widest font-black">Online</p>
+                                        <p className="text-[10px] text-blue-100 uppercase tracking-widest font-black">Online</p>
                                     </div>
                                 </div>
                                 <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white p-2 text-xl font-bold">✕</button>
                             </div>
                             <div className="flex-1 bg-slate-50 p-4 overflow-y-auto custom-scrollbar flex flex-col gap-4">
                                 {messages.map((msg, i) => (
-                                    <div key={i} className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${msg.sender === 'ai' ? 'bg-white border border-slate-200 text-slate-700 self-start rounded-tl-sm' : 'bg-indigo-600 text-white self-end rounded-tr-sm'}`}>{msg.text}</div>
+                                    <div key={i} className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${msg.sender === 'ai' ? 'bg-white border border-slate-200 text-slate-700 self-start rounded-tl-sm' : 'bg-blue-600 text-white self-end rounded-tr-sm'}`}>{msg.text}</div>
                                 ))}
                                 <div ref={messagesEndRef} />
                             </div>
                             <div className="p-3 bg-white border-t border-slate-100 flex gap-2">
                                 <input type="text" value={inputText} onChange={e => setInputText(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="Napisz tu..." className="flex-1 bg-slate-100 border-none rounded-xl px-4 py-2 outline-none text-sm" />
-                                <button onClick={handleSend} className="bg-indigo-600 hover:bg-indigo-700 text-white w-10 h-10 rounded-xl flex items-center justify-center"><svg className="w-4 h-4 translate-x-[-1px] translate-y-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
+                                <button onClick={handleSend} className="bg-blue-600 hover:bg-blue-700 text-white w-10 h-10 rounded-xl flex items-center justify-center"><svg className="w-4 h-4 translate-x-[-1px] translate-y-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
                             </div>
                         </div>
                     )}
                     
-                    <button onClick={() => setIsOpen(!isOpen)} className="bg-white border-2 border-indigo-100 w-16 h-16 rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl hover:scale-105 transition-all relative group z-50">
+                    <button onClick={() => setIsOpen(!isOpen)} className="bg-white border-2 border-blue-100 w-16 h-16 rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl hover:scale-105 transition-all relative group z-50">
                         {!isOpen && (
-                            <div className="absolute right-20 top-2 bg-indigo-600 text-white text-xs font-bold py-2 px-4 rounded-2xl rounded-tr-sm shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                            <div className="absolute right-20 top-2 bg-blue-600 text-white text-xs font-bold py-2 px-4 rounded-2xl rounded-tr-sm shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                                 W czym pomóc? 👋
                             </div>
                         )}
@@ -237,17 +354,17 @@
         // --- GŁÓWNA APLIKACJA ---
         function App() {
             return (
-                <div className="min-h-screen">
+                <div className="min-h-screen flex flex-col">
                     <nav className="fixed top-0 left-0 right-0 z-50 glass-nav py-4 px-6">
                         <div className="max-w-6xl mx-auto flex justify-between items-center">
                             <div className="flex items-center space-x-2 font-black text-xl tracking-tight cursor-pointer" onClick={() => window.scrollTo(0,0)}>
-                                <div className="bg-indigo-600 p-2 rounded-xl text-white shadow-lg shadow-indigo-200"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-                                <span>EduBox<span className="text-indigo-600">AI</span></span>
+                                <div className="bg-blue-600 p-2 rounded-xl text-white shadow-lg shadow-blue-200"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+                                <span>EduBox<span className="text-blue-600">AI</span></span>
                             </div>
                             <div className="hidden md:flex space-x-8 text-sm font-bold text-slate-500">
-                                <a href="#aplikacje" className="hover:text-indigo-600 transition-colors">Aplikacje</a>
-                                <a href="#wideo" className="hover:text-indigo-600 transition-colors">Wideo</a>
-                                <a href="#opinie" className="hover:text-indigo-600 transition-colors">Opinie</a>
+                                <a href="#aplikacje" className="hover:text-blue-600 transition-colors">Aplikacje</a>
+                                <a href="#wideo" className="hover:text-blue-600 transition-colors">Wideo</a>
+                                <a href="#opinie" className="hover:text-blue-600 transition-colors">Opinie</a>
                             </div>
                             <a href="https://buycoffee.to/magiccolor" target="_blank" className="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 text-amber-950 px-5 py-2.5 rounded-xl font-bold shadow-sm transition-transform active:scale-95 text-sm flex items-center gap-2">
                                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM7 2v3M11 2v3M15 2v3"/></svg><span>Postaw Kawę</span>
@@ -255,20 +372,11 @@
                         </div>
                     </nav>
 
-                    <header className="relative pt-40 pb-20 px-6 text-center border-b border-slate-100 overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/50 z-0"></div>
-                        <div className="max-w-4xl mx-auto relative z-10">
-                            <Reveal>
-                                <span className="bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-6 inline-block">Zintegrowany System AI dla Nauczycieli</span>
-                                <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 tracking-tight leading-tight">Odzyskaj czas na to,<br/>co <span className="text-gradient">najważniejsze.</span></h1>
-                                <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">Zautomatyzuj nudną papierkową robotę. EduBox AI to darmowy pakiet narzędzi, które piszą scenariusze, opinie i układają materiały w kilka sekund.</p>
-                                <div className="flex flex-col sm:flex-row justify-center gap-4">
-                                    <a href="#aplikacje" className="bg-slate-900 text-white px-8 py-4 rounded-xl font-bold shadow-xl hover:-translate-y-1 transition-transform">Zobacz Narzędzia 🚀</a>
-                                    <a href="#wideo" className="bg-white text-indigo-600 border-2 border-indigo-100 px-8 py-4 rounded-xl font-bold hover:bg-indigo-50 transition-colors">Zrozum jak to działa ▶</a>
-                                </div>
-                            </Reveal>
-                        </div>
-                    </header>
+                    {/* NOWY MODUŁ - HERO SECTION */}
+                    <HeroSection />
+
+                    {/* NOWY MODUŁ - FUNKCJE */}
+                    <FeaturesSection />
 
                     <section id="wideo" className="bg-slate-900 py-24 relative overflow-hidden">
                         <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -289,7 +397,7 @@
                             <Reveal delay={200}>
                                 <div className="mt-20 pt-16 border-t border-slate-800 grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
                                     <div>
-                                        <div className="text-5xl font-black text-indigo-400 mb-2"><Counter target={2450} />+</div>
+                                        <div className="text-5xl font-black text-blue-400 mb-2"><Counter target={2450} />+</div>
                                         <div className="text-slate-400 font-bold uppercase tracking-widest text-xs">Zaoszczędzonych Godzin</div>
                                     </div>
                                     <div>
@@ -312,7 +420,9 @@
                                 <Reveal key={i} delay={i * 100}>
                                     <a href={app.url} target="_blank" className="app-card bg-white rounded-3xl p-8 flex flex-col h-full relative group">
                                         {app.badge && <div className={`absolute top-0 right-0 text-white text-[10px] font-black px-3 py-1.5 rounded-bl-xl uppercase tracking-widest ${app.badge.includes('PRO') || app.badge.includes('NOWOŚĆ') ? app.color.split(' ')[1].replace('text-', 'bg-') : 'bg-slate-800'}`}>{app.badge}</div>}
-                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform ${app.color}`}><svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">{app.icon}</svg></div>
+                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform ${app.color}`}>
+                                            {typeof app.icon === 'string' ? <div dangerouslySetInnerHTML={{__html: app.icon}} /> : <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">{app.icon}</svg>}
+                                        </div>
                                         <h3 className="text-2xl font-bold mb-3 text-slate-800 tracking-tight">{app.title}</h3>
                                         <p className="text-slate-500 mb-8 flex-grow text-sm leading-relaxed">{app.desc}</p>
                                         <div className={`font-black text-xs uppercase tracking-widest pt-5 border-t border-slate-100 flex items-center group-hover:translate-x-2 transition-transform ${app.color.split(' ')[1]}`}>Uruchom Narzędzie →</div>
@@ -374,26 +484,16 @@
                         </div>
                     </section>
 
-                    <section id="czytelnia" className="bg-slate-900 text-white py-24">
-                        <div className="max-w-3xl mx-auto px-6 text-center">
-                            <Reveal>
-                                <span className="text-indigo-400 font-bold tracking-widest uppercase text-xs mb-4 block">Filozofia EduBox AI</span>
-                                <h2 className="text-3xl md:text-5xl font-extrabold mt-2 mb-8 tracking-tight">Sztuczna Inteligencja to Twoja supermoc</h2>
-                                <div className="text-lg text-slate-400 leading-relaxed space-y-6">
-                                    <p>Wierzymy, że AI nie powstało po to, aby zastąpić nauczyciela. Powstało po to, aby usunąć z jego drogi to, co nużące, powtarzalne i biurokratyczne.</p>
-                                    <p>Pisanie IPET-ów, tworzenie szlaczków czy wymyślanie 20 podobnych zadań matematycznych to zadania, w których komputer radzi sobie wybitnie. Przekaż mu te obowiązki, abyś Ty miał więcej czasu na to, co naprawdę ważne – na budowanie relacji z Twoimi uczniami i inspirowanie ich do nauki.</p>
-                                </div>
-                            </Reveal>
-                        </div>
-                    </section>
+                    {/* NOWY MODUŁ - ZAUFANIE (Etyka / RODO) */}
+                    <TrustSection />
                     
                     <footer className="bg-white pt-20 pb-10 border-t border-slate-200">
                         <div className="max-w-6xl mx-auto px-6">
                             <div className="flex flex-col md:flex-row items-center justify-between gap-10 mb-16">
                                 <div className="text-center md:text-left">
-                                    <div className="text-2xl font-black tracking-tight mb-2 text-slate-900">EduBox<span className="text-indigo-600">AI</span></div>
+                                    <div className="text-2xl font-black tracking-tight mb-2 text-slate-900">EduBox<span className="text-blue-600">AI</span></div>
                                     <p className="text-slate-500 text-sm max-w-sm leading-relaxed">Zbudowane z pasją do edukacji. Chcę dać każdemu nauczycielowi narzędzia, które odciążą go w codziennych obowiązkach.</p>
-                                    <a href="mailto:edubox.ai@gmail.com" className="inline-block mt-4 text-indigo-600 font-bold hover:underline">Masz pomysł? Napisz do mnie!</a>
+                                    <a href="mailto:edubox.ai@gmail.com" className="inline-block mt-4 text-blue-600 font-bold hover:underline">Masz pomysł? Napisz do mnie!</a>
                                 </div>
                                 <div className="bg-amber-50 p-6 rounded-3xl border border-amber-100 flex flex-col items-center text-center max-w-sm">
                                     <p className="text-sm text-amber-900 mb-4 font-bold">Utrzymaj projekt przy życiu i odblokuj funkcje PRO we wszystkich aplikacjach!</p>

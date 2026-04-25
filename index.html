@@ -69,17 +69,19 @@
             return <span ref={ref}>{count.toLocaleString('pl-PL')}</span>;
         };
 
-        // --- ZAKTUALIZOWANA BAZA APLIKACJI Z KOLORAMI ---
+        // --- ZAKTUALIZOWANA BAZA APLIKACJI Z KOLORAMI I NAPRAWIONYM BŁĘDEM ---
         const APPS = [
             {
                 title: 'Kreator Awansu AI',
                 desc: 'Moduł dla Nauczyciela i Dyrektora. Generuje profesjonalne sprawozdania i opinie do awansu zawodowego, uwzględniając specjalizację (np. psycholog, fizjoterapeuta).',
                 url: 'awans.html',
                 badge: 'NOWOŚĆ',
-                badgeColor: 'bg-blue-600',
-                icon: <><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></>,
-                color: 'bg-blue-100 text-bluJak tylko wejdziesz w nią i wygenerujesz jakiś testowy dokument, daj znać, jak oceniasz formalny żargon sztucznej inteligencji!
-            }, 
+                color: 'bg-sky-100 text-sky-700',
+                cardBg: 'bg-sky-50/50 hover:bg-sky-50',
+                borderColor: 'border-sky-100 hover:border-sky-300',
+                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>'
+            },
+            { 
                 title: 'Edukacja 2025 AI', 
                 desc: 'Bądź gotowy na Edukację Obywatelską i Zdrowotną! Generator nowoczesnych scenariuszy z grami ról i debatami.', 
                 url: 'edukacja2025.html', 

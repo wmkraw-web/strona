@@ -105,21 +105,31 @@
                 
                 let systemPrompt = "";
                 let userPrompt = "";
+                let aiTemperature = 0.4;
 
                 if (mode === 'song') {
-                    systemPrompt = `Jesteś wybitnym polskim tekściarzem i edukatorem. Odpowiadaj WYŁĄCZNIE w formacie JSON.
+                    // Wyższa temperatura dla piosenek = Lepsze i bardziej kreatywne rymy
+                    aiTemperature = 0.7; 
+                    systemPrompt = `Jesteś wybitnym polskim autorem tekstów piosenek edukacyjnych dla dzieci, mistrzem słowa w stylu Jana Brzechwy. Odpowiadaj WYŁĄCZNIE w formacie JSON.
 CRITICAL RULE 1: You MUST use exactly these English keys in your JSON object: "title", "suno_prompt", "lyrics". DO NOT translate these keys.
 CRITICAL RULE 2: The "lyrics" and "title" MUST be strictly in the POLISH language (po polsku).
-CRITICAL RULE 3: The rhymes in the lyrics MUST be perfect in Polish (AABB or ABAB format).
-CRITICAL RULE 4: The "suno_prompt" MUST be in ENGLISH (e.g., Upbeat pop, happy, kids music).
+CRITICAL RULE 3: RHYMES ARE ABSOLUTELY MANDATORY. You must use PERFECT, EXACT Polish rhymes at the end of the lines (AABB or ABAB format). Example of good rhymes: "dzieci / śmieci", "woda / zgoda", "kwiatki / rabatki".
+CRITICAL RULE 4: Each line in a verse must have a similar number of syllables to keep a steady rhythm.
+CRITICAL RULE 5: The "suno_prompt" MUST be in ENGLISH (e.g., Upbeat pop, happy, kids music).
 {
   "title": "Polski, chwytliwy tytuł piosenki",
   "suno_prompt": "English musical style tags (e.g. Upbeat pop, happy, acoustic guitar)",
-  "lyrics": "[Verse 1]\\nPolski tekst...\\n\\n[Chorus]\\nPolski tekst...\\n\\n[Verse 2]\\nPolski tekst...\\n\\n[Outro]\\nPolski tekst..."
+  "lyrics": "[Verse 1]\\nPierwszy wers piosenki,\\nDrugi wers rymuje się z pierwszym,\\nTrzeci wers ma w sobie treść,\\nCzwarty do rymu musi wejść.\\n\\n[Chorus]\\n..."
 }`;
-                    userPrompt = `Temat piosenki: ${params.topic}. Dla kogo: ${params.age}. Gatunek muzyczny: ${params.style}. Napisz bardzo rytmiczny tekst w 100% po POLSKU. Zadbaj o doskonałe polskie rymy na końcu wersów. W tekście zawrzyj wartość edukacyjną. Piosenka musi wpadać w ucho i być łatwa do śpiewania dla podanej grupy wiekowej.`;
+                    userPrompt = `Temat piosenki: ${params.topic}. Dla kogo: ${params.age}. Gatunek muzyczny: ${params.style}. 
+Napisz rytmiczny, wpadający w ucho tekst piosenki w 100% po POLSKU.
+ZASADY KRYTYCZNE (ZASTOSUJ JE!):
+1. Rymy na końcu wersów muszą być IDEALNE i DOKŁADNE (np. kot/płot, rakieta/planeta, lasy/czasy).
+2. Każdy wers musi mieć podobną liczbę sylab, aby zachować świetny, muzyczny rytm.
+3. W tekście zawrzyj wartość edukacyjną, ale niech brzmi jak radosna zabawa. Bądź kreatywny!`;
                 } 
                 else if (mode === 'escape') {
+                    aiTemperature = 0.4;
                     systemPrompt = `Jesteś kreatywnym polskim nauczycielem tworzącym angażujące gry terenowe (Escape Roomy) w klasie. Odpowiadaj WYŁĄCZNIE w formacie JSON. Całość tekstu wewnątrz JSON musi być po POLSKU.
 CRITICAL RULE: You MUST use exactly these English keys: "title", "intro", "riddles", "final_code". Inside riddles array use: "number", "task", "answer", "hiding_spot". DO NOT translate these keys.
 {
@@ -133,6 +143,7 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "intro", "riddl
                     userPrompt = `Temat edukacyjny: ${params.topic}. Wiek uczestników: ${params.age}. Miejsce ukrywania wskazówek: ${params.location}. Ułóż 4 zagadki tematyczne po polsku, które dzieci muszą rozwiązać współpracując. Podaj sprytne, ale bezpieczne kryjówki.`;
                 }
                 else if (mode === 'tiktok') {
+                    aiTemperature = 0.4;
                     systemPrompt = `Jesteś polskim reżyserem form wideo (TikTok, Reels) tworzącym śmieszne scenariusze edukacyjne dla uczniów. Odpowiadaj WYŁĄCZNIE w formacie JSON. Całość scenariusza musi być po POLSKU.
 CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "hook", "script", "camera_tips". Inside script use: "actor", "action", "dialogue". DO NOT translate these keys.
 {
@@ -157,7 +168,7 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                                 { role: "user", content: userPrompt }
                             ],
                             model: "openai",
-                            temperature: 0.3,
+                            temperature: aiTemperature,
                             response_format: { type: "json_object" },
                             jsonMode: true,
                             seed: Math.floor(Math.random() * 10000)
@@ -178,8 +189,7 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                     
                     const parsedData = JSON.parse(jsonStr);
 
-                    // TARCZA OCHRONNA: AI często tłumaczy klucze na polski (np. "tekst" zamiast "lyrics").
-                    // Ta sekcja gwarantuje, że strona zawsze znajdzie odpowiednie dane.
+                    // TARCZA OCHRONNA KLUCZY
                     if (mode === 'song') {
                         parsedData.title = parsedData.title || parsedData.tytuł || parsedData.tytul || "Twoja Piosenka";
                         parsedData.suno_prompt = parsedData.suno_prompt || parsedData.styl || parsedData.prompt || "Wesoły Pop";
@@ -201,7 +211,7 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                     
                 } catch (error) {
                     console.error("Błąd AI:", error); 
-                    showToast('Wystąpił błąd komunikacji z AI lub problem ze sformatowaniem tekstu. Spróbuj ponownie.');
+                    showToast('Wystąpił błąd komunikacji z AI. Spróbuj kliknąć "Generuj" ponownie.');
                 } finally { 
                     setIsGenerating(false); 
                 }
@@ -234,8 +244,8 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                             <div className="bg-white p-8 rounded-3xl flex flex-col items-center space-y-5 max-w-sm text-slate-800 shadow-2xl">
                                 <div className={`w-16 h-16 border-8 border-t-transparent rounded-full animate-spin`} style={{ borderTopColor: mode === 'song' ? '#d946ef' : mode === 'escape' ? '#f59e0b' : '#06b6d4', borderRightColor: '#f1f5f9', borderBottomColor: '#f1f5f9', borderLeftColor: '#f1f5f9'}}></div>
                                 <div className="text-center">
-                                    <h3 className="text-xl font-black mb-1">Przygotowuję scenariusz...</h3>
-                                    <p className="text-xs text-slate-500 font-medium">Magia AI działa w tle (ok. 15 sekund).</p>
+                                    <h3 className="text-xl font-black mb-1">Piszę i rymuję...</h3>
+                                    <p className="text-xs text-slate-500 font-medium">Sztuka wymaga czasu (ok. 15 sekund).</p>
                                 </div>
                             </div>
                         </div>

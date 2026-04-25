@@ -178,10 +178,12 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                             { role: "system", content: systemPrompt },
                             { role: "user", content: userPrompt }
                         ],
-                        model: "openai",
+                        // TARCZA 3.0: Zmuszamy API do korzystania z czystego modelu bez "halucynacji myślowych"
+                        model: "gpt-4o", 
                         temperature: aiTemperature,
                         seed: Math.floor(Math.random() * 10000)
                     };
+                    
                     if (useJsonMode) {
                         payload.response_format = { type: "json_object" };
                         payload.jsonMode = true;
@@ -198,22 +200,34 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                     let text = await res.text();
                     
                     // ==========================================
-                    // TARCZA 2.0: WYCIĄGANIE CZYSTEGO TEKSTU Z GŁOWY AI
-                    // (Ignoruje zjawisko "leaking reasoning" od modeli DeepSeek)
+                    // TARCZA 3.0: WYCIĄGANIE CZYSTEGO TEKSTU I ODPORNOŚĆ NA UCIĘTE JSONY
                     // ==========================================
                     let cleanText = text;
-                    try {
-                        // Jeśli AI ubrało swoją odpowiedź w techniczny obiekt JSON
-                        const outerObj = JSON.parse(text);
-                        if (outerObj.content) cleanText = outerObj.content;
-                        else if (outerObj.choices && outerObj.choices[0].message.content) cleanText = outerObj.choices[0].message.content;
-                    } catch(e) {
-                        // Zostaje czysty tekst
+                    
+                    // Krok 1: Awaryjne wyłuskanie tekstu z uszkodzonego, uciętego pliku JSON (na wypadek wycieku)
+                    if (cleanText.includes('"reasoning_content"')) {
+                        const contentMarker = '"content":"';
+                        const startIdx = cleanText.indexOf(contentMarker);
+                        if (startIdx !== -1) {
+                            let extracted = cleanText.substring(startIdx + contentMarker.length);
+                            // Ucinamy śmieci na końcu zniszczonego pliku
+                            extracted = extracted.replace(/"\s*}\s*$/, '').replace(/"$/, ''); 
+                            // Zamieniamy formatowanie JSON (np. \n) na ludzki tekst
+                            cleanText = extracted.replace(/\\n/g, '\n').replace(/\\"/g, '"'); 
+                        }
+                    } else {
+                        // Krok 2: Normalne odpakowywanie
+                        try {
+                            const outerObj = JSON.parse(text);
+                            if (outerObj.content) cleanText = outerObj.content;
+                            else if (outerObj.choices && outerObj.choices[0].message.content) cleanText = outerObj.choices[0].message.content;
+                        } catch(e) {}
                     }
                     
-                    // Brutalne usunięcie tagów myślenia <think>...</think>, z których słyną nowe darmowe modele
+                    // Krok 3: Usunięcie tagów myślenia z niektórych modeli open-source
                     cleanText = cleanText.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
 
+                    // PARSOWANIE GOTOWEGO TEKSTU
                     if (mode === 'song') {
                         let title = "Twoja Piosenka";
                         let suno_prompt = "Upbeat children song";

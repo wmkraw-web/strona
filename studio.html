@@ -109,17 +109,15 @@
                 let useJsonMode = true;
 
                 if (mode === 'song') {
-                    // WYŁĄCZAMY JSON DLA PIOSENEK! AI ma pisać luźno jako artysta.
                     useJsonMode = false;
-                    aiTemperature = 0.6; // Idealna temperatura do rymów
+                    aiTemperature = 0.6; 
                     
-                    // PROSTY, BEZBŁĘDNY PROMPT PO POLSKU (Bez meta-kodu i angielskiego)
                     systemPrompt = `Jesteś wybitnym autorem tekstów piosenek dla dzieci.
 Twoim zadaniem jest napisanie edukacyjnej, rytmicznej piosenki w 100% po polsku.
 
 ZASADY:
 1. Piosenka musi mieć idealne, proste rymy (AABB lub ABAB), np. woda/zgoda, krok/smok.
-2. Zwróć tylko i wyłącznie gotowy tekst według poniższego szablonu. Żadnych wstępów i komentarzy.
+2. Zwróć tylko i wyłącznie gotowy tekst według poniższego szablonu. Żadnych wstępów, monologów ani komentarzy.
 
 FORMAT ODPOWIEDZI (Skopiuj ten format dokładnie):
 TYTUŁ: [Wymyśl polski, wesoły tytuł piosenki]
@@ -199,27 +197,43 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                     
                     let text = await res.text();
                     
+                    // ==========================================
+                    // TARCZA 2.0: WYCIĄGANIE CZYSTEGO TEKSTU Z GŁOWY AI
+                    // (Ignoruje zjawisko "leaking reasoning" od modeli DeepSeek)
+                    // ==========================================
+                    let cleanText = text;
+                    try {
+                        // Jeśli AI ubrało swoją odpowiedź w techniczny obiekt JSON
+                        const outerObj = JSON.parse(text);
+                        if (outerObj.content) cleanText = outerObj.content;
+                        else if (outerObj.choices && outerObj.choices[0].message.content) cleanText = outerObj.choices[0].message.content;
+                    } catch(e) {
+                        // Zostaje czysty tekst
+                    }
+                    
+                    // Brutalne usunięcie tagów myślenia <think>...</think>, z których słyną nowe darmowe modele
+                    cleanText = cleanText.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+
                     if (mode === 'song') {
-                        // RĘCZNY, NIEZNISZCZALNY PARSER DLA PIOSENEK
                         let title = "Twoja Piosenka";
                         let suno_prompt = "Upbeat children song";
                         let lyrics = "Wystąpił błąd w pisaniu tekstu. Spróbuj ponownie.";
 
-                        // Wyciągamy tytuł
-                        const titleMatch = text.match(/TYTU[ŁL]:\s*([^\n]+)/i);
+                        // Wyciągamy tytuł z czystego tekstu
+                        const titleMatch = cleanText.match(/TYTU[ŁL]:\s*([^\n]+)/i);
                         if (titleMatch) title = titleMatch[1].trim().replace(/["']/g, '');
 
                         // Wyciągamy prompt dla Suno
-                        const styleMatch = text.match(/(?:STYL|PROMPT):\s*([^\n]+)/i);
+                        const styleMatch = cleanText.match(/(?:STYL|PROMPT):\s*([^\n]+)/i);
                         if (styleMatch) suno_prompt = styleMatch[1].trim().replace(/["']/g, '');
 
                         // Wyciągamy sam tekst piosenki
-                        const textSplit = text.split(/TEKST:\s*/i);
+                        const textSplit = cleanText.split(/TEKST:\s*/i);
                         if (textSplit.length > 1) {
                             lyrics = textSplit[1].trim();
                         } else {
-                            // Awaryjne ucięcie pierwszych linijek jeśli AI zgubi słowo "TEKST:"
-                            lyrics = text.replace(/TYTU[ŁL]:[^\n]+\n/i, '').replace(/(STYL|PROMPT):[^\n]+\n/i, '').trim();
+                            // Awaryjne czyszczenie, jeśli zniknęło słowo TEKST:
+                            lyrics = cleanText.replace(/TYTU[ŁL]:[^\n]+\n/i, '').replace(/(STYL|PROMPT):[^\n]+\n/i, '').trim();
                         }
 
                         setGeneratedData({ title, suno_prompt, lyrics });
@@ -227,7 +241,8 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                         return;
                     }
 
-                    let jsonStr = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+                    // Przetwarzanie dla Scenariuszy i Gier (JSON)
+                    let jsonStr = cleanText.replace(/```json/gi, '').replace(/```/g, '').trim();
                     const start = jsonStr.indexOf('{');
                     const end = jsonStr.lastIndexOf('}');
                     if(start !== -1 && end !== -1) {
@@ -236,7 +251,7 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                     
                     const parsedData = JSON.parse(jsonStr);
 
-                    // Tarcza dla trybów nielirycznych
+                    // Tarcza dla kluczy
                     if (mode === 'escape') {
                         parsedData.title = parsedData.title || parsedData.tytuł || "Twój Escape Room";
                         parsedData.intro = parsedData.intro || parsedData.wstep || "Witajcie odkrywcy!";
@@ -285,8 +300,8 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                             <div className="bg-white p-8 rounded-3xl flex flex-col items-center space-y-5 max-w-sm text-slate-800 shadow-2xl">
                                 <div className={`w-16 h-16 border-8 border-t-transparent rounded-full animate-spin`} style={{ borderTopColor: mode === 'song' ? '#d946ef' : mode === 'escape' ? '#f59e0b' : '#06b6d4', borderRightColor: '#f1f5f9', borderBottomColor: '#f1f5f9', borderLeftColor: '#f1f5f9'}}></div>
                                 <div className="text-center">
-                                    <h3 className="text-xl font-black mb-1">Piszę scenariusz...</h3>
-                                    <p className="text-xs text-slate-500 font-medium">To potrwa około 10 sekund.</p>
+                                    <h3 className="text-xl font-black mb-1">Piszę i rymuję...</h3>
+                                    <p className="text-xs text-slate-500 font-medium">Szukam idealnych słów (ok. 10 sekund).</p>
                                 </div>
                             </div>
                         </div>

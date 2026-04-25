@@ -72,7 +72,7 @@
             const [accessCode, setAccessCode] = useState('');
             const [isGenerating, setIsGenerating] = useState(false);
             
-            const [subject, setSubject] = useState('civic'); // 'civic' or 'health'
+            const [subject, setSubject] = useState('civic');
             const [params, setParams] = useState({
                 topic: '',
                 age: 'Klasy 4-6 Szkoły Podstawowej',
@@ -111,22 +111,30 @@
                 const userPrompt = `Przedmiot: ${subjectName}. Temat: ${params.topic}. Grupa docelowa: ${params.age}. Czas: ${params.duration}. Główna metoda pracy: ${params.method}. Stwórz nowoczesny, odważny i angażujący uczniów scenariusz, unikający nudnych wykładów.`;
 
                 try {
-                    const res = await fetch('/api/chat', {
+                    // Bezpośrednie połączenie przeglądarki z AI - ignoruje limit 10 sekund na Vercelu!
+                    const res = await fetch('https://text.pollinations.ai/', {
                         method: 'POST', 
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ prompt: userPrompt, system: systemPrompt })
+                        body: JSON.stringify({ 
+                            messages: [
+                                { role: "system", content: systemPrompt },
+                                { role: "user", content: userPrompt }
+                            ],
+                            model: "openai",
+                            temperature: 0.3,
+                            seed: Math.floor(Math.random() * 10000)
+                        })
                     });
                     
-                    if (!res.ok) throw new Error("Błąd serwera");
+                    if (!res.ok) throw new Error("Błąd serwera AI");
                     
-                    const data = await res.json();
-                    let text = data.text;
+                    let text = await res.text();
                     const start = text.indexOf('{');
                     const end = text.lastIndexOf('}');
                     setScenario(JSON.parse(text.substring(start, end + 1)));
                 } catch (error) {
                     console.error(error); 
-                    alert("Serwer przeciążony. Spróbuj ponownie.");
+                    alert("Przepraszamy, serwery AI są w tej chwili bardzo obciążone. Spróbuj ponownie za kilka sekund.");
                 } finally { 
                     setIsGenerating(false); 
                 }
@@ -152,7 +160,7 @@
                             <div className="bg-white p-8 rounded-3xl flex flex-col items-center space-y-4 max-w-sm text-slate-800 shadow-2xl">
                                 <div className={`w-16 h-16 border-8 rounded-full animate-spin ${subject === 'civic' ? 'border-blue-100 border-t-blue-600' : 'border-emerald-100 border-t-emerald-600'}`}></div>
                                 <h3 className="text-xl font-black text-center">Analizuję podstawę programową...</h3>
-                                <p className="text-xs text-slate-500 text-center font-medium">To potrwa około 15 sekund.</p>
+                                <p className="text-xs text-slate-500 text-center font-medium">To potrwa około 15-20 sekund. Proszę czekać...</p>
                             </div>
                         </div>
                     )}

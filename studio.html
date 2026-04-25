@@ -27,13 +27,15 @@
         
         @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
         .animate-bounce-slow { animation: bounce-slow 3s infinite ease-in-out; }
+        @keyframes slide-up { 0% { opacity: 0; transform: translate(-50%, 20px); } 100% { opacity: 1; transform: translate(-50%, 0); } }
+        .animate-toast { animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState } = React;
+        const { useState, useEffect, useRef } = React;
 
         const Icon = ({ name, size = 20, className = "" }) => {
             const icons = {
@@ -45,7 +47,8 @@
                 Copy: <><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></>,
                 Coffee: <path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM7 2v3M11 2v3M15 2v3"/>,
                 Lock: <><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>,
-                Play: <path d="m5 3 14 9-14 9V3z"/>
+                Play: <path d="m5 3 14 9-14 9V3z"/>,
+                AlertCircle: <><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>
             };
             return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{icons[name]}</svg>;
         };
@@ -55,6 +58,7 @@
             const [accessCode, setAccessCode] = useState('');
             const [isGenerating, setIsGenerating] = useState(false);
             const [copied, setCopied] = useState(false);
+            const [toastMessage, setToastMessage] = useState('');
             
             const [mode, setMode] = useState('song');
             
@@ -68,9 +72,20 @@
 
             const [generatedData, setGeneratedData] = useState(null);
 
+            const showToast = (msg) => {
+                setToastMessage(msg);
+                setTimeout(() => setToastMessage(''), 3500);
+            };
+
             const handleVerifyCode = () => {
-                if (accessCode.toUpperCase() === 'KAWA2024') { setIsPremium(true); setAccessCode(''); } 
-                else alert('Błędny kod!');
+                if (accessCode.toUpperCase() === 'KAWA2024') { 
+                    setIsPremium(true); 
+                    setAccessCode(''); 
+                    showToast('Kod aktywny! Witamy w Premium 🌟');
+                } 
+                else {
+                    showToast('Nieprawidłowy kod dostępu!');
+                }
             };
 
             const THEMES = {
@@ -80,7 +95,10 @@
             };
 
             const generateContent = async () => {
-                if (!params.topic.trim()) return alert('Wpisz temat lub zagadnienie!');
+                if (!params.topic.trim()) {
+                    showToast('Wpisz najpierw temat lub zagadnienie!');
+                    return;
+                }
                 setIsGenerating(true);
                 setGeneratedData(null);
                 setCopied(false);
@@ -89,41 +107,44 @@
                 let userPrompt = "";
 
                 if (mode === 'song') {
-                    systemPrompt = `Jesteś ekspertem od pisania piosenek edukacyjnych. Odpowiadaj WYŁĄCZNIE w formacie JSON.
-CRITICAL RULE: You MUST use exactly these English keys in your JSON object: "title", "suno_prompt", "lyrics". DO NOT translate these keys.
+                    systemPrompt = `Jesteś wybitnym polskim tekściarzem i edukatorem. Odpowiadaj WYŁĄCZNIE w formacie JSON.
+CRITICAL RULE 1: You MUST use exactly these English keys in your JSON object: "title", "suno_prompt", "lyrics". DO NOT translate these keys.
+CRITICAL RULE 2: The "lyrics" and "title" MUST be strictly in the POLISH language (po polsku).
+CRITICAL RULE 3: The rhymes in the lyrics MUST be perfect in Polish (AABB or ABAB format).
+CRITICAL RULE 4: The "suno_prompt" MUST be in ENGLISH (e.g., Upbeat pop, happy, kids music).
 {
-  "title": "Chwytliwy tytuł piosenki",
-  "suno_prompt": "Styl muzyczny po angielsku (np. Upbeat pop, happy, kids music, acoustic guitar)",
-  "lyrics": "[Verse 1]\\nTekst...\\n\\n[Chorus]\\nTekst...\\n\\n[Verse 2]\\nTekst...\\n\\n[Outro]\\nTekst..."
+  "title": "Polski, chwytliwy tytuł piosenki",
+  "suno_prompt": "English musical style tags (e.g. Upbeat pop, happy, acoustic guitar)",
+  "lyrics": "[Verse 1]\\nPolski tekst...\\n\\n[Chorus]\\nPolski tekst...\\n\\n[Verse 2]\\nPolski tekst...\\n\\n[Outro]\\nPolski tekst..."
 }`;
-                    userPrompt = `Temat piosenki: ${params.topic}. Dla kogo: ${params.age}. Gatunek muzyczny: ${params.style}. Napisz bardzo rytmiczny tekst, który łatwo się śpiewa. Zadbaj o doskonałe rymy na końcu wersów. W tekście zawrzyj wartość edukacyjną.`;
+                    userPrompt = `Temat piosenki: ${params.topic}. Dla kogo: ${params.age}. Gatunek muzyczny: ${params.style}. Napisz bardzo rytmiczny tekst w 100% po POLSKU. Zadbaj o doskonałe polskie rymy na końcu wersów. W tekście zawrzyj wartość edukacyjną. Piosenka musi wpadać w ucho i być łatwa do śpiewania dla podanej grupy wiekowej.`;
                 } 
                 else if (mode === 'escape') {
-                    systemPrompt = `Jesteś kreatywnym nauczycielem tworzącym angażujące gry terenowe (Escape Roomy) w klasie. Odpowiadaj WYŁĄCZNIE w formacie JSON.
+                    systemPrompt = `Jesteś kreatywnym polskim nauczycielem tworzącym angażujące gry terenowe (Escape Roomy) w klasie. Odpowiadaj WYŁĄCZNIE w formacie JSON. Całość tekstu wewnątrz JSON musi być po POLSKU.
 CRITICAL RULE: You MUST use exactly these English keys: "title", "intro", "riddles", "final_code". Inside riddles array use: "number", "task", "answer", "hiding_spot". DO NOT translate these keys.
 {
-  "title": "Nazwa misji/scenariusza",
-  "intro": "Krótki, fabularny wstęp (list) do odczytania dzieciom na start",
+  "title": "Polski tytuł misji",
+  "intro": "Krótki, fabularny wstęp (list) po polsku do odczytania dzieciom",
   "riddles": [
-    { "number": 1, "task": "Opis zagadki/łamigłówki do rozwiązania przez dzieci", "answer": "Prawidłowa odpowiedź (np. cyfra do kłódki lub hasło)", "hiding_spot": "Gdzie w sali schować tę zagadkę" }
+    { "number": 1, "task": "Opis zagadki/łamigłówki po polsku", "answer": "Prawidłowa odpowiedź (np. cyfra)", "hiding_spot": "Gdzie w sali schować tę zagadkę po polsku" }
   ],
-  "final_code": "Ostateczny kod/hasło składające się z wcześniejszych odpowiedzi"
+  "final_code": "Ostateczny kod/hasło składające się z odpowiedzi"
 }`;
-                    userPrompt = `Temat edukacyjny: ${params.topic}. Wiek uczestników: ${params.age}. Miejsce ukrywania wskazówek: ${params.location}. Ułóż 4 zagadki tematyczne, które dzieci muszą rozwiązać współpracując. Podaj sprytne, ale bezpieczne kryjówki.`;
+                    userPrompt = `Temat edukacyjny: ${params.topic}. Wiek uczestników: ${params.age}. Miejsce ukrywania wskazówek: ${params.location}. Ułóż 4 zagadki tematyczne po polsku, które dzieci muszą rozwiązać współpracując. Podaj sprytne, ale bezpieczne kryjówki.`;
                 }
                 else if (mode === 'tiktok') {
-                    systemPrompt = `Jesteś reżyserem krótkich form wideo (TikTok, Reels, Shorts) tworzącym nowoczesne, śmieszne scenariusze edukacyjne dla uczniów. Odpowiadaj WYŁĄCZNIE w formacie JSON.
+                    systemPrompt = `Jesteś polskim reżyserem form wideo (TikTok, Reels) tworzącym śmieszne scenariusze edukacyjne dla uczniów. Odpowiadaj WYŁĄCZNIE w formacie JSON. Całość scenariusza musi być po POLSKU.
 CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "hook", "script", "camera_tips". Inside script use: "actor", "action", "dialogue". DO NOT translate these keys.
 {
-  "title": "Chwytliwy tytuł (Trend)",
+  "title": "Chwytliwy polski tytuł",
   "characters": ["Postać 1", "Postać 2"],
-  "hook": "Haczyk (Pierwsze 3 sekundy)",
+  "hook": "Haczyk (Pierwsze 3 sekundy) po polsku",
   "script": [
-    { "actor": "Kto mówi", "action": "Wskazówka reżyserska", "dialogue": "Dokładny tekst" }
+    { "actor": "Kto mówi (po polsku)", "action": "Wskazówka reżyserska (po polsku)", "dialogue": "Dokładny tekst dialogu (po polsku)" }
   ],
-  "camera_tips": "Krótka porada jak nagrać to w klasie telefonem"
+  "camera_tips": "Krótka porada jak to nagrać (po polsku)"
 }`;
-                    userPrompt = `Temat do wyjaśnienia w wideo: ${params.topic}. Grupa docelowa: ${params.age}. Liczba aktorów: ${params.characters}. Stwórz krótki (ok. 30-40 sekund), dynamiczny i humorystyczny scenariusz scenki.`;
+                    userPrompt = `Temat wideo: ${params.topic}. Grupa docelowa: ${params.age}. Liczba aktorów: ${params.characters}. Stwórz krótki (30-40 sekund), dynamiczny i humorystyczny scenariusz scenki edukacyjnej w 100% po polsku.`;
                 }
 
                 try {
@@ -160,7 +181,7 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                     
                 } catch (error) {
                     console.error("Błąd AI:", error); 
-                    alert("Wystąpił błąd podczas generowania. Upewnij się, że nie używasz adblocka blokującego połączenia z AI lub spróbuj ponownie za chwilę.");
+                    showToast('Wystąpił błąd komunikacji. Spróbuj ponownie za chwilę.');
                 } finally { 
                     setIsGenerating(false); 
                 }
@@ -177,7 +198,16 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
             const currentTheme = THEMES[mode];
 
             return (
-                <div className="min-h-screen flex flex-col relative bg-slate-50">
+                <div className="min-h-screen flex flex-col relative bg-slate-50 overflow-x-hidden">
+                    
+                    {/* POWIADOMIENIE (TOAST) */}
+                    {toastMessage && (
+                        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] bg-slate-800 text-white px-6 py-3 rounded-2xl shadow-2xl font-bold text-sm animate-toast flex items-center gap-3 border border-slate-700">
+                            <Icon name="AlertCircle" size={18} className="text-amber-400" />
+                            {toastMessage}
+                        </div>
+                    )}
+
                     {/* EKRAN ŁADOWANIA */}
                     {isGenerating && (
                         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-[100] flex flex-col items-center justify-center text-white">

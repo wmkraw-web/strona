@@ -168,20 +168,40 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                     
                     let text = await res.text();
                     
-                    // Bezpieczne parsowanie JSON
-                    let jsonStr = text;
-                    const start = text.indexOf('{');
-                    const end = text.lastIndexOf('}');
+                    // Bezpieczne parsowanie JSON i czyszczenie z markdowna
+                    let jsonStr = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+                    const start = jsonStr.indexOf('{');
+                    const end = jsonStr.lastIndexOf('}');
                     if(start !== -1 && end !== -1) {
-                        jsonStr = text.substring(start, end + 1);
+                        jsonStr = jsonStr.substring(start, end + 1);
                     }
                     
                     const parsedData = JSON.parse(jsonStr);
+
+                    // TARCZA OCHRONNA: AI często tłumaczy klucze na polski (np. "tekst" zamiast "lyrics").
+                    // Ta sekcja gwarantuje, że strona zawsze znajdzie odpowiednie dane.
+                    if (mode === 'song') {
+                        parsedData.title = parsedData.title || parsedData.tytuł || parsedData.tytul || "Twoja Piosenka";
+                        parsedData.suno_prompt = parsedData.suno_prompt || parsedData.styl || parsedData.prompt || "Wesoły Pop";
+                        parsedData.lyrics = parsedData.lyrics || parsedData.tekst || parsedData.piosenka || parsedData.wiersz || parsedData.slowa || "Brak tekstu.";
+                    } else if (mode === 'escape') {
+                        parsedData.title = parsedData.title || parsedData.tytuł || parsedData.tytul || "Twój Escape Room";
+                        parsedData.intro = parsedData.intro || parsedData.wstep || parsedData.wstęp || parsedData.fabula || "Witajcie odkrywcy!";
+                        parsedData.final_code = parsedData.final_code || parsedData.kod || parsedData.haslo || parsedData.hasło || "1234";
+                        parsedData.riddles = parsedData.riddles || parsedData.zagadki || parsedData.zadania || [];
+                    } else if (mode === 'tiktok') {
+                        parsedData.title = parsedData.title || parsedData.tytuł || parsedData.tytul || "Twój Scenariusz";
+                        parsedData.characters = parsedData.characters || parsedData.obsada || parsedData.postacie || parsedData.aktorzy || [];
+                        parsedData.hook = parsedData.hook || parsedData.haczyk || parsedData.wstep || parsedData.poczatek || "Uwaga!";
+                        parsedData.camera_tips = parsedData.camera_tips || parsedData.wskazowki || parsedData.porady || parsedData.kamera || "Nagrywaj pionowo.";
+                        parsedData.script = parsedData.script || parsedData.skrypt || parsedData.scenariusz || parsedData.dialogi || [];
+                    }
+                    
                     setGeneratedData(parsedData);
                     
                 } catch (error) {
                     console.error("Błąd AI:", error); 
-                    showToast('Wystąpił błąd komunikacji. Spróbuj ponownie za chwilę.');
+                    showToast('Wystąpił błąd komunikacji z AI lub problem ze sformatowaniem tekstu. Spróbuj ponownie.');
                 } finally { 
                     setIsGenerating(false); 
                 }

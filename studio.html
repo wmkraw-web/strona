@@ -74,7 +74,7 @@
 
             const showToast = (msg) => {
                 setToastMessage(msg);
-                setTimeout(() => setToastMessage(''), 3500);
+                setTimeout(() => setToastMessage(''), 5000);
             };
 
             const handleVerifyCode = () => {
@@ -112,33 +112,31 @@
                     useJsonMode = false;
                     aiTemperature = 0.7; 
                     
-                    systemPrompt = `Jesteś wybitnym autorem tekstów piosenek dla dzieci.
-Twoim zadaniem jest napisanie edukacyjnej, rytmicznej piosenki w 100% po polsku.
+                    systemPrompt = `Jesteś wybitnym polskim autorem tekstów piosenek dla dzieci, z talentem na miarę Jana Brzechwy.
 
-ZASADY:
-1. Piosenka musi mieć idealne, proste rymy (AABB lub ABAB), np. woda/zgoda, krok/smok.
-2. Zwróć tylko i wyłącznie gotowy tekst według poniższego szablonu. Żadnych wstępów, monologów ani komentarzy.
+ZASADY KRYTYCZNE (RYMY - TO NAJWAŻNIEJSZE):
+1. Piosenka MUSI mieć idealne, parzyste rymy na końcu wersów (AABB). Oznacza to, że wers 1 MUSI rymować się z 2, a wers 3 z 4.
+2. Przykłady dobrych rymów: woda/zgoda, krok/smok, słońce/łące, dzieci/śmieci.
+3. ZAKAZ białego wiersza. ZAKAZ rymów typu "niebo / znają". To muszą być proste i czyste rymy.
+4. Zwróć tylko i wyłącznie gotowy tekst według poniższego szablonu. Żadnych wstępów.
 
 FORMAT ODPOWIEDZI (Skopiuj ten format dokładnie):
 TYTUŁ: [Wymyśl polski, wesoły tytuł piosenki]
 STYL: [Wpisz 4 angielskie tagi muzyczne, np. upbeat pop, happy, kids music]
 TEKST:
 [Zwrotka 1]
-(4 linijki rymowanego tekstu)
+(4 linijki z rymami AABB)
 
 [Refren]
-(4 linijki rymowanego tekstu)
+(4 linijki z rymami AABB)
 
 [Zwrotka 2]
-(4 linijki rymowanego tekstu)
+(4 linijki z rymami AABB)
 
 [Refren]
-(4 linijki rymowanego tekstu)`;
+(4 linijki z rymami AABB)`;
 
-                    userPrompt = `Napisz wesołą piosenkę dla dzieci. 
-Temat: ${params.topic}. 
-Dla kogo: ${params.age}. 
-Gatunek muzyczny: ${params.style}.`;
+                    userPrompt = `Napisz wesołą piosenkę dla dzieci. \nTemat: ${params.topic}. \nDla kogo: ${params.age}. \nGatunek muzyczny: ${params.style}.`;
                 } 
                 else if (mode === 'escape') {
                     useJsonMode = true;
@@ -173,12 +171,12 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                 }
 
                 try {
-                    // NOWOŚĆ: Łączymy się z naszym profesjonalnym serwerem Vercela zamiast z darmowym AI
                     const payload = { 
                         system: systemPrompt,
                         prompt: userPrompt,
                         temperature: aiTemperature,
-                        format: useJsonMode ? "json" : "text"
+                        format: useJsonMode ? "json" : "text",
+                        model: mode === 'song' ? 'gpt-4o' : 'gpt-4o-mini'
                     };
 
                     const res = await fetch('/api/chat', {
@@ -190,16 +188,13 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                     const data = await res.json();
 
                     if (!res.ok) {
-                        throw new Error(data.message || data.details || "Błąd serwera AI");
+                        // Tutaj wyciągamy błąd z API
+                        throw new Error(data.details || data.message || "Nieznany błąd z serwera Vercel");
                     }
                     
-                    // Odbieramy czysty tekst od naszego serwera
                     let text = data.text;
                     let cleanText = text;
                     
-                    // ==========================================
-                    // TARCZA 3.0: WYCIĄGANIE CZYSTEGO TEKSTU I ODPORNOŚĆ NA UCIĘTE JSONY
-                    // ==========================================
                     if (cleanText.includes('"reasoning_content"')) {
                         const contentMarker = '"content":"';
                         const startIdx = cleanText.indexOf(contentMarker);
@@ -218,7 +213,6 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                     
                     cleanText = cleanText.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
 
-                    // PARSOWANIE GOTOWEGO TEKSTU
                     if (mode === 'song') {
                         let title = "Twoja Piosenka";
                         let suno_prompt = "Upbeat children song";
@@ -242,7 +236,6 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                         return;
                     }
 
-                    // Przetwarzanie dla Scenariuszy i Gier (JSON)
                     let jsonStr = cleanText.replace(/```json/gi, '').replace(/```/g, '').trim();
                     const start = jsonStr.indexOf('{');
                     const end = jsonStr.lastIndexOf('}');
@@ -252,7 +245,6 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                     
                     const parsedData = JSON.parse(jsonStr);
 
-                    // Tarcza dla kluczy
                     if (mode === 'escape') {
                         parsedData.title = parsedData.title || parsedData.tytuł || "Twój Escape Room";
                         parsedData.intro = parsedData.intro || parsedData.wstep || "Witajcie odkrywcy!";
@@ -270,7 +262,8 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                     
                 } catch (error) {
                     console.error("Błąd AI:", error); 
-                    showToast('Błąd połączenia. Upewnij się, że Vercel posiada poprawny OPENAI_API_KEY!');
+                    // To pokaże nam dokładnie, czy problemem jest klucz, format czy serwer
+                    showToast(`Błąd: ${error.message}`);
                 } finally { 
                     setIsGenerating(false); 
                 }

@@ -110,7 +110,7 @@
 
                 if (mode === 'song') {
                     useJsonMode = false;
-                    aiTemperature = 0.6; 
+                    aiTemperature = 0.7; 
                     
                     systemPrompt = `Jesteś wybitnym autorem tekstów piosenek dla dzieci.
 Twoim zadaniem jest napisanie edukacyjnej, rytmicznej piosenki w 100% po polsku.
@@ -173,50 +173,42 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                 }
 
                 try {
+                    // NOWOŚĆ: Łączymy się z naszym profesjonalnym serwerem Vercela zamiast z darmowym AI
                     const payload = { 
-                        messages: [
-                            { role: "system", content: systemPrompt },
-                            { role: "user", content: userPrompt }
-                        ],
-                        // TARCZA 3.0: Zmuszamy API do korzystania z czystego modelu bez "halucynacji myślowych"
-                        model: "gpt-4o", 
+                        system: systemPrompt,
+                        prompt: userPrompt,
                         temperature: aiTemperature,
-                        seed: Math.floor(Math.random() * 10000)
+                        format: useJsonMode ? "json" : "text"
                     };
-                    
-                    if (useJsonMode) {
-                        payload.response_format = { type: "json_object" };
-                        payload.jsonMode = true;
-                    }
 
-                    const res = await fetch('https://text.pollinations.ai/', {
+                    const res = await fetch('/api/chat', {
                         method: 'POST', 
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
                     
-                    if (!res.ok) throw new Error("Błąd serwera AI");
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                        throw new Error(data.message || data.details || "Błąd serwera AI");
+                    }
                     
-                    let text = await res.text();
+                    // Odbieramy czysty tekst od naszego serwera
+                    let text = data.text;
+                    let cleanText = text;
                     
                     // ==========================================
                     // TARCZA 3.0: WYCIĄGANIE CZYSTEGO TEKSTU I ODPORNOŚĆ NA UCIĘTE JSONY
                     // ==========================================
-                    let cleanText = text;
-                    
-                    // Krok 1: Awaryjne wyłuskanie tekstu z uszkodzonego, uciętego pliku JSON (na wypadek wycieku)
                     if (cleanText.includes('"reasoning_content"')) {
                         const contentMarker = '"content":"';
                         const startIdx = cleanText.indexOf(contentMarker);
                         if (startIdx !== -1) {
                             let extracted = cleanText.substring(startIdx + contentMarker.length);
-                            // Ucinamy śmieci na końcu zniszczonego pliku
                             extracted = extracted.replace(/"\s*}\s*$/, '').replace(/"$/, ''); 
-                            // Zamieniamy formatowanie JSON (np. \n) na ludzki tekst
                             cleanText = extracted.replace(/\\n/g, '\n').replace(/\\"/g, '"'); 
                         }
                     } else {
-                        // Krok 2: Normalne odpakowywanie
                         try {
                             const outerObj = JSON.parse(text);
                             if (outerObj.content) cleanText = outerObj.content;
@@ -224,7 +216,6 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                         } catch(e) {}
                     }
                     
-                    // Krok 3: Usunięcie tagów myślenia z niektórych modeli open-source
                     cleanText = cleanText.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
 
                     // PARSOWANIE GOTOWEGO TEKSTU
@@ -233,20 +224,16 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                         let suno_prompt = "Upbeat children song";
                         let lyrics = "Wystąpił błąd w pisaniu tekstu. Spróbuj ponownie.";
 
-                        // Wyciągamy tytuł z czystego tekstu
                         const titleMatch = cleanText.match(/TYTU[ŁL]:\s*([^\n]+)/i);
                         if (titleMatch) title = titleMatch[1].trim().replace(/["']/g, '');
 
-                        // Wyciągamy prompt dla Suno
                         const styleMatch = cleanText.match(/(?:STYL|PROMPT):\s*([^\n]+)/i);
                         if (styleMatch) suno_prompt = styleMatch[1].trim().replace(/["']/g, '');
 
-                        // Wyciągamy sam tekst piosenki
                         const textSplit = cleanText.split(/TEKST:\s*/i);
                         if (textSplit.length > 1) {
                             lyrics = textSplit[1].trim();
                         } else {
-                            // Awaryjne czyszczenie, jeśli zniknęło słowo TEKST:
                             lyrics = cleanText.replace(/TYTU[ŁL]:[^\n]+\n/i, '').replace(/(STYL|PROMPT):[^\n]+\n/i, '').trim();
                         }
 
@@ -283,7 +270,7 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                     
                 } catch (error) {
                     console.error("Błąd AI:", error); 
-                    showToast('Serwer był chwilowo zajęty. Spróbuj kliknąć "Generuj" ponownie.');
+                    showToast('Błąd połączenia. Upewnij się, że Vercel posiada poprawny OPENAI_API_KEY!');
                 } finally { 
                     setIsGenerating(false); 
                 }
@@ -315,7 +302,7 @@ CRITICAL RULE: You MUST use exactly these English keys: "title", "characters", "
                                 <div className={`w-16 h-16 border-8 border-t-transparent rounded-full animate-spin`} style={{ borderTopColor: mode === 'song' ? '#d946ef' : mode === 'escape' ? '#f59e0b' : '#06b6d4', borderRightColor: '#f1f5f9', borderBottomColor: '#f1f5f9', borderLeftColor: '#f1f5f9'}}></div>
                                 <div className="text-center">
                                     <h3 className="text-xl font-black mb-1">Piszę i rymuję...</h3>
-                                    <p className="text-xs text-slate-500 font-medium">Szukam idealnych słów (ok. 10 sekund).</p>
+                                    <p className="text-xs text-slate-500 font-medium">Szukam idealnych słów (szybkie AI).</p>
                                 </div>
                             </div>
                         </div>

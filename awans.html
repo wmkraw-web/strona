@@ -11,16 +11,17 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap');
         
-        body { background-color: #020617; font-family: 'Plus Jakarta Sans', sans-serif; color: #f8fafc; overflow-x: hidden; scroll-behavior: smooth; }
+        body { background-color: #020617; font-family: 'Plus Jakarta Sans', sans-serif; color: #f8fafc; overflow-x: hidden; }
         .document-font { font-family: 'Merriweather', serif; }
         
         .glass-panel { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .glass-nav { background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .text-gradient { background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+
+        input:focus, select:focus, textarea:focus { box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); border-color: #3b82f6 !important; }
 
         @media print {
             body { background: white; color: black; }
@@ -32,13 +33,10 @@
         @keyframes slide-up { 0% { opacity: 0; transform: translate(-50%, 20px); } 100% { opacity: 1; transform: translate(-50%, 0); } }
         .animate-toast { animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        .floating { animation: float 6s ease-in-out infinite; }
-
-        input:focus, select:focus, textarea:focus {
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
-            border-color: #3b82f6 !important;
-        }
+        @keyframes pop { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .bot-bubble { animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes blink { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.1); } }
+        .bot-eye { animation: blink 4s infinite; transform-origin: center; }
     </style>
 </head>
 <body>
@@ -56,22 +54,30 @@
                 Download: <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>,
                 Coffee: <path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM7 2v3M11 2v3M15 2v3"/>,
                 Lock: <><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>,
-                Key: <path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3y-3.5L15.5 7.5z"/>,
                 AlertCircle: <><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>,
-                UserCheck: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></>,
-                Scale: <><path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></>,
-                Target: <><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></>,
-                FileWord: <><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M8 11.5l1.5 5 1.5-3 1.5 3 1.5-5"/></>,
-                Zap: <><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></>
+                UserCheck: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></>
             };
             return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{icons[name]}</svg>;
         };
+
+        const BotHelperAvatar = () => (
+            <svg viewBox="0 0 100 100" className="w-14 h-14 drop-shadow-md flex-shrink-0" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 30 V15" stroke="#94a3b8" strokeWidth="4" strokeLinecap="round"/>
+                <circle cx="50" cy="12" r="5" fill="#3b82f6"/>
+                <rect x="25" y="30" width="50" height="40" rx="12" fill="#1e40af"/>
+                <rect x="32" y="38" width="36" height="22" rx="6" fill="#ffffff"/>
+                <circle cx="40" cy="49" r="3.5" fill="#1e40af" className="bot-eye"/>
+                <circle cx="60" cy="49" r="3.5" fill="#1e40af" className="bot-eye"/>
+                <path d="M 45 56 Q 50 60 55 56" stroke="#1e40af" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+            </svg>
+        );
 
         function App() {
             const [isPremium, setIsPremium] = useState(false);
             const [accessCode, setAccessCode] = useState('');
             const [isGenerating, setIsGenerating] = useState(false);
             const [toastMessage, setToastMessage] = useState('');
+            const [botMessage, setBotMessage] = useState("Cześć! Wrzuć mi w formularz swoje chaotyczne notatki. Użyję profesjonalnego żargonu prawnego i pedagogicznego, by zamienić je w elegancki dokument!");
             
             const [mode, setMode] = useState('opiekun'); 
             
@@ -80,7 +86,8 @@
                 role: 'Nauczyciel edukacji wczesnoszkolnej',
                 customRole: '',
                 level: 'Nauczyciel początkujący (na mianowanego)',
-                achievements: ''
+                achievements: '',
+                formatType: 'epic' // Nowa opcja!
             });
 
             const [generatedData, setGeneratedData] = useState(null);
@@ -96,190 +103,111 @@
                 "Inne (wpisz własne)"
             ];
 
-            const showToast = (msg) => {
-                setToastMessage(msg);
-                setTimeout(() => setToastMessage(''), 4000);
-            };
+            const showToast = (msg) => { setToastMessage(msg); setTimeout(() => setToastMessage(''), 4000); };
 
             const handleVerifyCode = () => {
                 if (accessCode.toUpperCase() === 'KAWA2024') { 
-                    setIsPremium(true); 
-                    setAccessCode(''); 
+                    setIsPremium(true); setAccessCode(''); 
                     showToast('Kod aktywny! Witamy w Premium 🌟');
-                } 
-                else {
-                    showToast('Nieprawidłowy kod dostępu!');
-                }
+                    setBotMessage("Premium odblokowane! Możesz teraz wygenerować epicko rozbudowane dokumenty.");
+                } else { showToast('Nieprawidłowy kod dostępu!'); }
             };
 
-            const scrollToApp = () => {
-                document.getElementById('kreator-app').scrollIntoView({ behavior: 'smooth' });
-            };
+            useEffect(() => {
+                if(mode === 'opiekun') setBotMessage("Tryb Dyrektora/Opiekuna. Dokument zostanie zredagowany w 3-ciej osobie jako formalna 'Ocena Dorobku Zawodowego'.");
+                else setBotMessage("Tryb Nauczyciela. Dokument zostanie zredagowany w 1-szej osobie jako Twoje osobiste 'Sprawozdanie z realizacji planu'.");
+            }, [mode]);
 
             const generateDocument = async () => {
                 const finalRole = params.role === "Inne (wpisz własne)" ? params.customRole : params.role;
-                
-                if (!finalRole.trim() || !params.achievements.trim()) {
-                    showToast('Wypełnij stanowisko i działania/sukcesy!');
-                    return;
-                }
+                if (!finalRole.trim() || !params.achievements.trim()) return showToast('Wypełnij stanowisko i działania/sukcesy!');
                 
                 setIsGenerating(true);
                 setGeneratedData(null);
+                setBotMessage("Analizuję Twoje notatki i dopasowuję odpowiednie paragrafy z Karty Nauczyciela. Chwileczkę...");
                 
+                let lengthInstruction = params.formatType === 'epic' 
+                    ? "Wymagam BARDZO ROZBUDOWANEGO i wyczerpującego dokumentu ('lany tekst'). Rozbuduj każdy podany punkt, używaj wyrafinowanego języka urzędowego, dodaj profesjonalne wnioski i podsumowania. Dokument musi wyglądać na profesjonalnie przygotowany esej."
+                    : "Wymagam ZWIĘZŁEGO dokumentu. Używaj punktatorów i krótkich, konkretnych zdań. Tylko same fakty i profesjonalne podsumowanie.";
+
                 let systemPrompt = "";
                 let userPrompt = "";
 
                 if (mode === 'opiekun') {
                     systemPrompt = `Jesteś doświadczonym dyrektorem szkoły oraz ekspertem prawa oświatowego w Polsce. 
-Twoim zadaniem jest napisanie "Projektu Oceny Dorobku Zawodowego" (oficjalnej opinii dyrektora/opiekuna) dla nauczyciela starającego się o awans zawodowy.
 ZASADY KRYTYCZNE:
-1. Pisz w 3 osobie liczby pojedynczej o nauczycielu. Ton wybitnie profesjonalny, urzędowy i obiektywny.
-2. Dokument musi uwzględniać specyfikę zawodu: ${finalRole}.
-3. Podziel dokument na czytelne akapity: Wstęp, Realizacja obowiązków, Współpraca, Podsumowanie/Rekomendacja.
-4. Zwróć odpowiedź WYŁĄCZNIE w formacie JSON z kluczami "title", "legal_basis" oraz "document_body". Używaj znaczników HTML (<b>, <br>) w polu document_body do formatowania tekstu.
-{
-  "title": "PROJEKT OCENY DOROBKU ZAWODOWEGO",
-  "legal_basis": "Na podstawie art. 9c ust. 5a ustawy z dnia 26 stycznia 1982 r. – Karta Nauczyciela...",
-  "document_body": "Pan/Pani <b>[Imię i Nazwisko]</b> w okresie pracy...<br><br><b>Realizacja obowiązków:</b><br>..."
-}`;
-                    userPrompt = `Imię i nazwisko nauczyciela: ${params.teacherName || '[Imię i Nazwisko]'}\nStanowisko: ${finalRole}\nStopień awansu: ${params.level}\nZrealizowane działania, sukcesy i formy doskonalenia (wypisane przez użytkownika): ${params.achievements}\n\nNapisz pełną, wielostronicową i wyczerpującą opinię.`;
+1. Pisz w 3 osobie liczby pojedynczej o nauczycielu. Ton wybitnie profesjonalny, urzędowy.
+2. ${lengthInstruction}
+3. Dopasuj słownictwo do specyfiki zawodu: ${finalRole}.
+4. Zwróć WYŁĄCZNIE format JSON: { "title": "...", "legal_basis": "...", "document_body": "Używaj tu znaczników <br> oraz <b> do formatowania. Bez formatowania markdown." }`;
+                    userPrompt = `Imię: ${params.teacherName || '[Imię]'}\nStanowisko: ${finalRole}\nStopień: ${params.level}\nDziałania: ${params.achievements}\nNapisz pełną opinię dyrektora/opiekuna.`;
                 } 
                 else if (mode === 'nauczyciel') {
-                    systemPrompt = `Jesteś ekspertem prawa oświatowego wspierającym nauczycieli w pisaniu "Sprawozdania z realizacji planu rozwoju zawodowego".
+                    systemPrompt = `Jesteś ekspertem prawa oświatowego piszącym "Sprawozdanie z realizacji planu rozwoju zawodowego" dla nauczyciela.
 ZASADY KRYTYCZNE:
-1. Pisz w 1 osobie liczby pojedynczej (np. "Zrealizowałem/am", "Wdrożyłem/am"). Ton profesjonalny i refleksyjny.
-2. Dopasuj działania do stanowiska: ${finalRole}.
-3. Podziel sprawozdanie na sekcje odpowiadające wymaganiom ustawowym (np. Doskonalenie warsztatu pracy, Działania na rzecz szkoły).
-4. Zwróć odpowiedź WYŁĄCZNIE w formacie JSON z kluczami "title", "legal_basis" oraz "document_body". Używaj znaczników HTML (<b>, <br>, <ul>, <li>) w polu document_body do formatowania.
-{
-  "title": "SPRAWOZDANIE Z REALIZACJI PLANU ROZWOJU ZAWODOWEGO",
-  "legal_basis": "Dokument przygotowany w związku z ubieganiem się o stopień awansu...",
-  "document_body": "W okresie od... do... realizowałem/am plan rozwoju zawodowego...<br><br><b>1. Doskonalenie warsztatu pracy:</b><ul><li>...</li></ul>"
-}`;
-                    userPrompt = `Imię i nazwisko: ${params.teacherName || '[Imię i Nazwisko]'}\nStanowisko: ${finalRole}\nOczekiwany stopień: ${params.level}\nMoje zrealizowane działania, szkolenia, innowacje i sukcesy: ${params.achievements}\n\nPrzekształć te surowe notatki w piękne, wielostronicowe, urzędowe sprawozdanie.`;
+1. Pisz w 1 osobie liczby pojedynczej ("Zrealizowałem/am"). Ton refleksyjny i urzędowy.
+2. ${lengthInstruction}
+3. Dopasuj działania do stanowiska: ${finalRole}.
+4. Zwróć WYŁĄCZNIE format JSON: { "title": "...", "legal_basis": "...", "document_body": "Używaj tu znaczników <br>, <b>, <ul>, <li> do formatowania. Bez formatowania markdown." }`;
+                    userPrompt = `Imię: ${params.teacherName || '[Imię]'}\nStanowisko: ${finalRole}\nStopień: ${params.level}\nMoje zrealizowane działania: ${params.achievements}\nPrzekształć te notatki w moje urzędowe sprawozdanie.`;
                 }
 
                 try {
-                    const payload = { 
-                        system: systemPrompt,
-                        prompt: userPrompt,
-                        temperature: 0.3,
-                        format: "json",
-                        model: "gpt-4o-mini"
-                    };
-
-                    const res = await fetch('/api/chat', {
-                        method: 'POST', 
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    
+                    const payload = { system: systemPrompt, prompt: userPrompt, temperature: 0.4, format: "json", model: "gpt-4o-mini" };
+                    const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                     const data = await res.json();
-
-                    if (!res.ok) throw new Error(data.details || data.message || "Nieznany błąd z serwera");
+                    if (!res.ok) throw new Error(data.details || data.message || "Błąd z serwera");
                     
-                    let text = data.text;
-                    let cleanText = text;
-                    
-                    // Usuwanie ukrytych myśli (Reasoning Leak Protection)
+                    let cleanText = data.text;
                     if (cleanText.includes('"reasoning_content"')) {
-                        const contentMarker = '"content":"';
-                        const startIdx = cleanText.indexOf(contentMarker);
+                        const startIdx = cleanText.indexOf('"content":"');
                         if (startIdx !== -1) {
-                            let extracted = cleanText.substring(startIdx + contentMarker.length);
-                            extracted = extracted.replace(/"\s*}\s*$/, '').replace(/"$/, ''); 
+                            let extracted = cleanText.substring(startIdx + 11).replace(/"\s*}\s*$/, '').replace(/"$/, ''); 
                             cleanText = extracted.replace(/\\n/g, '\n').replace(/\\"/g, '"'); 
                         }
                     } else {
-                        try {
-                            const outerObj = JSON.parse(text);
-                            if (outerObj.content) cleanText = outerObj.content;
-                            else if (outerObj.choices && outerObj.choices[0].message.content) cleanText = outerObj.choices[0].message.content;
-                        } catch(e) {}
+                        try { const outerObj = JSON.parse(cleanText); if(outerObj.content) cleanText = outerObj.content; else if (outerObj.choices) cleanText = outerObj.choices[0].message.content; } catch(e){}
                     }
-                    
                     cleanText = cleanText.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-
                     let jsonStr = cleanText.replace(/```json/gi, '').replace(/```/g, '').trim();
-                    const start = jsonStr.indexOf('{');
-                    const end = jsonStr.lastIndexOf('}');
-                    if(start !== -1 && end !== -1) {
-                        jsonStr = jsonStr.substring(start, end + 1);
-                    }
+                    if(jsonStr.indexOf('{') !== -1) jsonStr = jsonStr.substring(jsonStr.indexOf('{'), jsonStr.lastIndexOf('}') + 1);
                     
                     const parsedData = JSON.parse(jsonStr);
-                    
-                    parsedData.title = parsedData.title || "Dokument Awansu Zawodowego";
-                    parsedData.legal_basis = parsedData.legal_basis || "";
-                    parsedData.document_body = parsedData.document_body || "Błąd generowania treści.";
-
                     setGeneratedData(parsedData);
-                    
+                    setBotMessage("Gotowe! Przejrzyj wygenerowany dokument po prawej stronie. Możesz go wydrukować lub pobrać do edycji w Wordzie.");
                 } catch (error) {
-                    console.error("Błąd AI:", error); 
-                    showToast(`Błąd: ${error.message}. Sprawdź klucz API.`);
-                } finally { 
-                    setIsGenerating(false); 
-                }
+                    console.error("Błąd AI:", error); showToast(`Błąd: ${error.message}`); setBotMessage("Coś poszło nie tak z połączeniem. Spróbuj ponownie!");
+                } finally { setIsGenerating(false); }
             };
 
             const exportToWord = () => {
                 if(!generatedData) return;
                 const content = document.getElementById('document-render-area').innerHTML;
-                
-                const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                <head><meta charset='utf-8'><title>${generatedData.title}</title>
-                <style>
-                    body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; color: #000; text-align: justify; }
-                    h1 { font-size: 16pt; text-align: center; text-transform: uppercase; margin-bottom: 20px; }
-                    .legal { font-size: 10pt; font-style: italic; text-align: center; margin-bottom: 30px; }
-                    ul { padding-left: 20px; }
-                    li { margin-bottom: 5px; }
-                </style></head><body>`;
+                const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>${generatedData.title}</title><style>body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; color: #000; text-align: justify; } h1 { font-size: 16pt; text-align: center; text-transform: uppercase; margin-bottom: 20px; } .legal { font-size: 10pt; font-style: italic; text-align: center; margin-bottom: 30px; } ul { padding-left: 20px; } li { margin-bottom: 5px; }</style></head><body>`;
                 const footer = `</body></html>`;
-                
                 const blob = new Blob(['\ufeff', header + content + footer], { type: 'application/msword' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = `Awans_${mode}_${Date.now()}.doc`;
-                link.click();
+                const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `Awans_${mode}_${Date.now()}.doc`; link.click();
             };
 
             return (
                 <div className="min-h-screen flex flex-col relative overflow-x-hidden">
-                    
-                    {/* POWIADOMIENIA TOAST */}
-                    {toastMessage && (
-                        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] bg-blue-600 text-white px-6 py-3 rounded-2xl shadow-[0_0_30px_rgba(37,99,235,0.4)] font-bold text-sm animate-toast flex items-center gap-3 border border-blue-500">
-                            <Icon name="AlertCircle" size={18} className="text-white" />
-                            {toastMessage}
-                        </div>
-                    )}
+                    {toastMessage && <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] bg-blue-600 text-white px-6 py-3 rounded-2xl shadow-[0_0_30px_rgba(37,99,235,0.4)] font-bold text-sm animate-toast flex items-center gap-3 border border-blue-500"><Icon name="AlertCircle" size={18} />{toastMessage}</div>}
 
-                    {/* EKRAN ŁADOWANIA AI */}
                     {isGenerating && (
                         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[100] flex flex-col items-center justify-center text-white">
-                            <div className="glass-panel p-10 rounded-3xl flex flex-col items-center space-y-6 max-w-sm shadow-[0_0_50px_rgba(37,99,235,0.2)] border border-blue-500/20">
+                            <div className="glass-panel p-10 rounded-3xl flex flex-col items-center space-y-6 max-w-sm border border-blue-500/20">
                                 <div className="w-16 h-16 border-4 border-slate-700 border-t-blue-500 rounded-full animate-spin"></div>
-                                <div className="text-center">
-                                    <h3 className="text-xl font-bold mb-2 text-white">Analizuję przepisy MEN...</h3>
-                                    <p className="text-xs text-slate-400 font-medium">Pisanie urzędowego dokumentu (ok. 15 sek).</p>
-                                </div>
+                                <div className="text-center"><h3 className="text-xl font-bold mb-2 text-white">Analizuję przepisy MEN...</h3><p className="text-xs text-slate-400 font-medium">Pisanie urzędowego dokumentu (ok. 15 sek).</p></div>
                             </div>
                         </div>
                     )}
 
-                    {/* GÓRNA NAWIGACJA */}
                     <nav className="fixed top-0 w-full z-50 glass-nav py-4 px-6 print-hidden">
                         <div className="max-w-7xl mx-auto flex justify-between items-center">
                             <div className="flex items-center space-x-3 font-extrabold text-xl tracking-tight cursor-pointer" onClick={() => window.scrollTo(0,0)}>
-                                <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2 rounded-xl text-white shadow-[0_0_15px_rgba(37,99,235,0.5)]">
-                                    <Icon name="Briefcase" size={22}/>
-                                </div>
-                                <span>EduBox<span className="text-blue-500">AI</span></span>
+                                <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2 rounded-xl text-white shadow-[0_0_15px_rgba(37,99,235,0.5)]"><Icon name="Briefcase" size={22}/></div>
+                                <span>Kreator<span className="text-blue-500">Awansu</span></span>
                             </div>
-                            
                             <div className="flex items-center space-x-4">
                                 {!isPremium && (
                                     <div className="hidden md:flex items-center space-x-2 bg-slate-900 p-1.5 rounded-xl border border-slate-700">
@@ -294,106 +222,26 @@ ZASADY KRYTYCZNE:
                         </div>
                     </nav>
 
-                    {/* === SEKCJA HERO (LANDING PAGE) === */}
-                    <section className="min-h-screen flex flex-col justify-center items-center px-6 pt-20 relative print-hidden">
-                        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[30rem] h-[30rem] bg-blue-600/20 blur-[120px] rounded-full -z-10 pointer-events-none"></div>
-                        <div className="text-center max-w-4xl relative z-10 floating">
-                            <h1 className="text-5xl md:text-7xl lg:text-[5rem] font-extrabold tracking-tight leading-tight mb-6 text-gradient">
-                                Koniec z biurokracją.<br/>Zacznij Awans z AI.
-                            </h1>
-                            <p className="text-xl md:text-2xl text-slate-400 mb-12 leading-relaxed max-w-3xl mx-auto">
-                                Odzyskaj 10 godzin w tygodniu. EduBox AI pisze profesjonalne sprawozdania i opinie za Ciebie w <span className="text-white font-bold">15 sekund</span>.
-                            </p>
-                            <div className="flex flex-col sm:flex-row gap-5 justify-center items-center">
-                                <button onClick={scrollToApp} className="px-10 py-5 bg-blue-600 text-white rounded-full font-black text-lg hover:bg-blue-500 transition-all shadow-[0_0_40px_rgba(37,99,235,0.4)] active:scale-95 flex items-center gap-3">
-                                    <Icon name="Sparkles" size={24}/> Uruchom Kreator
-                                </button>
-                                <button onClick={scrollToApp} className="px-10 py-5 glass-panel text-white rounded-full font-bold text-lg hover:bg-white/10 transition-all">
-                                    Zobacz jak to działa
-                                </button>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* === SEKCJA KORZYŚCI === */}
-                    <section className="py-24 px-6 max-w-7xl mx-auto w-full print-hidden">
-                        <div className="grid md:grid-cols-4 gap-6">
-                            <div className="glass-panel p-8 rounded-[2.5rem] hover:-translate-y-2 transition-transform duration-300">
-                                <div className="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 border border-slate-700">
-                                    <Icon name="Scale" size={28} className="text-blue-400"/>
-                                </div>
-                                <h4 className="font-bold text-xl mb-3 text-white">Idealny żargon</h4>
-                                <p className="text-slate-400 text-sm leading-relaxed">Używamy profesjonalnego słownictwa zgodnego z wymogami Karty Nauczyciela i dyrektywami MEN.</p>
-                            </div>
-                            <div className="glass-panel p-8 rounded-[2.5rem] hover:-translate-y-2 transition-transform duration-300">
-                                <div className="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 border border-slate-700">
-                                    <Icon name="Target" size={28} className="text-indigo-400"/>
-                                </div>
-                                <h4 className="font-bold text-xl mb-3 text-white">Personalizacja</h4>
-                                <p className="text-slate-400 text-sm leading-relaxed">System osobno podchodzi do obowiązków logopedy, psychologa, pedagoga i nauczyciela świetlicy.</p>
-                            </div>
-                            <div className="glass-panel p-8 rounded-[2.5rem] hover:-translate-y-2 transition-transform duration-300">
-                                <div className="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 border border-slate-700">
-                                    <Icon name="FileWord" size={28} className="text-emerald-400"/>
-                                </div>
-                                <h4 className="font-bold text-xl mb-3 text-white">Eksport Word</h4>
-                                <p className="text-slate-400 text-sm leading-relaxed">Pobierz gotowy, w pełni sformatowany dokument .docx i wprowadź drobne poprawki u siebie na komputerze.</p>
-                            </div>
-                            <div className="glass-panel p-8 rounded-[2.5rem] hover:-translate-y-2 transition-transform duration-300">
-                                <div className="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 border border-slate-700">
-                                    <Icon name="Zap" size={28} className="text-amber-400"/>
-                                </div>
-                                <h4 className="font-bold text-xl mb-3 text-white">W 15 sekund</h4>
-                                <p className="text-slate-400 text-sm leading-relaxed">Zamiast ślęczeć cały weekend, wpisujesz hasłowo swoje osiągnięcia, a my robimy z tego wielostronicowy raport.</p>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* === GŁÓWNY WIDOK APLIKACJI === */}
-                    <div id="kreator-app" className="max-w-7xl mx-auto px-4 pt-10 pb-32 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full print:block print:p-0 relative z-10 scroll-mt-24">
-                        
-                        {/* PANEL LEWY - KONFIGURACJA */}
+                    <div className="max-w-7xl mx-auto px-4 pt-32 pb-24 grid grid-cols-1 lg:grid-cols-12 gap-8 w-full print:block print:p-0 relative z-10">
                         <div className="lg:col-span-4 space-y-6 print-hidden">
-                            
-                            {/* Wybór Trybu */}
                             <div className="glass-panel p-2 rounded-2xl flex gap-2">
                                 <button onClick={() => {setMode('opiekun'); setGeneratedData(null);}} className={`flex-1 py-4 px-2 rounded-xl flex flex-col items-center justify-center font-bold text-[10px] uppercase tracking-widest transition-all duration-300 ${mode === 'opiekun' ? 'bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.3)] border border-blue-500' : 'text-slate-400 hover:bg-slate-800'}`}>
-                                    <Icon name="FileSignature" size={24} className="mb-2 text-blue-300" />
-                                    Piszę Opinię
-                                    <span className="text-[8px] font-normal opacity-70 mt-1">(Opiekun / Dyrektor)</span>
+                                    <Icon name="FileSignature" size={24} className="mb-2 text-blue-300" /> Piszę Opinię <span className="text-[8px] font-normal opacity-70 mt-1">(Dyrektor)</span>
                                 </button>
                                 <button onClick={() => {setMode('nauczyciel'); setGeneratedData(null);}} className={`flex-1 py-4 px-2 rounded-xl flex flex-col items-center justify-center font-bold text-[10px] uppercase tracking-widest transition-all duration-300 ${mode === 'nauczyciel' ? 'bg-indigo-600 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)] border border-indigo-500' : 'text-slate-400 hover:bg-slate-800'}`}>
-                                    <Icon name="UserCheck" size={24} className="mb-2 text-indigo-300" />
-                                    Sprawozdanie
-                                    <span className="text-[8px] font-normal opacity-70 mt-1">(Nauczyciel)</span>
+                                    <Icon name="UserCheck" size={24} className="mb-2 text-indigo-300" /> Sprawozdanie <span className="text-[8px] font-normal opacity-70 mt-1">(Nauczyciel)</span>
                                 </button>
                             </div>
 
-                            {/* Formularz Danych */}
                             <div className="glass-panel p-6 md:p-8 rounded-[2rem] space-y-6">
-                                <h2 className="font-bold text-sm uppercase tracking-widest border-b border-slate-700/50 pb-4 text-slate-300 flex items-center gap-2">
-                                    <Icon name="Briefcase" size={18} className="text-blue-500" /> Dane do dokumentu
-                                </h2>
+                                <h2 className="font-bold text-sm uppercase tracking-widest border-b border-slate-700/50 pb-4 text-slate-300 flex items-center gap-2"><Icon name="Briefcase" size={18} className="text-blue-500" /> Formularz Awansu</h2>
                                 
-                                <div>
-                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Kogo dotyczy dokument? (Opcjonalnie)</label>
-                                    <input 
-                                        type="text" 
-                                        value={params.teacherName} 
-                                        onChange={e => setParams({...params, teacherName: e.target.value})} 
-                                        placeholder="Imię i nazwisko" 
-                                        className="w-full p-4 bg-slate-900 border border-slate-700 rounded-xl outline-none text-white text-sm focus:border-blue-500 transition-colors placeholder-slate-600"
-                                    />
-                                </div>
-
                                 <div>
                                     <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Stanowisko / Specjalizacja</label>
                                     <select value={params.role} onChange={e => setParams({...params, role: e.target.value})} className="w-full p-4 bg-slate-900 border border-slate-700 rounded-xl outline-none text-white text-sm font-medium focus:border-blue-500 mb-3 transition-colors appearance-none">
                                         {ROLES.map(r => <option key={r} value={r} className="bg-slate-900">{r}</option>)}
                                     </select>
-                                    {params.role === "Inne (wpisz własne)" && (
-                                        <input type="text" value={params.customRole} onChange={e => setParams({...params, customRole: e.target.value})} placeholder="np. Nauczyciel bibliotekarz..." className="w-full p-4 bg-slate-800 border border-blue-500/50 rounded-xl outline-none text-white text-sm focus:border-blue-500 animate-toast transition-colors" />
-                                    )}
+                                    {params.role === "Inne (wpisz własne)" && <input type="text" value={params.customRole} onChange={e => setParams({...params, customRole: e.target.value})} placeholder="np. Nauczyciel bibliotekarz..." className="w-full p-4 bg-slate-800 border border-blue-500/50 rounded-xl outline-none text-white text-sm focus:border-blue-500 transition-colors" />}
                                 </div>
 
                                 <div>
@@ -405,25 +253,28 @@ ZASADY KRYTYCZNE:
                                 </div>
 
                                 <div>
-                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">
-                                        Działania i Sukcesy (Wypisz hasłowo)
-                                    </label>
-                                    <textarea 
-                                        value={params.achievements} 
-                                        onChange={e => setParams({...params, achievements: e.target.value})} 
-                                        placeholder="Wpisz chaotycznie, co robił nauczyciel. Np. kurs TUS, prowadzil kolko szachowe, wdrozyl innowacje matematyczna..." 
-                                        className="w-full p-4 bg-slate-900 border border-slate-700 rounded-xl outline-none text-white font-medium text-sm resize-none focus:border-blue-500 transition-colors custom-scrollbar placeholder-slate-600"
-                                        rows="6"
-                                    />
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Działania (Luźne notatki)</label>
+                                    <textarea value={params.achievements} onChange={e => setParams({...params, achievements: e.target.value})} placeholder="np. kółko szachowe, gazetki, pomoc w poradni, kursy..." className="w-full p-4 bg-slate-900 border border-slate-700 rounded-xl outline-none text-white font-medium text-sm resize-none focus:border-blue-500 transition-colors custom-scrollbar placeholder-slate-600" rows="5"/>
+                                </div>
+
+                                <div className="bg-blue-900/20 p-4 rounded-xl border border-blue-500/30">
+                                    <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-3">Długość dokumentu</label>
+                                    <div className="flex flex-col gap-2">
+                                        <label className="flex items-center gap-3 cursor-pointer group">
+                                            <input type="radio" name="format" value="epic" checked={params.formatType === 'epic'} onChange={() => setParams({...params, formatType: 'epic'})} className="w-4 h-4 text-blue-600 bg-slate-900 border-slate-600 focus:ring-blue-500" />
+                                            <span className="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">Epicko rozbudowany (Lany tekst)</span>
+                                        </label>
+                                        <label className="flex items-center gap-3 cursor-pointer group">
+                                            <input type="radio" name="format" value="short" checked={params.formatType === 'short'} onChange={() => setParams({...params, formatType: 'short'})} className="w-4 h-4 text-blue-600 bg-slate-900 border-slate-600 focus:ring-blue-500" />
+                                            <span className="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">Zwięzły (Krótkie punkty)</span>
+                                        </label>
+                                    </div>
                                 </div>
 
                                 {!isPremium ? (
                                     <div className="p-6 rounded-xl border-2 border-dashed border-slate-700 flex flex-col items-center justify-center text-center gap-3 bg-slate-900/50">
                                         <div className="p-3 bg-slate-800 rounded-full"><Icon name="Lock" size={24} className="text-slate-400"/></div>
-                                        <div>
-                                            <span className="text-sm font-bold text-slate-300 block mb-1">Funkcja zablokowana</span>
-                                            <span className="text-xs text-slate-500">Wpisz kod Premium na górnym pasku.</span>
-                                        </div>
+                                        <div><span className="text-sm font-bold text-slate-300 block mb-1">Funkcja zablokowana</span><span className="text-xs text-slate-500">Wpisz kod Premium na górnym pasku.</span></div>
                                     </div>
                                 ) : (
                                     <button onClick={generateDocument} className="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-xl font-black text-sm tracking-widest shadow-[0_0_20px_rgba(37,99,235,0.3)] flex justify-center items-center gap-2 transition-all active:scale-95 uppercase">
@@ -431,59 +282,41 @@ ZASADY KRYTYCZNE:
                                     </button>
                                 )}
                             </div>
+
+                            <div className="p-5 rounded-3xl shadow-lg border flex items-start gap-4 animate-[reveal_0.3s_ease-out] transition-colors bg-blue-900/20 border-blue-500/30">
+                                <BotHelperAvatar />
+                                <div className="flex-1 pt-1">
+                                    <h4 className="font-black text-xs uppercase tracking-widest mb-1.5 text-blue-400">EduBot Urzędnik</h4>
+                                    <p className="text-sm font-medium leading-relaxed text-slate-300 bot-bubble" key={botMessage}>{botMessage}</p>
+                                </div>
+                            </div>
                         </div>
 
-                        {/* PANEL PRAWY - WYNIK (JASNY DOKUMENT) */}
                         <div className="lg:col-span-8 flex justify-center items-start overflow-x-auto pb-10 print:block">
-                            
                             {!generatedData ? (
                                 <div className="glass-panel w-full max-w-[210mm] min-h-[297mm] shadow-2xl p-8 rounded-[2rem] flex flex-col items-center justify-center text-center space-y-6 print-hidden border-2 border-dashed border-slate-700">
-                                    <div className="p-6 bg-slate-800/50 rounded-full border border-slate-700 shadow-inner floating">
-                                        <Icon name="FileSignature" size={64} className="text-slate-500" />
-                                    </div>
+                                    <div className="p-6 bg-slate-800/50 rounded-full border border-slate-700 shadow-inner"><Icon name="FileSignature" size={64} className="text-slate-500" /></div>
                                     <div>
                                         <h2 className="text-2xl font-bold mb-3 text-white">Twój dokument pojawi się tutaj</h2>
-                                        <p className="max-w-md mx-auto text-slate-400 leading-relaxed text-sm">Wypełnij formularz po lewej stronie, a sztuczna inteligencja zredaguje z Twoich luźnych notatek poprawny, oficjalny dokument językiem urzędowym.</p>
+                                        <p className="max-w-md mx-auto text-slate-400 leading-relaxed text-sm">Wypełnij formularz po lewej stronie, a zredaguję z Twoich luźnych notatek poprawny dokument urzędowy.</p>
                                     </div>
                                 </div>
                             ) : (
                                 <div className="w-full max-w-[210mm] animate-[reveal_0.5s_ease-out] print:max-w-full">
-                                    
-                                    {/* Toolbar Pobierania */}
                                     <div className="flex justify-end gap-3 mb-6 print-hidden bg-slate-900/50 p-2 rounded-2xl border border-slate-800 backdrop-blur-md">
-                                        <button onClick={exportToWord} className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all text-sm shadow-[0_0_15px_rgba(37,99,235,0.3)] active:scale-95">
-                                            <Icon name="Download" size={18}/> Word (.docx)
-                                        </button>
-                                        <button onClick={() => window.print()} className="flex-1 sm:flex-none bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all text-sm active:scale-95">
-                                            <Icon name="Printer" size={18}/> Drukuj PDF
-                                        </button>
+                                        <button onClick={exportToWord} className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all text-sm shadow-[0_0_15px_rgba(37,99,235,0.3)] active:scale-95"><Icon name="Download" size={18}/> Word (.docx)</button>
+                                        <button onClick={() => window.print()} className="flex-1 sm:flex-none bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all text-sm active:scale-95"><Icon name="Printer" size={18}/> Drukuj PDF</button>
                                     </div>
-
-                                    {/* Karta A4 (Zawsze jasna) */}
                                     <div className="bg-white shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-12 md:p-20 text-slate-900 document-font text-justify rounded-sm min-h-[297mm]" id="print-container">
-                                        
                                         <div id="document-render-area">
-                                            <h1 className="text-xl font-bold text-center uppercase mb-6 tracking-wide leading-tight text-black">
-                                                {generatedData.title}
-                                            </h1>
-                                            
-                                            {generatedData.legal_basis && (
-                                                <p className="text-sm italic text-center mb-10 text-slate-700 px-8">
-                                                    {generatedData.legal_basis}
-                                                </p>
-                                            )}
-
-                                            <div 
-                                                className="text-base leading-relaxed space-y-4 text-black"
-                                                dangerouslySetInnerHTML={{ __html: generatedData.document_body }} 
-                                            />
-                                            
+                                            <h1 className="text-xl font-bold text-center uppercase mb-6 tracking-wide leading-tight text-black">{generatedData.title}</h1>
+                                            {generatedData.legal_basis && <p className="text-sm italic text-center mb-10 text-slate-700 px-8">{generatedData.legal_basis}</p>}
+                                            <div className="text-base leading-relaxed space-y-4 text-black" dangerouslySetInnerHTML={{ __html: generatedData.document_body }} />
                                             <div className="mt-24 flex justify-between px-8 print:px-0 text-black">
                                                 <div className="border-t border-slate-400 w-48 text-center pt-2 text-sm">Miejscowość, data</div>
                                                 <div className="border-t border-slate-400 w-48 text-center pt-2 text-sm">Podpis i pieczęć</div>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             )}
@@ -492,9 +325,7 @@ ZASADY KRYTYCZNE:
                 </div>
             );
         }
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        const root = ReactDOM.createRoot(document.getElementById('root')); root.render(<App />);
     </script>
 </body>
 </html>

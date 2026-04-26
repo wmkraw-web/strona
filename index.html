@@ -3,31 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
     <title>EduBox AI - Twój Cyfrowy Niezbędnik Nauczyciela</title>
-    <meta name="description" content="Darmowe narzędzia AI dla nauczycieli. Generuj karty pracy, scenariusze i dyplomy w kilka sekund.">
-    
+    <!-- Biblioteki -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800;900&display=swap');
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #020617; /* Głęboki granat/czerń */
+            color: #f8fafc; 
+            scroll-behavior: smooth; 
+            overflow-x: hidden;
+        }
         
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; overflow-x: hidden; scroll-behavior: smooth;}
-        .text-gradient { background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); }
+        /* Szklane panele Premium */
+        .glass-panel { 
+            background: rgba(30, 41, 59, 0.4); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+        .glass-nav { 
+            background: rgba(2, 6, 23, 0.8); 
+            backdrop-filter: blur(20px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+        
+        /* Animacje i efekty */
         .app-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .app-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px -15px rgba(79, 70, 229, 0.15); }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
-        @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(79, 70, 229, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); } }
-        .bot-button-pulse { animation: pulse-ring 2.5s infinite; }
+        .app-card:hover { 
+            transform: translateY(-10px); 
+            box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.2); 
+            border-color: rgba(59, 130, 246, 0.3);
+            background: rgba(30, 41, 59, 0.7);
+        }
         
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-        .bot-float { animation: float 3s ease-in-out infinite; }
+        .text-gradient { 
+            background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        
+        .btn-bounce:active { transform: scale(0.95); }
+        video { border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        
+        /* Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+
+        /* Efekt pojawiania się */
+        .reveal { opacity: 0; transform: translateY(30px); animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+        
+        /* Lewitujący bot */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .bot-float { animation: float 4s ease-in-out infinite; }
+        
+        /* Wielka poświata w tle (Hero Glow) */
+        .hero-glow {
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 800px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(2, 6, 23, 0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -36,363 +84,140 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        const Reveal = ({ children, delay = 0 }) => {
-            const [isVisible, setIsVisible] = useState(false);
-            const ref = useRef();
-            useEffect(() => {
-                const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) setIsVisible(true); }, { threshold: 0.1 });
-                if (ref.current) observer.observe(ref.current);
-                return () => observer.disconnect();
-            }, []);
-            return <div ref={ref} className={`transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`} style={{ transitionDelay: `${delay}ms` }}>{children}</div>;
-        };
+        const BUY_COFFEE_LINK = "https://buycoffee.to/magiccolor";
 
-        const Counter = ({ target, duration = 2000 }) => {
-            const [count, setCount] = useState(0);
-            const ref = useRef();
-            const [isVisible, setIsVisible] = useState(false);
-            useEffect(() => {
-                const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) setIsVisible(true); }, { threshold: 0.5 });
-                if (ref.current) observer.observe(ref.current);
-                return () => observer.disconnect();
-            }, []);
-            useEffect(() => {
-                if (!isVisible) return;
-                let start = 0;
-                const increment = target / (duration / 16);
-                const timer = setInterval(() => {
-                    start += increment;
-                    if (start >= target) { setCount(target); clearInterval(timer); } else setCount(Math.ceil(start));
-                }, 16);
-                return () => clearInterval(timer);
-            }, [isVisible, target, duration]);
-            return <span ref={ref}>{count.toLocaleString('pl-PL')}</span>;
-        };
-
-        // --- ZAKTUALIZOWANA BAZA APLIKACJI Z KOLORAMI I NAPRAWIONYM BŁĘDEM ---
+        // ==========================================
+        // DANE APLIKACJI
+        // ==========================================
         const APPS = [
             {
                 title: 'Kreator Awansu AI',
-                desc: 'Moduł dla Nauczyciela i Dyrektora. Generuje profesjonalne sprawozdania i opinie do awansu zawodowego, uwzględniając specjalizację (np. psycholog, fizjoterapeuta).',
+                desc: 'Generuje profesjonalne sprawozdania i opinie do awansu zawodowego, uwzględniając specjalizację (np. psycholog, fizjoterapeuta).',
                 url: 'awans.html',
                 badge: 'NOWOŚĆ',
-                color: 'bg-sky-100 text-sky-700',
-                cardBg: 'bg-sky-50/50 hover:bg-sky-50',
-                borderColor: 'border-sky-100 hover:border-sky-300',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>'
+                badgeColor: 'bg-blue-600',
+                icon: <><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></>,
+                color: 'text-blue-400'
             },
             { 
                 title: 'Edukacja 2025 AI', 
                 desc: 'Bądź gotowy na Edukację Obywatelską i Zdrowotną! Generator nowoczesnych scenariuszy z grami ról i debatami.', 
                 url: 'edukacja2025.html', 
-                badge: 'NOWOŚĆ', 
-                color: 'bg-blue-100 text-blue-700',
-                cardBg: 'bg-blue-50/50 hover:bg-blue-50',
-                borderColor: 'border-blue-100 hover:border-blue-300',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>' 
+                badge: 'NOWOŚĆ',
+                badgeColor: 'bg-blue-600', 
+                color: 'text-blue-400',
+                icon: <><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></> 
             },
             { 
                 title: 'EduChunk AI', 
                 desc: 'Asystent Skupienia dla ADHD i Dysleksji. Wklej trudny tekst, a AI podzieli go na przyjazne i czytelne mikro-lekcje.', 
                 url: 'chunking.html', 
                 badge: 'INKLUZJA', 
-                color: 'bg-teal-100 text-teal-700',
-                cardBg: 'bg-teal-50/50 hover:bg-teal-50',
-                borderColor: 'border-teal-100 hover:border-teal-300',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>' 
+                badgeColor: 'bg-teal-600',
+                color: 'text-teal-400',
+                icon: <><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></> 
             },
-            { 
-                title: 'Scenariusz AI PRO', 
-                desc: 'Kompletny generator scenariuszy zajęć zgodnych z polską podstawą programową. Eksportuje gotowe pliki do Worda!', 
-                url: 'https://generator-scenariuszy.vercel.app/', 
-                badge: 'HIT! PRO', 
-                color: 'bg-emerald-100 text-emerald-600',
-                cardBg: 'bg-emerald-50/50 hover:bg-emerald-50',
-                borderColor: 'border-emerald-100 hover:border-emerald-300',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>' 
+            {
+                title: 'Scenariusz AI PRO',
+                desc: 'Kompletny generator scenariuszy zajęć zgodnych z polską podstawą programową. Tworzy cele, podział na minuty i eksportuje do Worda.',
+                url: 'https://generator-scenariuszy.vercel.app/',
+                badge: 'HIT! PRO',
+                badgeColor: 'bg-emerald-600',
+                icon: <><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></>,
+                color: 'text-emerald-400'
             },
-            { 
-                title: 'EduKarty AI', 
-                desc: 'Buduj karty pracy jak z klocków LEGO. Matematyka obrazkowa, szlaczki i kolorowanki AI bez tła.', 
-                url: 'https://edukarty-ai.vercel.app/', 
-                badge: 'PRO', 
-                color: 'bg-orange-100 text-orange-600',
-                cardBg: 'bg-orange-50/50 hover:bg-orange-50',
-                borderColor: 'border-orange-100 hover:border-orange-300',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5zM4 13a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6zM16 13a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-6z"/></svg>' 
+            {
+                title: 'EduKarty AI',
+                desc: 'Buduj karty pracy jak z klocków LEGO. Matematyka obrazkowa, szlaczki i kolorowanki AI bez tła. Idealne dla klas 1-3.',
+                url: 'https://edukarty-ai.vercel.app/',
+                badge: 'PRO',
+                badgeColor: 'bg-orange-600',
+                icon: <path d="M4 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5zM4 13a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6zM16 13a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-6z"/>,
+                color: 'text-orange-400'
             },
-            { 
-                title: 'EduGenerator', 
-                desc: 'Dyplomy i girlandy gotowe do druku w 60 sekund. Wybieraj piękne motywy lub poproś AI o unikalną grafikę.', 
-                url: 'https://edugenerator-dyplomy.vercel.app/', 
-                color: 'bg-indigo-100 text-indigo-600',
-                cardBg: 'bg-indigo-50/50 hover:bg-indigo-50',
-                borderColor: 'border-indigo-100 hover:border-indigo-300',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526M20 7a8 8 0 1 1-16 0 8 8 0 0 1 16 0z"/><circle cx="12" cy="7" r="3"/></svg>' 
+            {
+                title: 'EduGenerator',
+                desc: 'Dyplomy i girlandy gotowe do druku w 60 sekund. Wybieraj piękne motywy lub poproś AI o unikalną grafikę.',
+                url: 'https://edugenerator-dyplomy.vercel.app/',
+                icon: <path d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/>,
+                color: 'text-indigo-400'
             },
-            { 
-                title: 'Asystent Pedagoga', 
-                desc: 'Twórz IPET-y, WOPFU i opinie o uczniach 10x szybciej. Zredagowane profesjonalnym żargonem pedagogicznym.', 
-                url: 'https://asystent-pedagoga-specjalnego-dokumenty.streamlit.app', 
-                badge: 'KOD PREMIUM', 
-                color: 'bg-rose-100 text-rose-600',
-                cardBg: 'bg-rose-50/50 hover:bg-rose-50',
-                borderColor: 'border-rose-100 hover:border-rose-300',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' 
+            {
+                title: 'Asystent Pedagoga',
+                desc: 'Twórz IPET-y, WOPFU i opinie o uczniach 10x szybciej. AI ułoży propozycję planu wsparcia na podstawie diagnozy.',
+                url: 'https://asystent-pedagoga-specjalnego-dokumenty.streamlit.app',
+                badge: 'KOD PREMIUM',
+                badgeColor: 'bg-rose-600',
+                icon: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>,
+                color: 'text-rose-400'
             },
             { 
                 title: 'PromptMaster AI', 
                 desc: 'Uniwersalny kreator profesjonalnych poleceń dla AI. Szablony dla biznesu, marketingu i codziennej pracy.', 
                 url: 'https://promptmaster-tau.vercel.app/', 
-                color: 'bg-violet-100 text-violet-600',
-                cardBg: 'bg-violet-50/50 hover:bg-violet-50',
-                borderColor: 'border-violet-100 hover:border-violet-300',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>' 
+                color: 'text-violet-400',
+                icon: <><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></> 
             },
-            { 
-                title: 'EduPrompter AI', 
-                desc: 'Kreator profesjonalnych poleceń (promptów) na zajęcia. Posiada wbudowanego tłumacza tagów na angielski.', 
-                url: 'https://eduprompter.vercel.app/', 
-                color: 'bg-cyan-100 text-cyan-600',
-                cardBg: 'bg-cyan-50/50 hover:bg-cyan-50',
-                borderColor: 'border-cyan-100 hover:border-cyan-300',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>' 
+            {
+                title: 'EduPrompter AI',
+                desc: 'Kreator profesjonalnych poleceń (promptów) dla ChatGPT i muzyki w Suno AI. Wbudowany tłumacz tagów na angielski.',
+                url: 'https://eduprompter.vercel.app/',
+                icon: <><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></>,
+                color: 'text-cyan-400'
             },
-            { 
-                title: 'Magic Color AI', 
-                desc: 'Wpisz dowolny pomysł, a AI narysuje unikalną kolorowankę. Wybierz wiek i poziom detali.', 
-                url: 'https://magic-color-ai-dla-dzieci.streamlit.app/', 
-                badge: 'PRO', 
-                color: 'bg-pink-100 text-pink-600',
-                cardBg: 'bg-pink-50/50 hover:bg-pink-50',
-                borderColor: 'border-pink-100 hover:border-pink-300',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.92 0 1.68-.75 1.68-1.68 0-.44-.18-.84-.44-1.12-.29-.3-.44-.65-.44-1.12 0-.93.75-1.68 1.68-1.68h2.08c3.1 0 5.68-2.52 5.68-5.68C22 6.48 17.52 2 12 2z"/><path d="M7 10h.01"/><path d="M11 6h.01"/><path d="M15 6h.01"/><path d="M19 10h.01"/></svg>' 
+            {
+                title: 'Magic Color AI',
+                desc: 'Inteligentny generator kolorowanek. Wpisz dowolny pomysł, a AI narysuje unikalną kolorowankę w kilka sekund.',
+                url: 'https://magic-color-ai-dla-dzieci.streamlit.app/',
+                badge: 'PRO',
+                badgeColor: 'bg-pink-600',
+                icon: <><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.92 0 1.68-.75 1.68-1.68 0-.44-.18-.84-.44-1.12-.29-.3-.44-.65-.44-1.12 0-.93.75-1.68 1.68-1.68h2.08c3.1 0 5.68-2.52 5.68-5.68C22 6.48 17.52 2 12 2z"/><circle cx="7.5" cy="10.5" r=".5"/><circle cx="10.5" cy="7.5" r=".5"/><circle cx="13.5" cy="7.5" r=".5"/><circle cx="16.5" cy="10.5" r=".5"/></>,
+                color: 'text-pink-400'
             },
-            { 
-                title: 'Kreator Ikon PRO', 
-                desc: 'Twórz ikony folderów (.ICO) dla Windows. Magiczna gumka usunie tło z każdego obrazka.', 
-                url: 'https://kreator-ikon.vercel.app/', 
-                color: 'bg-slate-200 text-slate-700',
-                cardBg: 'bg-slate-50/80 hover:bg-slate-100',
-                borderColor: 'border-slate-200 hover:border-slate-300',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>' 
+            {
+                title: 'Kreator Ikon PRO',
+                desc: 'Twórz własne ikony folderów (.ICO) dla Windows. AI narysuje przedmiot i automatycznie usunie z niego tło.',
+                url: 'https://kreator-ikon.vercel.app/',
+                icon: <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>,
+                color: 'text-slate-300'
             },
             { 
                 title: 'EduBoxPro Studio', 
                 desc: 'Zaawansowany kombajn narzędzi AI. Profesjonalny generator promptów Wideo i Grafiki oraz interaktywne gry.', 
                 url: 'studio.html', 
                 badge: 'NOWOŚĆ',
-                color: 'bg-fuchsia-100 text-fuchsia-700',
-                cardBg: 'bg-fuchsia-50/50 hover:bg-fuchsia-50',
-                borderColor: 'border-fuchsia-100 hover:border-fuchsia-300',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.21 1.21 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>' 
+                badgeColor: 'bg-fuchsia-600',
+                color: 'text-fuchsia-400',
+                icon: <><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.21 1.21 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></> 
             }
         ];
 
-        // --- KOMPONENTY WIZUALNE ---
+        const RECOMMENDATIONS = [
+            { name: 'Chmurka AI', url: 'https://chmurka.ai/', icon: '☁️', desc: 'Przyjazny polski asystent AI do tekstów.' },
+            { name: 'ChatGPT', url: 'https://chat.openai.com/', icon: '🤖', desc: 'Najpotężniejszy model językowy.' },
+            { name: 'Suno AI', url: 'https://suno.com/', icon: '🎵', desc: 'Twórz piosenki na zajęcia z AI.' }
+        ];
 
-        const HeroSection = () => {
-            return (
-                <header className="relative pt-40 pb-20 px-6 text-center border-b border-slate-100 overflow-hidden bg-gradient-to-b from-blue-50 to-white">
-                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4=')] opacity-50 z-0"></div>
-                    <div className="max-w-5xl mx-auto relative z-10">
-                        <Reveal>
-                            <div className="inline-flex items-center justify-center p-2 mb-6 bg-blue-100 text-blue-800 rounded-full text-xs font-black uppercase tracking-widest shadow-sm">
-                                ✨ Twój Osobisty Asystent Dydaktyczny AI
-                            </div>
-                            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
-                                Odzyskaj <span className="text-blue-600">10 godzin</span> w tygodniu.<br className="hidden md:block"/>
-                                Zostaw biurokrację AI.
-                            </h1>
-                            <p className="mt-4 text-lg md:text-xl text-slate-600 max-w-3xl mx-auto mb-10 leading-relaxed">
-                                EduBox Pro AI to inteligentna platforma dla nauczycieli i pedagogów. Generuj konspekty, karty pracy, dyplomy i dokumentację IPET w 5 sekund. Odzyskaj czas na to, co naprawdę ważne – na pracę z uczniem.
-                            </p>
-                            <div className="flex flex-col sm:flex-row justify-center gap-4">
-                                <a href="#aplikacje" className="px-8 py-4 bg-blue-600 text-white rounded-xl font-bold text-lg hover:bg-blue-700 transition shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center">
-                                    Przetestuj za darmo 🚀
-                                </a>
-                                <a href="#wideo" className="px-8 py-4 bg-white text-blue-600 border-2 border-blue-100 rounded-xl font-bold text-lg hover:bg-blue-50 transition flex items-center justify-center">
-                                    Zobacz jak to działa ▶
-                                </a>
-                            </div>
-                            <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-sm font-bold text-slate-500">
-                                <div className="flex items-center"><span className="text-green-500 mr-2">✔️</span> Zgodne z wytycznymi MEN</div>
-                                <div className="flex items-center"><span className="text-green-500 mr-2">✔️</span> Bezpieczne dane (RODO)</div>
-                            </div>
-                        </Reveal>
-                    </div>
-                </header>
-            );
-        };
-
-        const FeaturesSection = () => {
-            const features = [
-                {
-                    icon: "📝",
-                    title: "Kreator Dokumentacji (IPET/WOPFU)",
-                    description: "Koniec z wielogodzinnym pisaniem opinii. Wpisz hasłowo mocne i słabe strony ucznia, a AI wygeneruje profesjonalny, wielostronicowy dokument urzędowy gotowy do druku."
-                },
-                {
-                    icon: "🏛️",
-                    title: "Gotowce: Edukacja Obywatelska",
-                    description: "Bądź gotowy na nowe przedmioty w 2025. Błyskawicznie generuj pełne konspekty zajęć, quizy i materiały o praworządności czy higienie cyfrowej."
-                },
-                {
-                    icon: "🧠",
-                    title: "Narzędzia Neuroinkluzywne (SPE)",
-                    description: "Masz w klasie uczniów z ADHD lub dysleksją? Nasz algorytm stosuje metodę 'chunkingu' – dzieli trudny tekst na mikro-lekcje i tworzy jasne instrukcje."
-                }
-            ];
-
-            return (
-                <section className="py-24 bg-white relative z-10 border-b border-slate-100">
-                    <div className="max-w-6xl mx-auto px-6">
-                        <Reveal>
-                            <div className="text-center mb-16">
-                                <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight">Rozwiązujemy realne problemy</h2>
-                                <p className="mt-4 text-lg text-slate-500 font-medium">Narzędzia zaprojektowane przez edukatorów, dla edukatorów.</p>
-                            </div>
-                        </Reveal>
-                        <div className="grid md:grid-cols-3 gap-8">
-                            {features.map((feature, index) => (
-                                <Reveal key={index} delay={index * 150}>
-                                    <div className="p-8 bg-slate-50 rounded-[2rem] hover:shadow-xl hover:-translate-y-2 transition-all border border-slate-100 h-full">
-                                        <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mb-6 text-3xl border border-slate-100">
-                                            {feature.icon}
-                                        </div>
-                                        <h3 className="text-xl font-bold text-slate-900 mb-3 leading-tight">{feature.title}</h3>
-                                        <p className="text-slate-500 leading-relaxed text-sm">
-                                            {feature.description}
-                                        </p>
-                                    </div>
-                                </Reveal>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-            );
-        };
-
-        const TrustSection = () => {
-            return (
-                <section className="py-24 bg-slate-900 text-white relative overflow-hidden">
-                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiMzMzQxNTUiLz48L3N2Zz4=')] opacity-20"></div>
-                    <div className="max-w-6xl mx-auto px-6 relative z-10">
-                        <Reveal>
-                            <div className="text-center mb-16">
-                                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">Technologia w służbie pedagogiki</h2>
-                                <p className="mt-4 text-slate-400 text-lg">Spełniamy najbardziej rygorystyczne normy unijne i oświatowe.</p>
-                            </div>
-                        </Reveal>
-                        <div className="grid md:grid-cols-3 gap-10 text-center">
-                            <Reveal delay={100}>
-                                <div className="p-6">
-                                    <div className="text-5xl mb-6">🔒</div>
-                                    <h3 className="text-xl font-bold mb-3">100% Prywatności Uczniów</h3>
-                                    <p className="text-slate-400 text-sm leading-relaxed">
-                                        Gwarantujemy, że żadne dane wpisywane do systemu (np. w kreatorze IPET) NIE SĄ wykorzystywane do trenowania zewnętrznych modeli AI. Zgodność z RODO.
-                                    </p>
-                                </div>
-                            </Reveal>
-                            <Reveal delay={200}>
-                                <div className="p-6">
-                                    <div className="text-5xl mb-6">🤝</div>
-                                    <h3 className="text-xl font-bold mb-3">Asystent, nie zastępstwo</h3>
-                                    <p className="text-slate-400 text-sm leading-relaxed">
-                                        EduBox wspiera ideę "Human-in-the-loop". Algorytm proponuje rozwiązania metodyczne, ale to Ty, jako certyfikowany pedagog, podejmujesz ostateczne decyzje.
-                                    </p>
-                                </div>
-                            </Reveal>
-                            <Reveal delay={300}>
-                                <div className="p-6">
-                                    <div className="text-5xl mb-6">👁️</div>
-                                    <h3 className="text-xl font-bold mb-3">Zgodność z WCAG 2.2</h3>
-                                    <p className="text-slate-400 text-sm leading-relaxed">
-                                        Platforma jest przygotowywana na wymogi Europejskiego Aktu o Dostępności (2025). Przejrzysty interfejs wspierający osoby z neuroatypowościami.
-                                    </p>
-                                </div>
-                            </Reveal>
-                        </div>
-                    </div>
-                </section>
-            );
-        };
-
-        const VideoGreeting = () => {
-            const [isMuted, setIsMuted] = useState(true);
-            const [isClosed, setIsClosed] = useState(false);
-            const videoRef = useRef(null);
-
-            if (isClosed) return null;
-
-            const handleToggleMute = () => {
-                if (videoRef.current) {
-                    videoRef.current.muted = !isMuted;
-                    setIsMuted(!isMuted);
-                    if (isMuted) {
-                        videoRef.current.currentTime = 0; 
-                        videoRef.current.play();
-                    }
-                }
-            };
-
-            return (
-                <div className="fixed bottom-6 left-6 z-[100] flex flex-col items-start group">
-                    {!isMuted && (
-                        <div className="bg-white text-indigo-900 border border-indigo-100 text-xs font-bold py-3 px-4 rounded-2xl rounded-bl-sm shadow-xl mb-3 max-w-[220px] leading-relaxed animate-[reveal_0.3s_ease-out]">
-                            "Witamy na EduBox AI! Skorzystaj z naszego chatbota po prawej stronie, odpowie od razu. Jeśli czegoś brakuje, napisz do nas!"
-                        </div>
-                    )}
-                    {isMuted && (
-                        <div className="absolute left-[85px] top-2 bg-pink-500 text-white text-[10px] font-bold py-1.5 px-3 rounded-2xl rounded-tl-sm shadow-lg whitespace-nowrap animate-bounce pointer-events-none">
-                            Kliknij i posłuchaj! 🔊
-                        </div>
-                    )}
-                    <div className="relative">
-                        <button onClick={() => setIsClosed(true)} className="absolute -top-2 -right-2 bg-white text-slate-400 hover:text-slate-700 w-6 h-6 rounded-full shadow-md flex items-center justify-center z-10 text-xs font-bold transition-colors">✕</button>
-                        <div onClick={handleToggleMute} className={`relative overflow-hidden shadow-2xl cursor-pointer transition-all duration-500 ease-in-out ${isMuted ? 'w-20 h-20 rounded-full border-4 border-white hover:scale-105' : 'w-36 h-48 rounded-2xl border-4 border-indigo-500'}`}>
-                            <video 
-                                ref={videoRef}
-                                src="powitanie.mp4" 
-                                autoPlay 
-                                loop={isMuted} 
-                                muted={isMuted} 
-                                playsInline
-                                onEnded={() => {
-                                    setIsMuted(true);
-                                    if (videoRef.current) { videoRef.current.muted = true; videoRef.current.play(); }
-                                }}
-                                className="w-full h-full object-cover"
-                                poster="https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=200&auto=format&fit=crop"
-                            />
-                            {isMuted && (
-                                <div className="absolute inset-0 bg-black/20 flex items-center justify-center transition-opacity hover:bg-black/40">
-                                    <svg className="w-8 h-8 text-white drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><line x1="3" y1="3" x2="21" y2="21" stroke="white" strokeWidth="2" strokeLinecap="round"/></svg>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
+        // ==========================================
+        // ASYSTENT EDU-BOT (DARK MODE)
+        // ==========================================
         const BotAvatar = ({ className = "w-10 h-10" }) => (
-            <svg viewBox="0 0 100 100" className={`${className} bot-float`} xmlns="http://www.w3.org/2000/svg">
-                <path d="M50 30 V15" stroke="#94a3b8" strokeWidth="4" strokeLinecap="round"/>
-                <circle cx="50" cy="12" r="6" fill="#fbbf24"/>
-                <rect x="20" y="30" width="60" height="45" rx="15" fill="#4f46e5"/>
-                <rect x="28" y="40" width="44" height="25" rx="8" fill="#ffffff"/>
-                <circle cx="38" cy="52" r="4" fill="#4f46e5"/>
-                <circle cx="62" cy="52" r="4" fill="#4f46e5"/>
-                <path d="M 45 60 Q 50 64 55 60" stroke="#4f46e5" strokeWidth="3" fill="none" strokeLinecap="round"/>
-                <path d="M20 45 h-4 a4 4 0 0 0 -4 4 v4 a4 4 0 0 0 4 4 h4" fill="#818cf8"/>
-                <path d="M80 45 h4 a4 4 0 0 1 4 4 v4 a4 4 0 0 1 -4 4 h-4" fill="#818cf8"/>
+            <svg viewBox="0 0 100 100" className={`${className} bot-float drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]`} xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 30 V15" stroke="#475569" strokeWidth="4" strokeLinecap="round"/>
+                <circle cx="50" cy="12" r="6" fill="#60a5fa"/>
+                <rect x="20" y="30" width="60" height="45" rx="15" fill="#1e3a8a"/>
+                <rect x="28" y="40" width="44" height="25" rx="8" fill="#0f172a"/>
+                <circle cx="38" cy="52" r="4" fill="#60a5fa"/>
+                <circle cx="62" cy="52" r="4" fill="#60a5fa"/>
+                <path d="M 45 60 Q 50 64 55 60" stroke="#60a5fa" strokeWidth="3" fill="none" strokeLinecap="round"/>
+                <path d="M20 45 h-4 a4 4 0 0 0 -4 4 v4 a4 4 0 0 0 4 4 h4" fill="#3b82f6"/>
+                <path d="M80 45 h4 a4 4 0 0 1 4 4 v4 a4 4 0 0 1 -4 4 h-4" fill="#3b82f6"/>
             </svg>
         );
 
         const EduBotChat = () => {
             const [isOpen, setIsOpen] = useState(false);
-            const [messages, setMessages] = useState([{ sender: 'ai', text: 'Cześć! Jestem EduBot 🤖 Twój osobisty asystent. Szukasz pomocy przy dyplomach, kartach pracy, czy IPETach?' }]);
+            const [messages, setMessages] = useState([{ sender: 'ai', text: 'Cześć! Jestem EduBot 🤖 Twój osobisty asystent. W czym mogę pomóc? (np. dyplomy, awans, karty pracy)' }]);
             const [inputText, setInputText] = useState('');
             const messagesEndRef = useRef(null);
 
@@ -405,14 +230,13 @@
                 setInputText('');
 
                 setTimeout(() => {
-                    let response = "Zawsze chętnie pomogę! Spróbuj zapytać mnie o 'IPET', 'dyplomy', 'karty pracy' lub 'kod premium'.";
+                    let response = "Zawsze chętnie pomogę! Spróbuj zapytać mnie o 'awans', 'dyplomy', 'karty pracy' lub 'kod premium'.";
                     const lower = userMsg.toLowerCase();
-                    if (lower.includes('ipet') || lower.includes('wopfu') || lower.includes('opini')) response = "Użyj naszego 'Asystenta Pedagoga'. Pomoże Ci napisać dokumenty zachowując urzędowy język.";
-                    else if (lower.includes('dyplom') || lower.includes('girland')) response = "Do tworzenia dyplomów użyj 'EduGeneratora'. To nasz absolutny hit!";
+                    if (lower.includes('ipet') || lower.includes('wopfu') || lower.includes('opini') || lower.includes('awans')) response = "Zdecydowanie polecam 'Kreator Awansu AI' lub 'Asystenta Pedagoga'. Napiszą dla Ciebie perfekcyjne dokumenty urzędowe!";
+                    else if (lower.includes('dyplom') || lower.includes('girland')) response = "Do tworzenia pięknych dyplomów użyj 'EduGeneratora'. To nasz klasyk!";
                     else if (lower.includes('kart') || lower.includes('matematyk')) response = "'EduKarty AI' pozwalają złożyć kartę pracy jak z klocków LEGO.";
-                    else if (lower.includes('kawa') || lower.includes('kod') || lower.includes('premium')) response = "Kod Premium otrzymasz stawiając mi wirtualną kawę przez link na górze strony! ☕ (Obecne hasło to KAWA2024)";
-                    else if (lower.includes('scenariusz') || lower.includes('lekcj')) response = "Polecam nasz Kombajn Metodyczny: 'Scenariusz AI PRO'. Wygeneruje dla Ciebie pełny konspekt zajęć.";
-                    else if (lower.includes('prompt') || lower.includes('polecen')) response = "Sprawdź 'PromptMaster AI' - uczy, jak pisać perfekcyjne zadania dla modeli AI.";
+                    else if (lower.includes('kawa') || lower.includes('kod') || lower.includes('premium')) response = "Kod Premium otrzymasz stawiając wirtualną kawę twórcy! ☕ (Obecne hasło to KAWA2024)";
+                    else if (lower.includes('scenariusz') || lower.includes('lekcj')) response = "Polecam nasz Kombajn: 'Scenariusz AI PRO'. Wygeneruje dla Ciebie pełny konspekt zajęć z exportem do Worda.";
                     setMessages(prev => [...prev, { sender: 'ai', text: response }]);
                 }, 800);
             };
@@ -420,196 +244,215 @@
             return (
                 <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
                     {isOpen && (
-                        <div className="bg-white w-[calc(100vw-48px)] sm:w-[350px] h-[450px] rounded-3xl shadow-2xl border border-slate-200 mb-4 flex flex-col overflow-hidden">
-                            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 flex items-center justify-between text-white shadow-md z-10">
+                        <div className="glass-panel w-[calc(100vw-48px)] sm:w-[350px] h-[450px] rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-slate-700 mb-4 flex flex-col overflow-hidden">
+                            <div className="bg-slate-900/80 border-b border-slate-700 p-4 flex items-center justify-between text-white z-10">
                                 <div className="flex items-center gap-3">
-                                    <div className="bg-white/20 p-1.5 rounded-full"><BotAvatar className="w-8 h-8"/></div>
+                                    <div className="bg-slate-800 p-1.5 rounded-full"><BotAvatar className="w-8 h-8"/></div>
                                     <div>
                                         <h3 className="font-bold leading-tight">EduBot Concierge</h3>
-                                        <p className="text-[10px] text-blue-100 uppercase tracking-widest font-black">Online</p>
+                                        <p className="text-[10px] text-blue-400 uppercase tracking-widest font-black">Online</p>
                                     </div>
                                 </div>
-                                <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white p-2 text-xl font-bold">✕</button>
+                                <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white p-2 text-xl font-bold transition-colors">✕</button>
                             </div>
-                            <div className="flex-1 bg-slate-50 p-4 overflow-y-auto custom-scrollbar flex flex-col gap-4">
+                            <div className="flex-1 bg-slate-900/50 p-4 overflow-y-auto custom-scrollbar flex flex-col gap-4">
                                 {messages.map((msg, i) => (
-                                    <div key={i} className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${msg.sender === 'ai' ? 'bg-white border border-slate-200 text-slate-700 self-start rounded-tl-sm' : 'bg-blue-600 text-white self-end rounded-tr-sm'}`}>{msg.text}</div>
+                                    <div key={i} className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${msg.sender === 'ai' ? 'bg-slate-800 border border-slate-700 text-slate-200 self-start rounded-tl-sm' : 'bg-blue-600 text-white self-end rounded-tr-sm'}`}>{msg.text}</div>
                                 ))}
                                 <div ref={messagesEndRef} />
                             </div>
-                            <div className="p-3 bg-white border-t border-slate-100 flex gap-2">
-                                <input type="text" value={inputText} onChange={e => setInputText(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="Napisz tu..." className="flex-1 bg-slate-100 border-none rounded-xl px-4 py-2 outline-none text-sm" />
-                                <button onClick={handleSend} className="bg-blue-600 hover:bg-blue-700 text-white w-10 h-10 rounded-xl flex items-center justify-center"><svg className="w-4 h-4 translate-x-[-1px] translate-y-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
+                            <div className="p-3 bg-slate-900 border-t border-slate-700 flex gap-2">
+                                <input type="text" value={inputText} onChange={e => setInputText(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="Napisz tu..." className="flex-1 bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-2 outline-none text-sm focus:border-blue-500 placeholder-slate-500 transition-colors" />
+                                <button onClick={handleSend} className="bg-blue-600 hover:bg-blue-500 text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors"><svg className="w-4 h-4 translate-x-[-1px] translate-y-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
                             </div>
                         </div>
                     )}
                     
-                    <button onClick={() => setIsOpen(!isOpen)} className="bg-white border-2 border-blue-100 w-16 h-16 rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl hover:scale-105 transition-all relative group z-50">
+                    <button onClick={() => setIsOpen(!isOpen)} className="bg-slate-900 border-2 border-blue-500/50 w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 transition-all relative group z-50">
                         {!isOpen && (
                             <div className="absolute right-20 top-2 bg-blue-600 text-white text-xs font-bold py-2 px-4 rounded-2xl rounded-tr-sm shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                                 W czym pomóc? 👋
                             </div>
                         )}
                         <BotAvatar />
-                        <div className="absolute bottom-1 right-1 w-4 h-4 bg-emerald-400 border-2 border-white rounded-full"></div>
+                        <div className="absolute bottom-1 right-1 w-4 h-4 bg-emerald-400 border-2 border-slate-900 rounded-full"></div>
                     </button>
                 </div>
             );
         };
 
+        // ==========================================
+        // KOMPONENT GŁÓWNY (KARTY APLIKACJI)
+        // ==========================================
+        const AppCard = ({ app }) => (
+            <a href={app.url} target="_blank" className="app-card glass-panel rounded-[2.5rem] p-8 flex flex-col h-full relative overflow-hidden group">
+                {app.badge && <div className={`absolute top-0 right-0 ${app.badgeColor} text-white text-[10px] font-black px-4 py-2 rounded-bl-2xl uppercase tracking-widest z-10`}>{app.badge}</div>}
+                
+                {/* Delikatna poświata w tle karty na hover */}
+                <div className={`absolute -inset-10 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity blur-2xl -z-10`}></div>
+
+                <div className={`w-16 h-16 bg-slate-800 border border-slate-700 ${app.color} rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-lg`}>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{app.icon}</svg>
+                </div>
+                
+                <h3 className="text-2xl font-bold text-white mb-3 tracking-tight">{app.title}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed mb-8 flex-grow">{app.desc}</p>
+                
+                <div className={`flex items-center ${app.color} font-bold text-xs uppercase tracking-widest pt-5 border-t border-slate-700/50 mt-auto`}>
+                    Uruchom narzędzie
+                    <svg className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </div>
+            </a>
+        );
+
         function App() {
             return (
-                <div className="min-h-screen flex flex-col">
-                    <nav className="fixed top-0 left-0 right-0 z-50 glass-nav py-4 px-6">
-                        <div className="max-w-6xl mx-auto flex justify-between items-center">
-                            <div className="flex items-center space-x-2 font-black text-xl tracking-tight cursor-pointer" onClick={() => window.scrollTo(0,0)}>
-                                <div className="bg-blue-600 p-2 rounded-xl text-white shadow-lg shadow-blue-200"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-                                <span>EduBox<span className="text-blue-600">AI</span></span>
+                <div className="min-h-screen relative">
+                    <div className="hero-glow"></div>
+
+                    {/* NAWIGACJA */}
+                    <nav className="fixed top-0 w-full z-[100] glass-nav">
+                        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                            <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo(0,0)}>
+                                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                </div>
+                                <span className="text-xl font-extrabold tracking-tight text-white">EduBox<span className="text-blue-500">AI</span></span>
                             </div>
-                            <div className="hidden md:flex space-x-8 text-sm font-bold text-slate-500">
-                                <a href="#aplikacje" className="hover:text-blue-600 transition-colors">Aplikacje</a>
-                                <a href="#wideo" className="hover:text-blue-600 transition-colors">Wideo</a>
-                                <a href="#opinie" className="hover:text-blue-600 transition-colors">Opinie</a>
+                            <div className="hidden md:flex items-center gap-8 text-xs font-black text-slate-400 uppercase tracking-widest">
+                                <a href="#narzedzia" className="hover:text-blue-400 transition-colors">Narzędzia</a>
+                                <a href="#linki" className="hover:text-blue-400 transition-colors">Polecane</a>
+                                <a href="#video" className="hover:text-blue-400 transition-colors">Wideo</a>
+                                <a href={BUY_COFFEE_LINK} target="_blank" className="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-500 transition-all shadow-[0_0_20px_rgba(59,130,246,0.4)] btn-bounce">Postaw Kawę ☕</a>
                             </div>
-                            <a href="https://buycoffee.to/magiccolor" target="_blank" className="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 text-amber-950 px-5 py-2.5 rounded-xl font-bold shadow-sm transition-transform active:scale-95 text-sm flex items-center gap-2">
-                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM7 2v3M11 2v3M15 2v3"/></svg><span>Postaw Kawę</span>
-                            </a>
                         </div>
                     </nav>
 
-                    <HeroSection />
-                    <FeaturesSection />
-
-                    <section id="wideo" className="bg-slate-900 py-24 relative overflow-hidden">
-                        <div className="max-w-6xl mx-auto px-6 relative z-10">
-                            <Reveal>
-                                <div className="text-center mb-16">
-                                    <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">Zobacz magię w akcji! 🎬</h2>
-                                    <p className="text-slate-400 max-w-2xl mx-auto text-lg">Przekonaj się, jak w zaledwie kilkanaście sekund powstają gotowe materiały na Twoje zajęcia.</p>
-                                </div>
-                            </Reveal>
-
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                                <Reveal delay={100}><div className="bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-700 aspect-[9/16]"><video src="wideo1.mp4" poster="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?q=80&w=400&auto=format&fit=crop" preload="none" controls playsInline className="w-full h-full object-cover"></video></div></Reveal>
-                                <Reveal delay={200}><div className="bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-700 aspect-[9/16]"><video src="wideo2.mp4" poster="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=400&auto=format&fit=crop" preload="none" controls playsInline className="w-full h-full object-cover"></video></div></Reveal>
-                                <Reveal delay={300}><div className="hidden lg:block bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-700 aspect-[9/16]"><video src="wideo3.mp4" poster="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=400&auto=format&fit=crop" preload="none" controls playsInline className="w-full h-full object-cover"></video></div></Reveal>
-                                <Reveal delay={400}><div className="hidden lg:block bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-700 aspect-[9/16]"><video src="wideo4.mp4" poster="https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=400&auto=format&fit=crop" preload="none" controls playsInline className="w-full h-full object-cover"></video></div></Reveal>
+                    {/* HERO */}
+                    <header className="relative pt-48 pb-24 px-6 text-center z-10">
+                        <div className="max-w-5xl mx-auto reveal">
+                            <div className="inline-flex items-center gap-2 bg-blue-900/30 border border-blue-500/30 px-4 py-2 rounded-full text-[10px] font-black text-blue-400 uppercase tracking-widest mb-8 backdrop-blur-sm">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                System AI dla Nauczycieli
                             </div>
+                            <h1 className="text-5xl md:text-7xl lg:text-[5rem] font-black text-white mb-8 leading-tight tracking-tight">
+                                Mniej papierów,<br/>
+                                <span className="text-gradient">więcej edukacji.</span>
+                            </h1>
+                            <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+                                Zautomatyzuj biurokrację dzięki Sztucznej Inteligencji. EduBox AI to narzędzia piszące scenariusze, opinie i generujące materiały w 15 sekund.
+                            </p>
+                            <div className="flex flex-wrap justify-center gap-5">
+                                <a href="#narzedzia" className="bg-blue-600 text-white px-10 py-5 rounded-full font-black text-lg hover:bg-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all btn-bounce active:scale-95 flex items-center gap-2">
+                                    Rozpocznij za darmo <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </header>
 
-                            <Reveal delay={200}>
-                                <div className="mt-20 pt-16 border-t border-slate-800 grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
-                                    <div>
-                                        <div className="text-5xl font-black text-blue-400 mb-2"><Counter target={2450} />+</div>
-                                        <div className="text-slate-400 font-bold uppercase tracking-widest text-xs">Zaoszczędzonych Godzin</div>
-                                    </div>
-                                    <div>
-                                        <div className="text-5xl font-black text-pink-400 mb-2"><Counter target={15200} />+</div>
-                                        <div className="text-slate-400 font-bold uppercase tracking-widest text-xs">Wygenerowanych Materiałów</div>
-                                    </div>
-                                    <div>
-                                        <div className="text-5xl font-black text-emerald-400 mb-2"><Counter target={100} />%</div>
-                                        <div className="text-slate-400 font-bold uppercase tracking-widest text-xs">Polska Podstawa Programowa</div>
-                                    </div>
-                                </div>
-                            </Reveal>
+                    {/* GRID APKI */}
+                    <section id="narzedzia" className="max-w-7xl mx-auto px-6 py-20 z-10 relative">
+                        <div className="text-center mb-16">
+                            <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tighter">Twoje Asystentki AI</h2>
+                            <p className="text-slate-400 mt-4 font-medium">Wybierz narzędzie i odzyskaj swój wolny czas.</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {APPS.map((app, i) => <AppCard key={i} app={app} />)}
                         </div>
                     </section>
 
-                    <main id="aplikacje" className="max-w-6xl mx-auto px-6 py-24 flex-grow w-full">
-                        <Reveal><h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 mb-16 text-center tracking-tight">Wybierz narzędzie dla siebie</h2></Reveal>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {APPS.map((app, i) => (
-                                <Reveal key={i} delay={i * 100}>
-                                    <a href={app.url} target="_blank" className={`app-card ${app.cardBg} border ${app.borderColor} rounded-3xl p-8 flex flex-col h-full relative group transition-colors`}>
-                                        {app.badge && <div className={`absolute top-0 right-0 text-white text-[10px] font-black px-3 py-1.5 rounded-bl-xl uppercase tracking-widest ${app.badge.includes('PRO') || app.badge.includes('NOWOŚĆ') || app.badge.includes('INKLUZJA') ? app.color.split(' ')[1].replace('text-', 'bg-') : 'bg-slate-800'}`}>{app.badge}</div>}
-                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform ${app.color}`}>
-                                            <div dangerouslySetInnerHTML={{__html: app.icon}} />
-                                        </div>
-                                        <h3 className="text-2xl font-bold mb-3 text-slate-800 tracking-tight">{app.title}</h3>
-                                        <p className="text-slate-600 font-medium mb-8 flex-grow text-sm leading-relaxed">{app.desc}</p>
-                                        <div className={`font-black text-xs uppercase tracking-widest pt-5 border-t border-slate-200/50 flex items-center group-hover:translate-x-2 transition-transform ${app.color.split(' ')[1]}`}>Uruchom Narzędzie →</div>
-                                    </a>
-                                </Reveal>
+                    {/* POLECANE LINKI */}
+                    <section id="linki" className="max-w-7xl mx-auto px-6 py-24 border-t border-slate-800">
+                        <div className="text-center mb-16">
+                            <h2 className="text-3xl font-black text-white mb-4 uppercase tracking-tighter">Przydatne zewnątrz</h2>
+                            <p className="text-slate-400 font-medium">Technologia AI, którą rekomendujemy do codziennej pracy.</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {RECOMMENDATIONS.map((link, i) => (
+                                <a key={i} href={link.url} target="_blank" className="glass-panel p-8 rounded-[2rem] hover:-translate-y-2 transition-transform flex flex-col items-center text-center group">
+                                    <div className="text-5xl mb-6 group-hover:scale-110 transition-transform drop-shadow-lg">{link.icon}</div>
+                                    <h4 className="text-xl font-bold text-white mb-2">{link.name}</h4>
+                                    <p className="text-slate-400 text-sm leading-relaxed">{link.desc}</p>
+                                </a>
                             ))}
                         </div>
-                    </main>
+                    </section>
 
-                    <section className="bg-indigo-50 py-24 border-t border-indigo-100">
-                        <div className="max-w-6xl mx-auto px-6">
-                            <Reveal>
-                                <div className="text-center mb-16">
-                                    <h2 className="text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">Polecane narzędzia zewnętrzne 🌐</h2>
-                                    <p className="text-slate-500">Sztuczna Inteligencja, z której korzystamy na co dzień i którą szczerze polecamy.</p>
+                    {/* VIDEO */}
+                    <section id="video" className="py-24 bg-slate-900 border-y border-slate-800">
+                        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                            <div className="relative group">
+                                <div className="absolute -inset-4 bg-blue-600/20 blur-2xl rounded-[2rem] opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                                <video controls poster="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070" className="relative z-10 w-full rounded-2xl border border-slate-700">
+                                    <source src="twoje-video-promo.mp4" type="video/mp4" />
+                                </video>
+                            </div>
+                            <div className="text-white space-y-8">
+                                <h2 className="text-4xl font-black leading-tight tracking-tight">
+                                    Zobacz magię<br/>
+                                    <span className="text-blue-500 uppercase">EduBox AI</span> w akcji!
+                                </h2>
+                                <p className="text-slate-400 text-lg leading-relaxed">
+                                    Na wideo pokazujemy, jak w 15 sekund wygenerować pełną kartę pracy z matematyki, którą normalnie przygotowywałbyś pół godziny. AI rysuje grafiki, wycina tło i układa równania.
+                                </p>
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="glass-panel p-5 rounded-2xl">
+                                        <div className="text-blue-400 font-black text-2xl mb-1">90%</div>
+                                        <div className="text-[10px] text-slate-400 uppercase font-bold tracking-widest leading-none">Mniej papierologii</div>
+                                    </div>
+                                    <div className="glass-panel p-5 rounded-2xl">
+                                        <div className="text-emerald-400 font-black text-2xl mb-1">100%</div>
+                                        <div className="text-[10px] text-slate-400 uppercase font-bold tracking-widest leading-none">Polska podstawa</div>
+                                    </div>
                                 </div>
-                            </Reveal>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {[
-                                    {name: 'Chmurka.ai', icon: '☁️', desc: 'Polski, przyjazny asystent AI. Idealny do szybkich pomysłów.', url: 'https://chmurka.ai/'},
-                                    {name: 'ChatGPT', icon: '🤖', desc: 'Najpopularniejszy model językowy. Niezastąpiony mózg.', url: 'https://chat.openai.com/'},
-                                    {name: 'Suno AI', icon: '🎵', desc: 'Wygeneruj piosenkę edukacyjną na każdy temat w 5 sekund!', url: 'https://suno.com/'}
-                                ].map((item, i) => (
-                                    <Reveal key={i} delay={i * 150}>
-                                        <a href={item.url} target="_blank" className="bg-white p-8 rounded-3xl flex items-start gap-5 hover:-translate-y-2 hover:shadow-xl transition-all border border-indigo-50">
-                                            <div className="text-4xl">{item.icon}</div>
-                                            <div>
-                                                <h4 className="font-bold text-lg text-slate-900 mb-1">{item.name}</h4>
-                                                <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
-                                            </div>
-                                        </a>
-                                    </Reveal>
-                                ))}
                             </div>
                         </div>
                     </section>
 
-                    <section id="opinie" className="bg-white py-24">
-                        <div className="max-w-6xl mx-auto px-6">
-                            <Reveal><h2 className="text-3xl md:text-4xl font-extrabold text-center text-slate-900 mb-16 tracking-tight">Co mówią nauczyciele? 💬</h2></Reveal>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                {[
-                                    {text: "EduGenerator to złoto! Zrobiłam dyplomy dla całej grupy 25 dzieci w 10 minut. Wcześniej zajmowało mi to całe popołudnie.", author: "Anna M.", role: "Nauczycielka Przedszkola"},
-                                    {text: "Scenariusz AI PRO to absolutny przełom. Cele i metody są dobrane idealnie pod polską podstawę. Polecam każdemu!", author: "Krzysztof P.", role: "Pedagog Specjalny"},
-                                    {text: "EduKarty AI z kolorowankami bez tła to jedyne takie narzędzie. Dzieci uwielbiają zadania z obrazkami, które same wymyślamy.", author: "Joanna S.", role: "Wychowawczyni Klas 1-3"}
-                                ].map((rev, i) => (
-                                    <Reveal key={i} delay={i * 200}>
-                                        <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100 h-full flex flex-col">
-                                            <div className="text-amber-400 mb-4 text-xl">★★★★★</div>
-                                            <p className="text-slate-600 mb-6 italic leading-relaxed flex-grow">"{rev.text}"</p>
-                                            <div>
-                                                <div className="font-bold text-slate-900">{rev.author}</div>
-                                                <div className="text-xs text-slate-500 uppercase tracking-widest mt-1">{rev.role}</div>
-                                            </div>
-                                        </div>
-                                    </Reveal>
-                                ))}
-                            </div>
+                    {/* OPINIE I ARTYKUŁ */}
+                    <section className="max-w-4xl mx-auto px-6 py-24 space-y-24">
+                        <div className="glass-panel p-10 rounded-[2.5rem] text-center space-y-8 relative overflow-hidden">
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-amber-500/10 blur-3xl rounded-full"></div>
+                            <div className="flex justify-center gap-1 text-amber-400 text-2xl">★★★★★</div>
+                            <p className="text-xl md:text-2xl font-medium text-slate-200 italic leading-relaxed relative z-10">
+                                "Kreator Awansu AI to absolutny przełom. Dokumenty są dobrane idealnie pod polskie wytyczne MEN. Zaoszczędziłam cały weekend pracy nad opiniami. Polecam!"
+                            </p>
+                            <div className="text-xs font-black text-slate-500 uppercase tracking-widest relative z-10">— Anna M., Nauczycielka Dyplomowana</div>
                         </div>
+
+                        <article className="prose prose-invert max-w-none text-slate-300">
+                            <h2 className="text-3xl font-black text-white mb-8 uppercase tracking-tighter border-l-4 border-blue-500 pl-4">AI w służbie nauczyciela</h2>
+                            <p className="leading-relaxed mb-6 text-lg">
+                                W EduBox AI wierzymy, że Sztuczna Inteligencja to nie konkurencja, ale <strong>supermoc w rękach nauczyciela</strong>. Nasza platforma nie powstała po to, by zastąpić Twoją pasję, ale po to, by usunąć z Twojej drogi to, co nudne i powtarzalne.
+                            </p>
+                            <p className="leading-relaxed mb-10 text-lg">
+                                Pisanie IPET-ów, tworzenie szlaczków czy generowanie 20 podobnych dyplomów to zadania, w których komputer radzi sobie rewelacyjnie. Ty masz dzięki temu więcej czasu na to, co najważniejsze: na budowanie relacji z uczniami.
+                            </p>
+                        </article>
                     </section>
 
-                    <TrustSection />
-                    
-                    <footer className="bg-white pt-20 pb-10 border-t border-slate-200">
-                        <div className="max-w-6xl mx-auto px-6">
-                            <div className="flex flex-col md:flex-row items-center justify-between gap-10 mb-16">
-                                <div className="text-center md:text-left">
-                                    <div className="text-2xl font-black tracking-tight mb-2 text-slate-900">EduBox<span className="text-blue-600">AI</span></div>
-                                    <p className="text-slate-500 text-sm max-w-sm leading-relaxed">Zbudowane z pasją do edukacji. Chcę dać każdemu nauczycielowi narzędzia, które odciążą go w codziennych obowiązkach.</p>
-                                    <a href="mailto:edubox.ai@gmail.com" className="inline-block mt-4 text-blue-600 font-bold hover:underline">Masz pomysł? Napisz do mnie!</a>
-                                </div>
-                                <div className="bg-amber-50 p-6 rounded-3xl border border-amber-100 flex flex-col items-center text-center max-w-sm">
-                                    <p className="text-sm text-amber-900 mb-4 font-bold">Utrzymaj projekt przy życiu i odblokuj funkcje PRO we wszystkich aplikacjach!</p>
-                                    <a href="https://buycoffee.to/magiccolor" target="_blank" className="w-full bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 px-6 py-4 rounded-2xl font-black transition-transform active:scale-95 shadow-sm">
-                                        Wspieram projekt (Kawa) ☕
-                                    </a>
-                                </div>
+                    {/* FOOTER */}
+                    <footer className="bg-slate-900 border-t border-slate-800 pt-20 pb-10 px-6">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12">
+                            <div className="text-center md:text-left">
+                                <div className="text-2xl font-black tracking-tighter mb-4 uppercase text-white">EduBox <span className="text-blue-500">AI</span></div>
+                                <p className="text-slate-400 text-sm max-w-sm leading-relaxed">
+                                    Wsparcie dla polskiej edukacji przyszłości. Automatyzacja, której od zawsze potrzebowałeś.
+                                </p>
                             </div>
-                            <div className="text-center pt-8 border-t border-slate-100">
-                                <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">© 2026 EduBox AI. Wspieramy polską edukację przyszłości.</p>
+                            <div className="flex flex-col items-center gap-4 glass-panel p-8 rounded-[2.5rem]">
+                                <span className="text-[10px] font-black text-blue-400 uppercase tracking-[3px]">Wsparcie projektu</span>
+                                <a href={BUY_COFFEE_LINK} target="_blank" className="bg-blue-600 text-white px-10 py-4 rounded-full font-black text-sm hover:bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all btn-bounce uppercase tracking-wide">
+                                    Postaw Kawę ☕
+                                </a>
+                                <p className="text-slate-500 text-[10px] font-bold uppercase mt-1">Utrzymaj darmowe serwery AI</p>
                             </div>
+                        </div>
+                        <div className="mt-20 pt-10 border-t border-slate-800 text-center text-[10px] font-bold text-slate-600 uppercase tracking-[10px]">
+                            &copy; 2026 EduBox AI. All rights reserved.
                         </div>
                     </footer>
 
-                    <VideoGreeting />
                     <EduBotChat />
                 </div>
             );

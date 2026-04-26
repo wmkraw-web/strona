@@ -84,6 +84,39 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
+        const Reveal = ({ children, delay = 0 }) => {
+            const [isVisible, setIsVisible] = useState(false);
+            const ref = useRef();
+            useEffect(() => {
+                const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) setIsVisible(true); }, { threshold: 0.1 });
+                if (ref.current) observer.observe(ref.current);
+                return () => observer.disconnect();
+            }, []);
+            return <div ref={ref} className={`transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`} style={{ transitionDelay: `${delay}ms` }}>{children}</div>;
+        };
+
+        const Counter = ({ target, duration = 2000 }) => {
+            const [count, setCount] = useState(0);
+            const ref = useRef();
+            const [isVisible, setIsVisible] = useState(false);
+            useEffect(() => {
+                const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) setIsVisible(true); }, { threshold: 0.5 });
+                if (ref.current) observer.observe(ref.current);
+                return () => observer.disconnect();
+            }, []);
+            useEffect(() => {
+                if (!isVisible) return;
+                let start = 0;
+                const increment = target / (duration / 16);
+                const timer = setInterval(() => {
+                    start += increment;
+                    if (start >= target) { setCount(target); clearInterval(timer); } else setCount(Math.ceil(start));
+                }, 16);
+                return () => clearInterval(timer);
+            }, [isVisible, target, duration]);
+            return <span ref={ref}>{count.toLocaleString('pl-PL')}</span>;
+        };
+
         const BUY_COFFEE_LINK = "https://buycoffee.to/magiccolor";
 
         // ==========================================
@@ -378,34 +411,39 @@
                         </div>
                     </section>
 
-                    {/* VIDEO */}
-                    <section id="video" className="py-24 bg-slate-900 border-y border-slate-800">
-                        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                            <div className="relative group">
-                                <div className="absolute -inset-4 bg-blue-600/20 blur-2xl rounded-[2rem] opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                                <video controls poster="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070" className="relative z-10 w-full rounded-2xl border border-slate-700">
-                                    <source src="twoje-video-promo.mp4" type="video/mp4" />
-                                </video>
+                    {/* PRZYWRÓCONA SEKCJA WIDEO (4 FILMIKI I LICZNIKI) */}
+                    <section id="video" className="py-24 bg-slate-900 border-y border-slate-800 relative overflow-hidden">
+                        <div className="max-w-7xl mx-auto px-6 relative z-10">
+                            <Reveal>
+                                <div className="text-center mb-16">
+                                    <h2 className="text-3xl md:text-5xl font-black text-white mb-4 tracking-tight uppercase">Zobacz magię w akcji! 🎬</h2>
+                                    <p className="text-slate-400 max-w-2xl mx-auto text-lg">Przekonaj się, jak w zaledwie kilkanaście sekund powstają gotowe materiały na Twoje zajęcia.</p>
+                                </div>
+                            </Reveal>
+
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                                <Reveal delay={100}><div className="bg-black rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.4)] border border-slate-700 aspect-[9/16] hover:border-blue-500 transition-colors"><video src="wideo1.mp4" poster="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?q=80&w=400&auto=format&fit=crop" preload="none" controls playsInline className="w-full h-full object-cover"></video></div></Reveal>
+                                <Reveal delay={200}><div className="bg-black rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.4)] border border-slate-700 aspect-[9/16] hover:border-blue-500 transition-colors"><video src="wideo2.mp4" poster="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=400&auto=format&fit=crop" preload="none" controls playsInline className="w-full h-full object-cover"></video></div></Reveal>
+                                <Reveal delay={300}><div className="hidden lg:block bg-black rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.4)] border border-slate-700 aspect-[9/16] hover:border-blue-500 transition-colors"><video src="wideo3.mp4" poster="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=400&auto=format&fit=crop" preload="none" controls playsInline className="w-full h-full object-cover"></video></div></Reveal>
+                                <Reveal delay={400}><div className="hidden lg:block bg-black rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.4)] border border-slate-700 aspect-[9/16] hover:border-blue-500 transition-colors"><video src="wideo4.mp4" poster="https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=400&auto=format&fit=crop" preload="none" controls playsInline className="w-full h-full object-cover"></video></div></Reveal>
                             </div>
-                            <div className="text-white space-y-8">
-                                <h2 className="text-4xl font-black leading-tight tracking-tight">
-                                    Zobacz magię<br/>
-                                    <span className="text-blue-500 uppercase">EduBox AI</span> w akcji!
-                                </h2>
-                                <p className="text-slate-400 text-lg leading-relaxed">
-                                    Na wideo pokazujemy, jak w 15 sekund wygenerować pełną kartę pracy z matematyki, którą normalnie przygotowywałbyś pół godziny. AI rysuje grafiki, wycina tło i układa równania.
-                                </p>
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div className="glass-panel p-5 rounded-2xl">
-                                        <div className="text-blue-400 font-black text-2xl mb-1">90%</div>
-                                        <div className="text-[10px] text-slate-400 uppercase font-bold tracking-widest leading-none">Mniej papierologii</div>
+
+                            <Reveal delay={200}>
+                                <div className="mt-20 pt-16 border-t border-slate-800 grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
+                                    <div>
+                                        <div className="text-5xl font-black text-blue-500 mb-2 drop-shadow-md"><Counter target={2450} />+</div>
+                                        <div className="text-slate-400 font-bold uppercase tracking-widest text-xs">Zaoszczędzonych Godzin</div>
                                     </div>
-                                    <div className="glass-panel p-5 rounded-2xl">
-                                        <div className="text-emerald-400 font-black text-2xl mb-1">100%</div>
-                                        <div className="text-[10px] text-slate-400 uppercase font-bold tracking-widest leading-none">Polska podstawa</div>
+                                    <div>
+                                        <div className="text-5xl font-black text-purple-500 mb-2 drop-shadow-md"><Counter target={15200} />+</div>
+                                        <div className="text-slate-400 font-bold uppercase tracking-widest text-xs">Wygenerowanych Materiałów</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-5xl font-black text-emerald-500 mb-2 drop-shadow-md"><Counter target={100} />%</div>
+                                        <div className="text-slate-400 font-bold uppercase tracking-widest text-xs">Polska Podstawa Programowa</div>
                                     </div>
                                 </div>
-                            </div>
+                            </Reveal>
                         </div>
                     </section>
 

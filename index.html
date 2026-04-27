@@ -124,10 +124,19 @@
         // ==========================================
         const APPS = [
             { 
+                title: 'EduOcena AI', 
+                desc: 'Kreator Ocen Opisowych. Wyklikaj umiejętności ucznia z suwaków, a AI napisze profesjonalne, wyczerpujące podsumowanie na świadectwo!', 
+                url: 'eduocena.html', 
+                badge: 'NOWOŚĆ NA MAJ',
+                badgeColor: 'bg-violet-600 text-white',
+                icon: <><path d="M12 22h6a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v3"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M5 17a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M7 16.5 8 22l-3-1-3 1 1-5.5"/></>,
+                color: 'text-violet-400'
+            },
+            { 
                 title: 'EduWizualizator PRO', 
                 desc: 'Twórz wizualne plany dnia i tablice "Najpierw-Potem" (AAC) dla dzieci ze spektrum autyzmu. Gotowe do druku i laminowania.', 
                 url: 'eduwizualizator.html', 
-                badge: 'NOWOŚĆ DLA SPE',
+                badge: 'DLA SPE',
                 badgeColor: 'bg-yellow-500 text-yellow-950',
                 icon: <><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></>,
                 color: 'text-yellow-400'
@@ -145,8 +154,6 @@
                 title: 'EduMotywator AI', 
                 desc: 'Brak prac domowych? Wygeneruj angażujące Karty Wyjścia (Exit Tickets) i Tajne Misje dla uczniów w 10 sekund.', 
                 url: 'edumotywator.html', 
-                badge: 'NOWOŚĆ',
-                badgeColor: 'bg-violet-600',
                 icon: <><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><line x1="13" x2="13" y1="7" y2="17"/><line x1="9" x2="9" y1="7" y2="17"/></>,
                 color: 'text-violet-400'
             },
@@ -274,7 +281,7 @@
             };
 
             return (
-                <div className="fixed bottom-6 left-6 z-[100] flex flex-col items-start group">
+                <div className="fixed bottom-6 left-6 z-[100] flex flex-col items-start group print-hidden">
                     {!isMuted && (
                         <div className="glass-panel text-white text-xs font-medium py-3 px-4 rounded-2xl rounded-bl-sm shadow-[0_0_20px_rgba(59,130,246,0.3)] mb-3 max-w-[220px] leading-relaxed animate-[reveal_0.3s_ease-out] border border-blue-500/30">
                             "Cześć! Tu asystentka EduBox. Po prawej stronie czeka na Ciebie nasz chatbot. Jeśli masz pomysły lub potrzebujesz kontaktu, napisz na nasz email!"
@@ -378,6 +385,7 @@ Twoją misją jest pomoc polskim nauczycielom. Jesteś WYBITNYM EKSPERTEM od pol
 
 Twoje zadania:
 1. Znasz wszystkie aplikacje EduBox AI i potrafisz doradzić, której użyć:
+- EduOcena AI (Pisze oceny opisowe na świadectwa z suwaków)
 - EduWizualizator PRO (plany dnia, piktogramy AAC, tablice Najpierw-Potem)
 - EduTerapia PRO (Historyjki społeczne, TUS, zabawy sensoryczne)
 - Asystent Pedagoga (IPET, WOPFU, opinie o uczniu)
@@ -527,7 +535,7 @@ Twoje zadania:
                                 <span className="text-gradient">więcej edukacji.</span>
                             </h1>
                             <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
-                                Zautomatyzuj biurokrację dzięki Sztucznej Inteligencji. EduBox AI to narzędzia piszące scenariusze, plany pracy dla SPE, dyplomy i dokumentację IPET w 5 sekund. Odzyskaj czas na to, co naprawdę ważne – na pracę z uczniem.
+                                Zautomatyzuj biurokrację dzięki Sztucznej Inteligencji. EduBox AI to narzędzia piszące scenariusze, plany pracy dla SPE, oceny opisowe i dokumentację IPET w 5 sekund. Odzyskaj czas na to, co naprawdę ważne – na pracę z uczniem.
                             </p>
                             <div className="flex flex-col sm:flex-row justify-center items-center gap-5">
                                 <a href="#narzedzia" className="bg-blue-600 text-white px-10 py-5 rounded-full font-black text-lg hover:bg-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all btn-bounce active:scale-95 flex items-center gap-2">

@@ -61,7 +61,8 @@
                 Coffee: <path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM7 2v3M11 2v3M15 2v3"/>,
                 Lock: <><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>,
                 AlertCircle: <><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></>,
-                Scissors: <><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></>
+                Scissors: <><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></>,
+                HelpCircle: <><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></>
             };
             return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{icons[name] || null}</svg>;
         };
@@ -83,6 +84,7 @@
             const [accessCode, setAccessCode] = useState('');
             const [isGenerating, setIsGenerating] = useState(false);
             const [toastMessage, setToastMessage] = useState('');
+            const [showInstructions, setShowInstructions] = useState(false);
             
             const [activeTab, setActiveTab] = useState('steps');
             const [botMessage, setBotMessage] = useState("Cześć! Dzieci w spektrum to wzrokowcy. Wybierz zakładkę, a ja zamienię Twoje słowa na gotowe do laminowania obrazki!");
@@ -207,6 +209,9 @@
                                 <span>Edu<span className="text-yellow-400">Wizualizator</span> PRO</span>
                             </div>
                             <div className="flex items-center space-x-4">
+                                <button onClick={() => setShowInstructions(true)} className="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300 hover:bg-slate-800 px-4 py-2 rounded-xl font-bold transition-colors border border-transparent hover:border-slate-700">
+                                    <Icon name="HelpCircle" size={20} /> <span className="hidden sm:inline">Jak używać?</span>
+                                </button>
                                 {!isPremium && (
                                     <div className="hidden md:flex items-center space-x-2 bg-slate-900 p-1.5 rounded-xl border border-slate-700">
                                         <input value={accessCode} onChange={e => setAccessCode(e.target.value)} placeholder="Kod Premium..." className="p-2 bg-transparent text-sm w-32 outline-none font-medium text-white placeholder-slate-500"/>
@@ -405,6 +410,52 @@
                             )}
                         </div>
                     </div>
+
+                    {showInstructions && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md print-hidden">
+                            <div className="glass-panel w-full max-w-3xl max-h-[90vh] rounded-[2rem] shadow-2xl overflow-hidden flex flex-col font-sans border border-slate-700">
+                                <div className="flex justify-between items-center p-6 border-b border-slate-700 bg-slate-900/80 flex-shrink-0">
+                                    <h2 className="text-xl font-black text-white flex items-center gap-3"><Icon name="HelpCircle" className="text-yellow-500"/> Instrukcja Obsługi: EduWizualizator</h2>
+                                    <button onClick={() => setShowInstructions(false)} className="p-2 hover:bg-slate-800 rounded-xl transition-colors text-slate-400 hover:text-white font-bold text-lg">✕</button>
+                                </div>
+
+                                <div className="p-6 md:p-8 overflow-y-auto space-y-8 text-sm text-slate-300 custom-scrollbar bg-slate-900/50">
+                                    <p className="text-base font-medium text-white">Witaj w <strong>EduWizualizatorze PRO!</strong> To narzędzie stworzone dla pedagogów specjalnych i wychowawców. Pomaga błyskawicznie tworzyć pomoce wizualne (AAC) dla dzieci w spektrum autyzmu, z afazją czy niepełnosprawnością intelektualną.</p>
+
+                                    <div className="space-y-3 bg-slate-800/50 p-5 rounded-2xl border border-slate-700">
+                                        <h3 className="font-bold text-yellow-400 text-lg border-b border-slate-700 pb-2">Krok 1: Analiza Zadania (Kroki/Rutyny)</h3>
+                                        <p>Dzieci w spektrum potrzebują rozbicia dużych zadań na małe kroki. Wpisz czynność (np. "Mycie rąk"), a sztuczna inteligencja automatycznie podzieli ją na proste polecenia i do każdego dopasuje czytelny piktogram (emoji). Idealne do stworzenia pionowego planu w łazience lub szatni!</p>
+                                    </div>
+
+                                    <div className="space-y-3 bg-slate-800/50 p-5 rounded-2xl border border-slate-700">
+                                        <h3 className="font-bold text-orange-400 text-lg border-b border-slate-700 pb-2">Krok 2: Tablica "Najpierw - Potem"</h3>
+                                        <p>To absolutny fundament pracy z oporem i buntem. Daje dziecku poczucie przewidywalności. Wpisz nielubiane zadanie (np. "Jemy zupę") oraz motywator (np. "Idziemy na plac zabaw"). Aplikacja wygeneruje wielką, wyraźną tablicę, która tłumaczy ciąg przyczynowo-skutkowy.</p>
+                                    </div>
+
+                                    <div className="space-y-3 bg-slate-800/50 p-5 rounded-2xl border border-slate-700">
+                                        <h3 className="font-bold text-emerald-400 text-lg border-b border-slate-700 pb-2">Krok 3: Zasady Sali (Kontrakt)</h3>
+                                        <p>Wizualne wsparcie dla zachowań pożądanych i zakazanych. Wpisz zasadę dobrą ("Mówimy cicho") i złą ("Nie krzyczymy"). Aplikacja wygeneruje karty z wielkim zielonym ptaszkiem (✓) i czerwonym krzyżykiem (✕).</p>
+                                    </div>
+
+                                    <div className="space-y-3 bg-yellow-900/20 p-6 rounded-2xl border border-yellow-500/30">
+                                        <h3 className="font-black text-yellow-400 text-lg flex items-center gap-2"><Icon name="Printer" size={20}/> Wydruk i Laminowanie</h3>
+                                        <p className="text-yellow-200 font-medium">Kiedy plansze są gotowe, kliknij <strong>WYDRUKUJ</strong>.</p>
+                                        <ul className="list-disc pl-5 text-yellow-300 space-y-1">
+                                            <li>Wszystkie wygenerowane karty mają wbudowane <strong>szare przerywane linie</strong>.</li>
+                                            <li>Wydrukuj karty, wytnij wzdłuż linii, zalaminuj i przyklej do nich rzepy!</li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="text-center pt-4">
+                                        <button onClick={() => setShowInstructions(false)} className="bg-yellow-500 hover:bg-yellow-400 text-yellow-950 px-10 py-4 rounded-xl font-black shadow-[0_0_20px_rgba(250,204,21,0.3)] transition-all active:scale-95 text-base tracking-wide w-full sm:w-auto uppercase">
+                                            Rozumiem, do dzieła!
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                 </div>
             );
         }

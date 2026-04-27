@@ -120,7 +120,7 @@
         };
 
         // ==========================================
-        // BAZA APLIKACJI (PEŁNA)
+        // DANE APLIKACJI
         // ==========================================
         const APPS = [
             { 
@@ -152,10 +152,8 @@
             },
             {
                 title: 'Kreator Awansu AI',
-                desc: 'Generuje profesjonalne sprawozdania i opinie do awansu zawodowego, uwzględniając specjalizację (np. psycholog, fizjoterapeuta).',
+                desc: 'Generuje profesjonalne sprawozdania i opinie do awansu zawodowego, uwzględniając specjalizację.',
                 url: 'awans.html',
-                badge: 'NOWOŚĆ',
-                badgeColor: 'bg-blue-600',
                 icon: <><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></>,
                 color: 'text-blue-400'
             },
@@ -197,13 +195,13 @@
                 title: 'EduGenerator',
                 desc: 'Dyplomy i girlandy gotowe do druku w 60 sekund. Wybieraj piękne motywy lub poproś AI o unikalną grafikę.',
                 url: 'https://edugenerator-dyplomy.vercel.app/',
-                icon: <><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526M20 7a8 8 0 1 1-16 0 8 8 0 0 1 16 0z"/><circle cx="12" cy="7" r="3"/></>,
+                icon: <path d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/>,
                 color: 'text-indigo-400'
             },
             {
                 title: 'Asystent Pedagoga',
                 desc: 'Twórz IPET-y, WOPFU i opinie o uczniach 10x szybciej. AI ułoży propozycję planu wsparcia na podstawie diagnozy.',
-                url: 'https://asystent-pedagoga-specjalnego-dokumenty.streamlit.app',
+                url: 'asystent-pedagoga.html',
                 badge: 'KOD PREMIUM',
                 badgeColor: 'bg-rose-600',
                 icon: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>,
@@ -212,7 +210,7 @@
             { 
                 title: 'PromptMaster AI', 
                 desc: 'Uniwersalny kreator profesjonalnych poleceń dla AI. Szablony dla biznesu, marketingu i codziennej pracy.', 
-                url: 'https://promptmaster-tau.vercel.app/', 
+                url: 'promptmaster.html', 
                 color: 'text-violet-400',
                 icon: <><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></> 
             },
@@ -316,7 +314,7 @@
         };
 
         // ==========================================
-        // ASYSTENT EDU-BOT (DARK MODE)
+        // ASYSTENT EDU-BOT (INTELIGENTNY)
         // ==========================================
         const BotAvatar = ({ className = "w-10 h-10" }) => (
             <svg viewBox="0 0 100 100" className={`${className} bot-float drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]`} xmlns="http://www.w3.org/2000/svg">
@@ -334,39 +332,73 @@
 
         const EduBotChat = () => {
             const [isOpen, setIsOpen] = useState(false);
-            const [messages, setMessages] = useState([{ sender: 'ai', text: 'Cześć! Jestem EduBot 🤖 Twój osobisty asystent. W czym mogę pomóc? (np. dyplomy, awans, karty pracy)' }]);
+            const [messages, setMessages] = useState([{ sender: 'ai', text: 'Cześć! Jestem EduBot 🤖 Osobisty asystent prawno-edukacyjny. Szukasz narzędzia czy masz pytanie o przepisy MEN i Kartę Nauczyciela?' }]);
             const [inputText, setInputText] = useState('');
+            const [isTyping, setIsTyping] = useState(false);
             const messagesEndRef = useRef(null);
 
-            useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isOpen]);
+            useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isOpen, isTyping]);
 
-            const handleSend = () => {
+            const handleSend = async () => {
                 if (!inputText.trim()) return;
                 const userMsg = inputText.trim();
                 setMessages(prev => [...prev, { sender: 'user', text: userMsg }]);
                 setInputText('');
+                setIsTyping(true);
 
-                setTimeout(() => {
-                    let response = "Zawsze chętnie pomogę! Spróbuj zapytać mnie o 'awans', 'dyplomy', 'karty pracy' lub 'kod premium'.";
-                    const lower = userMsg.toLowerCase();
-                    if (lower.includes('ipet') || lower.includes('wopfu') || lower.includes('opini') || lower.includes('awans')) response = "Zdecydowanie polecam 'Kreator Awansu AI' lub 'Asystenta Pedagoga'. Napiszą dla Ciebie perfekcyjne dokumenty urzędowe!";
-                    else if (lower.includes('dyplom') || lower.includes('girland')) response = "Do tworzenia pięknych dyplomów użyj 'EduGeneratora'. To nasz klasyk!";
-                    else if (lower.includes('kart') || lower.includes('matematyk')) response = "'EduKarty AI' pozwalają złożyć kartę pracy jak z klocków LEGO.";
-                    else if (lower.includes('kawa') || lower.includes('kod') || lower.includes('premium')) response = "Kod Premium otrzymasz stawiając wirtualną kawę twórcy! ☕ (Obecne hasło to KAWA2024)";
-                    else if (lower.includes('scenariusz') || lower.includes('lekcj')) response = "Polecam nasz Kombajn: 'Scenariusz AI PRO'. Wygeneruje dla Ciebie pełny konspekt zajęć z exportem do Worda.";
-                    setMessages(prev => [...prev, { sender: 'ai', text: response }]);
-                }, 800);
+                try {
+                    const systemPrompt = `Jesteś EduBotem - oficjalnym, inteligentnym asystentem platformy EduBox AI (stworzonej przez Maćka). 
+Twoją misją jest pomoc polskim nauczycielom. Jesteś EKSPERTEM od polskiego Prawa Oświatowego.
+
+Twoje zadania:
+1. Znasz wszystkie aplikacje EduBox AI i potrafisz doradzić, której użyć:
+- EduWizualizator PRO (plany dnia, piktogramy AAC, tablice Najpierw-Potem - idealne dla dzieci z autyzmem)
+- EduTerapia PRO (Historyjki społeczne z obrazkami, Trening Umiejętności Społecznych TUS, zabawy sensoryczne)
+- Asystent Pedagoga (IPET, WOPFU, opinie o uczniu)
+- EduMotywator AI (Karty wyjścia, misje domowe zamiast zadań)
+- Kreator Awansu AI (sprawozdania z planu rozwoju, opinie dyrektora)
+- Edukacja 2025 AI (scenariusze, edukacja obywatelska i zdrowotna)
+- EduKarty AI (karty pracy, szlaczki, generator zadań)
+- EduGenerator (dyplomy, girlandy)
+2. Znasz przepisy polskiego Prawa Oświatowego, przepisy o pomocy psychologiczno-pedagogicznej (PPP), zasady tworzenia IPET i WOPFU, awans zawodowy (Karta Nauczyciela). Odpowiadaj zwięźle, konkretnie i podawaj podstawy prawne, jeśli to możliwe.
+3. Jesteś uprzejmy, pomocny i entuzjastyczny. Jeśli padnie pytanie o płatności, przypomnij, że system działa dzięki dobrowolnym "wirtualnym kawom", a kod odblokowujący funkcje Premium to "KAWA2024".
+4. Odpowiadaj w czystym tekście, unikaj skomplikowanego formatowania markdown (bez gwiazdek i znaków hash #), używaj emotikon dla lepszej czytelności.`;
+
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            system: systemPrompt,
+                            prompt: userMsg,
+                            temperature: 0.5,
+                            model: "gpt-4o-mini"
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(data.message || "Błąd API");
+                    }
+
+                    setMessages(prev => [...prev, { sender: 'ai', text: data.text }]);
+                } catch (error) {
+                    console.error("Błąd EduBota:", error);
+                    setMessages(prev => [...prev, { sender: 'ai', text: "Przepraszam, mam chwilowe problemy z połączeniem z moim mózgiem sztucznej inteligencji. Spróbuj zapytać ponownie za moment! 🔌" }]);
+                } finally {
+                    setIsTyping(false);
+                }
             };
 
             return (
                 <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end print-hidden">
                     {isOpen && (
-                        <div className="glass-panel w-[calc(100vw-48px)] sm:w-[350px] h-[450px] rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-slate-700 mb-4 flex flex-col overflow-hidden">
+                        <div className="glass-panel w-[calc(100vw-48px)] sm:w-[350px] h-[500px] rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-slate-700 mb-4 flex flex-col overflow-hidden">
                             <div className="bg-slate-900/80 border-b border-slate-700 p-4 flex items-center justify-between text-white z-10">
                                 <div className="flex items-center gap-3">
                                     <div className="bg-slate-800 p-1.5 rounded-full"><BotAvatar className="w-8 h-8"/></div>
                                     <div>
-                                        <h3 className="font-bold leading-tight">EduBot Concierge</h3>
+                                        <h3 className="font-bold leading-tight">EduBot AI (Ekspert)</h3>
                                         <p className="text-[10px] text-blue-400 uppercase tracking-widest font-black">Online</p>
                                     </div>
                                 </div>
@@ -374,13 +406,20 @@
                             </div>
                             <div className="flex-1 bg-slate-900/50 p-4 overflow-y-auto custom-scrollbar flex flex-col gap-4">
                                 {messages.map((msg, i) => (
-                                    <div key={i} className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm ${msg.sender === 'ai' ? 'bg-slate-800 border border-slate-700 text-slate-200 self-start rounded-tl-sm' : 'bg-blue-600 text-white self-end rounded-tr-sm'}`}>{msg.text}</div>
+                                    <div key={i} className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm whitespace-pre-wrap ${msg.sender === 'ai' ? 'bg-slate-800 border border-slate-700 text-slate-200 self-start rounded-tl-sm' : 'bg-blue-600 text-white self-end rounded-tr-sm'}`}>{msg.text}</div>
                                 ))}
+                                {isTyping && (
+                                    <div className="bg-slate-800 border border-slate-700 text-slate-400 self-start rounded-2xl rounded-tl-sm p-3 text-sm flex items-center gap-2">
+                                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
+                                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                    </div>
+                                )}
                                 <div ref={messagesEndRef} />
                             </div>
                             <div className="p-3 bg-slate-900 border-t border-slate-700 flex gap-2">
-                                <input type="text" value={inputText} onChange={e => setInputText(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="Napisz tu..." className="flex-1 bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-2 outline-none text-sm focus:border-blue-500 transition-colors" />
-                                <button onClick={handleSend} className="bg-blue-600 hover:bg-blue-500 text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors"><svg className="w-4 h-4 translate-x-[-1px] translate-y-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
+                                <input type="text" value={inputText} onChange={e => setInputText(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleSend()} placeholder="Zapytaj o aplikację lub prawo oświatowe..." className="flex-1 bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-2 outline-none text-xs focus:border-blue-500 transition-colors" />
+                                <button onClick={handleSend} disabled={isTyping} className="bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors"><svg className="w-4 h-4 translate-x-[-1px] translate-y-[1px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
                             </div>
                         </div>
                     )}
@@ -388,7 +427,7 @@
                     <button onClick={() => setIsOpen(!isOpen)} className="bg-slate-900 border-2 border-blue-500/50 w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] hover:scale-105 transition-all relative group z-50">
                         {!isOpen && (
                             <div className="absolute right-20 top-2 bg-blue-600 text-white text-xs font-bold py-2 px-4 rounded-2xl rounded-tr-sm shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                                W czym pomóc? 👋
+                                Prawo oświatowe? Pytaj! 👨‍⚖️
                             </div>
                         )}
                         <BotAvatar />
@@ -457,22 +496,24 @@
                                 <span className="text-gradient">więcej edukacji.</span>
                             </h1>
                             <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
-                                Zautomatyzuj biurokrację dzięki Sztucznej Inteligencji. EduBox AI to narzędzia piszące scenariusze, opinie i generujące materiały w 15 sekund.
+                                Zautomatyzuj biurokrację dzięki Sztucznej Inteligencji. EduBox AI to narzędzia piszące scenariusze, plany pracy dla SPE, dyplomy i dokumentację IPET w 5 sekund. Odzyskaj czas na to, co naprawdę ważne – na pracę z uczniem.
                             </p>
-                            <div className="flex flex-wrap justify-center gap-5">
-                                <a href="#narzedzia" className="bg-blue-600 text-white px-10 py-5 rounded-full font-black text-lg hover:bg-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all btn-bounce active:scale-95 flex items-center gap-2">
-                                    Rozpocznij za darmo <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                            <div className="flex flex-col sm:flex-row justify-center items-center gap-5">
+                                <a href="#narzedzia" className="px-10 py-5 bg-blue-600 text-white rounded-full font-black text-lg hover:bg-blue-500 shadow-[0_0_40px_rgba(37,99,235,0.4)] transition-all btn-bounce active:scale-95 flex items-center gap-3">
+                                    Przetestuj za darmo 🚀
                                 </a>
                             </div>
                         </div>
                     </header>
 
                     {/* GRID APKI */}
-                    <section id="narzedzia" className="max-w-7xl mx-auto px-6 py-20 z-10 relative print-hidden">
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tighter">Twoje Asystentki AI</h2>
-                            <p className="text-slate-400 mt-4 font-medium">Wybierz narzędzie i odzyskaj swój wolny czas.</p>
-                        </div>
+                    <section id="narzedzia" className="max-w-7xl mx-auto px-6 py-20 z-10 relative print-hidden border-t border-slate-800">
+                        <Reveal>
+                            <div className="text-center mb-16">
+                                <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tighter">Twoje Asystentki AI</h2>
+                                <p className="text-slate-400 mt-4 font-medium">Wybierz narzędzie i odzyskaj swój wolny czas.</p>
+                            </div>
+                        </Reveal>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {APPS.map((app, i) => <AppCard key={i} app={app} />)}
                         </div>
@@ -480,17 +521,21 @@
 
                     {/* POLECANE LINKI */}
                     <section id="linki" className="max-w-7xl mx-auto px-6 py-24 border-t border-slate-800 print-hidden">
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl font-black text-white mb-4 uppercase tracking-tighter">Przydatne zewnątrz</h2>
-                            <p className="text-slate-400 font-medium">Technologia AI, którą rekomendujemy do codziennej pracy.</p>
-                        </div>
+                        <Reveal>
+                            <div className="text-center mb-16">
+                                <h2 className="text-3xl font-black text-white mb-4 uppercase tracking-tighter">Przydatne zewnątrz</h2>
+                                <p className="text-slate-400 font-medium">Technologia AI, którą rekomendujemy do codziennej pracy.</p>
+                            </div>
+                        </Reveal>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {RECOMMENDATIONS.map((link, i) => (
-                                <a key={i} href={link.url} target="_blank" className="glass-panel p-8 rounded-[2rem] hover:-translate-y-2 transition-transform flex flex-col items-center text-center group">
-                                    <div className="text-5xl mb-6 group-hover:scale-110 transition-transform drop-shadow-lg">{link.icon}</div>
-                                    <h4 className="text-xl font-bold text-white mb-2">{link.name}</h4>
-                                    <p className="text-slate-400 text-sm leading-relaxed">{link.desc}</p>
-                                </a>
+                                <Reveal key={i} delay={i * 100}>
+                                    <a href={link.url} target="_blank" className="glass-panel p-8 rounded-[2rem] hover:-translate-y-2 transition-transform flex flex-col items-center text-center group">
+                                        <div className="text-5xl mb-6 group-hover:scale-110 transition-transform drop-shadow-lg">{link.icon}</div>
+                                        <h4 className="text-xl font-bold text-white mb-2">{link.name}</h4>
+                                        <p className="text-slate-400 text-sm leading-relaxed">{link.desc}</p>
+                                    </a>
+                                </Reveal>
                             ))}
                         </div>
                     </section>

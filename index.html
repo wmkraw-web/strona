@@ -314,7 +314,7 @@
         };
 
         // ==========================================
-        // ASYSTENT EDU-BOT (INTELIGENTNY)
+        // ASYSTENT EDU-BOT (EKSPERT PRAWNY)
         // ==========================================
         const BotAvatar = ({ className = "w-10 h-10" }) => (
             <svg viewBox="0 0 100 100" className={`${className} bot-float drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]`} xmlns="http://www.w3.org/2000/svg">
@@ -330,9 +330,18 @@
             </svg>
         );
 
+        // Funkcja do wyłapywania linków URL z tekstu odpowiedzi bota i zamieniania ich na klikalne tagi <a>
+        const formatLinks = (text) => {
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            const parts = text.split(urlRegex);
+            return parts.map((part, i) => 
+                urlRegex.test(part) ? <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline break-all">{part}</a> : part
+            );
+        };
+
         const EduBotChat = () => {
             const [isOpen, setIsOpen] = useState(false);
-            const [messages, setMessages] = useState([{ sender: 'ai', text: 'Cześć! Jestem EduBot 🤖 Osobisty asystent prawno-edukacyjny. Szukasz narzędzia czy masz pytanie o przepisy MEN i Kartę Nauczyciela?' }]);
+            const [messages, setMessages] = useState([{ sender: 'ai', text: 'Cześć! Jestem EduBot 🤖 Twój asystent prawno-edukacyjny. Szukasz odpowiedniego narzędzia, czy masz pytanie o przepisy i Ustawy MEN?' }]);
             const [inputText, setInputText] = useState('');
             const [isTyping, setIsTyping] = useState(false);
             const messagesEndRef = useRef(null);
@@ -348,21 +357,24 @@
 
                 try {
                     const systemPrompt = `Jesteś EduBotem - oficjalnym, inteligentnym asystentem platformy EduBox AI (stworzonej przez Maćka). 
-Twoją misją jest pomoc polskim nauczycielom. Jesteś EKSPERTEM od polskiego Prawa Oświatowego.
+Twoją misją jest pomoc polskim nauczycielom. Jesteś WYBITNYM EKSPERTEM od polskiego Prawa Oświatowego.
 
 Twoje zadania:
 1. Znasz wszystkie aplikacje EduBox AI i potrafisz doradzić, której użyć:
-- EduWizualizator PRO (plany dnia, piktogramy AAC, tablice Najpierw-Potem - idealne dla dzieci z autyzmem)
-- EduTerapia PRO (Historyjki społeczne z obrazkami, Trening Umiejętności Społecznych TUS, zabawy sensoryczne)
+- EduWizualizator PRO (plany dnia, piktogramy AAC, tablice Najpierw-Potem)
+- EduTerapia PRO (Historyjki społeczne, TUS, zabawy sensoryczne)
 - Asystent Pedagoga (IPET, WOPFU, opinie o uczniu)
 - EduMotywator AI (Karty wyjścia, misje domowe zamiast zadań)
 - Kreator Awansu AI (sprawozdania z planu rozwoju, opinie dyrektora)
-- Edukacja 2025 AI (scenariusze, edukacja obywatelska i zdrowotna)
-- EduKarty AI (karty pracy, szlaczki, generator zadań)
+- Edukacja 2025 AI (scenariusze obywatelskie i zdrowotne)
+- EduKarty AI (karty pracy)
 - EduGenerator (dyplomy, girlandy)
-2. Znasz przepisy polskiego Prawa Oświatowego, przepisy o pomocy psychologiczno-pedagogicznej (PPP), zasady tworzenia IPET i WOPFU, awans zawodowy (Karta Nauczyciela). Odpowiadaj zwięźle, konkretnie i podawaj podstawy prawne, jeśli to możliwe.
-3. Jesteś uprzejmy, pomocny i entuzjastyczny. Jeśli padnie pytanie o płatności, przypomnij, że system działa dzięki dobrowolnym "wirtualnym kawom", a kod odblokowujący funkcje Premium to "KAWA2024".
-4. Odpowiadaj w czystym tekście, unikaj skomplikowanego formatowania markdown (bez gwiazdek i znaków hash #), używaj emotikon dla lepszej czytelności.`;
+2. PRAWO OŚWIATOWE: Znasz Kartę Nauczyciela, rozporządzenia MEN o pomocy psychologiczno-pedagogicznej (PPP), zasady tworzenia IPET i WOPFU, awans zawodowy itd. 
+   KRYTYCZNA ZASADA: Zawsze gdy uczeń pyta o kwestie prawne, podaj DOKŁADNĄ nazwę Ustawy lub Rozporządzenia oraz jej Dziennik Ustaw (Dz.U.). 
+   Następnie ZAWSZE postaraj się podać pełny, poprawny link do tej ustawy w Internetowym Systemie Aktów Prawnych (ISAP), np. https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU... 
+   Jeśli nie znasz dokładnego linku, wklej link do wyszukiwarki ISAP: https://isap.sejm.gov.pl/isap.nsf/ByYear.xsp i poinstruuj użytkownika, by wyszukał "Tekst jednolity" danej ustawy.
+3. Jesteś uprzejmy, pomocny i entuzjastyczny. Jeśli padnie pytanie o płatności, przypomnij, że system działa dzięki dobrowolnym "wirtualnym kawom", a kod odblokowujący to "KAWA2024".
+4. Odpowiadaj w czystym tekście. Jeśli podajesz linki, podawaj je w całości (zaczynając od https://), aby system na stronie poprawnie zamienił je na klikalne hiperłącza. Nie używaj znaków markdown (**) wokół linków.`;
 
                     const response = await fetch('/api/chat', {
                         method: 'POST',
@@ -370,7 +382,7 @@ Twoje zadania:
                         body: JSON.stringify({
                             system: systemPrompt,
                             prompt: userMsg,
-                            temperature: 0.5,
+                            temperature: 0.4,
                             model: "gpt-4o-mini"
                         })
                     });
@@ -406,7 +418,9 @@ Twoje zadania:
                             </div>
                             <div className="flex-1 bg-slate-900/50 p-4 overflow-y-auto custom-scrollbar flex flex-col gap-4">
                                 {messages.map((msg, i) => (
-                                    <div key={i} className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm whitespace-pre-wrap ${msg.sender === 'ai' ? 'bg-slate-800 border border-slate-700 text-slate-200 self-start rounded-tl-sm' : 'bg-blue-600 text-white self-end rounded-tr-sm'}`}>{msg.text}</div>
+                                    <div key={i} className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm whitespace-pre-wrap ${msg.sender === 'ai' ? 'bg-slate-800 border border-slate-700 text-slate-200 self-start rounded-tl-sm' : 'bg-blue-600 text-white self-end rounded-tr-sm'}`}>
+                                        {formatLinks(msg.text)}
+                                    </div>
                                 ))}
                                 {isTyping && (
                                     <div className="bg-slate-800 border border-slate-700 text-slate-400 self-start rounded-2xl rounded-tl-sm p-3 text-sm flex items-center gap-2">
@@ -499,8 +513,8 @@ Twoje zadania:
                                 Zautomatyzuj biurokrację dzięki Sztucznej Inteligencji. EduBox AI to narzędzia piszące scenariusze, plany pracy dla SPE, dyplomy i dokumentację IPET w 5 sekund. Odzyskaj czas na to, co naprawdę ważne – na pracę z uczniem.
                             </p>
                             <div className="flex flex-col sm:flex-row justify-center items-center gap-5">
-                                <a href="#narzedzia" className="px-10 py-5 bg-blue-600 text-white rounded-full font-black text-lg hover:bg-blue-500 shadow-[0_0_40px_rgba(37,99,235,0.4)] transition-all btn-bounce active:scale-95 flex items-center gap-3">
-                                    Przetestuj za darmo 🚀
+                                <a href="#narzedzia" className="bg-blue-600 text-white px-10 py-5 rounded-full font-black text-lg hover:bg-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all btn-bounce active:scale-95 flex items-center gap-2">
+                                    Rozpocznij za darmo <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                                 </a>
                             </div>
                         </div>
@@ -523,7 +537,7 @@ Twoje zadania:
                     <section id="linki" className="max-w-7xl mx-auto px-6 py-24 border-t border-slate-800 print-hidden">
                         <Reveal>
                             <div className="text-center mb-16">
-                                <h2 className="text-3xl font-black text-white mb-4 uppercase tracking-tighter">Przydatne zewnątrz</h2>
+                                <h2 className="text-3xl font-black text-white mb-4 uppercase tracking-tighter">Przydatne na zewnątrz</h2>
                                 <p className="text-slate-400 font-medium">Technologia AI, którą rekomendujemy do codziennej pracy.</p>
                             </div>
                         </Reveal>

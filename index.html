@@ -330,13 +330,30 @@
             </svg>
         );
 
-        // Funkcja do wyłapywania linków URL z tekstu odpowiedzi bota i zamieniania ich na klikalne tagi <a>
-        const formatLinks = (text) => {
-            const urlRegex = /(https?:\/\/[^\s]+)/g;
-            const parts = text.split(urlRegex);
-            return parts.map((part, i) => 
-                urlRegex.test(part) ? <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline break-all">{part}</a> : part
-            );
+        // Funkcja do wyłapywania linków URL i zamieniania ich na klikalne tagi <a>
+        const formatMessageContent = (text) => {
+            if (typeof text !== 'string') return text;
+            
+            // 1. Zabezpieczenie: jeśli AI użyje markdowna do linków np. [tekst](link), wyciągamy sam link
+            let cleanedText = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '$1: $2');
+            
+            // 2. Dzielimy tekst na linki (zaczynające się od http) i resztę
+            const urlRegex = /(https?:\/\/[^\s<]+[^<.,:;"')\]\s])/g;
+            const parts = cleanedText.split(urlRegex);
+            
+            return parts.map((part, i) => {
+                if (part.match(/^https?:\/\//)) {
+                    return <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline break-all">{part}</a>;
+                }
+                
+                // 3. Dodatkowa obsługa pogrubień (**)
+                const boldParts = part.split(/\*\*([^*]+)\*\*/g);
+                if (boldParts.length > 1) {
+                    return <span key={i}>{boldParts.map((bp, j) => j % 2 === 1 ? <strong key={j} className="text-blue-100 font-bold">{bp}</strong> : bp)}</span>;
+                }
+                
+                return part;
+            });
         };
 
         const EduBotChat = () => {
@@ -374,7 +391,7 @@ Twoje zadania:
    Następnie ZAWSZE postaraj się podać pełny, poprawny link do tej ustawy w Internetowym Systemie Aktów Prawnych (ISAP), np. https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU... 
    Jeśli nie znasz dokładnego linku, wklej link do wyszukiwarki ISAP: https://isap.sejm.gov.pl/isap.nsf/ByYear.xsp i poinstruuj użytkownika, by wyszukał "Tekst jednolity" danej ustawy.
 3. Jesteś uprzejmy, pomocny i entuzjastyczny. Jeśli padnie pytanie o płatności, przypomnij, że system działa dzięki dobrowolnym "wirtualnym kawom", a kod odblokowujący to "KAWA2024".
-4. Odpowiadaj w czystym tekście. Jeśli podajesz linki, podawaj je w całości (zaczynając od https://), aby system na stronie poprawnie zamienił je na klikalne hiperłącza. Nie używaj znaków markdown (**) wokół linków.`;
+4. Odpowiadaj w czystym tekście. KRYTYCZNE: NIGDY NIE UŻYWAJ ZNAKÓW MARKDOWN DLA LINKÓW (np. [tekst](url)). Linki wklejaj jako ZWYKŁY TEKST, ZAWSZE zaczynając od https:// i od nowej linii. Oznaczaj ważne pojęcia pogrubieniem używając gwiazdek (**tekst**).`;
 
                     const response = await fetch('/api/chat', {
                         method: 'POST',
@@ -418,8 +435,8 @@ Twoje zadania:
                             </div>
                             <div className="flex-1 bg-slate-900/50 p-4 overflow-y-auto custom-scrollbar flex flex-col gap-4">
                                 {messages.map((msg, i) => (
-                                    <div key={i} className={`max-w-[85%] p-3 rounded-2xl text-sm shadow-sm whitespace-pre-wrap ${msg.sender === 'ai' ? 'bg-slate-800 border border-slate-700 text-slate-200 self-start rounded-tl-sm' : 'bg-blue-600 text-white self-end rounded-tr-sm'}`}>
-                                        {formatLinks(msg.text)}
+                                    <div key={i} className={`max-w-[90%] p-3 rounded-2xl text-sm shadow-sm whitespace-pre-wrap break-words overflow-hidden ${msg.sender === 'ai' ? 'bg-slate-800 border border-slate-700 text-slate-200 self-start rounded-tl-sm' : 'bg-blue-600 text-white self-end rounded-tr-sm'}`}>
+                                        {formatMessageContent(msg.text)}
                                     </div>
                                 ))}
                                 {isTyping && (

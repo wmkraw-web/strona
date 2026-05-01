@@ -109,12 +109,7 @@ Podziel poradę na:
 
         function App() {
             // =========================================================================
-            // MIEJSCE NA TWÓJ KLUCZ API ORAZ PIN!
-            // =========================================================================
-            // 1. Zastąp poniższy tekst swoim kluczem z Google AI Studio:
-            const GLOBAL_API_KEY = "AIzaSyD2YzmcZB-etM944pQDBGCk5LHBq8ThT50"; 
-            
-            // 2. Kod PIN dla żony do odblokowania aplikacji:
+            // Kod PIN dla żony do odblokowania aplikacji:
             const SECRET_PIN = "kasia123"; 
             // =========================================================================
 
@@ -201,9 +196,7 @@ Podziel poradę na:
 
             // --- GENEROWANIE SOS (Z wyszukiwaniem Google!) ---
             const generateSos = async () => {
-                if (!GLOBAL_API_KEY || GLOBAL_API_KEY === "TUTAJ_WKLEJ_KLUCZ_Z_GOOGLE") {
-                    setSosError("UWAGA: Nie uzupełniłeś klucza API w kodzie źródłowym! Dlatego widzisz tryb DEMO.");
-                } else if (!sosInput.trim()) {
+                if (!sosInput.trim()) {
                     setSosError('Opisz krótko sytuację w klasie.');
                     return;
                 }
@@ -214,7 +207,8 @@ Podziel poradę na:
                 setSosSources([]);
 
                 try {
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${GLOBAL_API_KEY}`;
+                    const apiKey = ""; // Pusty ciąg pozwala platformie wstrzyknąć klucz w Preview!
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                     
                     const payload = {
                         contents: [{ parts: [{ text: `Rozwiąż problem: ${sosInput}` }] }],
@@ -256,7 +250,7 @@ Podziel poradę na:
 
                 } catch (err) {
                     console.error("Błąd SOS:", err);
-                    setSosError('Błąd połączenia. Uruchamiam tryb awaryjny (Demo). Upewnij się, że Twój klucz API jest prawidłowy i masz połączenie z siecią.');
+                    setSosError('Błąd połączenia. Uruchamiam tryb awaryjny (Demo).');
                     setTimeout(() => {
                         setSosResult("🧠 POTENCJALNA PRZYCZYNA:\nZachowanie dziecka wynika najpewniej z przebodźcowania i funkcji ucieczkowej.\n\n🚨 SZYBKA REAKCJA:\n1. Obniż ton głosu.\n2. Usuń dystraktory z otoczenia.\n3. Użyj wizualnej planszy 'Przerwa'.\n\n🛠️ DZIAŁANIE NA JUTRO:\nWprowadź strefę wyciszenia (namiot sensoryczny).");
                         setSosSources([{ title: "Darmowy artykuł z sieci: Jak wyciszyć ucznia z autyzmem", uri: "https://www.google.com/search?q=wyciszanie+ucznia+autyzm" }]);
@@ -269,17 +263,14 @@ Podziel poradę na:
 
             // --- GENEROWANIE KARTKI SUKCESU ---
             const handleSuccessGenerate = async () => {
-                if (!GLOBAL_API_KEY || GLOBAL_API_KEY === "TUTAJ_WKLEJ_KLUCZ_Z_GOOGLE") {
-                    alert("BRAK KLUCZA API: Aplikacja uruchomi tryb pokazowy (Demo). Wpisz swój klucz w kodzie, by uzyskać pełne unikalne odpowiedzi.");
-                }
-                
                 if (!successName.trim() || !successAction.trim()) return;
                 setIsGeneratingSuccess(true);
                 setShowSuccessCard(false);
                 setSuccessText('');
                 
                 try {
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${GLOBAL_API_KEY}`;
+                    const apiKey = "";
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                     const payload = {
                         contents: [{ parts: [{ text: `Dziecko o imieniu ${successName} osiągnęło sukces: ${successAction}. Napisz bardzo radosną, krótką (max 3 zdania) pochwałę/dyplomik dla rodziców. Zacznij od 'Wielkie brawa!'. Dodaj urocze emotikony.` }] }],
                         systemInstruction: { parts: [{ text: "Jesteś pełnym ciepła wychowawcą przedszkolnym." }] },
@@ -304,9 +295,7 @@ Podziel poradę na:
 
             // --- GENEROWANIE BAJKI I OBRAZKA ---
             const generateStoryAndImage = async () => {
-                if (!GLOBAL_API_KEY || GLOBAL_API_KEY === "TUTAJ_WKLEJ_KLUCZ_Z_GOOGLE") {
-                    setStoryError("BRAK KLUCZA API: Bez klucza system nie może połączyć się z siecią by wygenerować bajkę i obraz. Wyświetlam pokazowe Demo.");
-                } else if (!storyProblem.trim()) { 
+                if (!storyProblem.trim()) { 
                     setStoryError('Wpisz problem ucznia.'); 
                     return; 
                 }
@@ -314,8 +303,9 @@ Podziel poradę na:
                 setIsGeneratingStory(true); setStoryError(''); setGeneratedStory(''); setGeneratedImage('');
 
                 try {
+                    const apiKey = "";
                     // 1. TEKST
-                    const textUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${GLOBAL_API_KEY}`;
+                    const textUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                     const textPayload = {
                         contents: [{ parts: [{ text: `Napisz radosną, uspokajającą rymowankę (max 4 zdania) dla dziecka ze spektrum autyzmu. Dziecko: ${storyProblem}. Zakończ pochwałą.` }] }],
                         generationConfig: { temperature: 0.7 }
@@ -325,7 +315,7 @@ Podziel poradę na:
                     const story = textData.candidates?.[0]?.content?.parts?.[0]?.text;
 
                     // 2. OBRAZEK
-                    const imgUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${GLOBAL_API_KEY}`;
+                    const imgUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
                     const imgPayload = {
                         instances: { prompt: `Cute 2D illustration for children book, a happy child resolving this problem: ${storyProblem}. Bright colors, therapeutic, calming.` },
                         parameters: { sampleCount: 1 }
@@ -365,7 +355,7 @@ Podziel poradę na:
                             </div>
                             <h2 className="text-4xl font-black text-white mb-2">EduKasia <span className="text-rose-400">PRO</span></h2>
                             <p className="text-slate-400 text-sm mb-8 font-medium bg-slate-900/50 p-3 rounded-xl border border-slate-700">
-                                Ten "kombajn" zawiera płatne funkcje wyszukiwania i generowania obrazów AI. Wpisz PIN od męża, aby odblokować.
+                                Wpisz PIN od męża, aby odblokować prywatny kombajn asystenta SPE.
                             </p>
                             
                             <input 

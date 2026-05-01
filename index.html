@@ -128,9 +128,496 @@
             return <span ref={ref}>{count.toLocaleString('pl-PL')}</span>;
         };
         
-        // ==========================================
-        // DANE APLIKACJI (KAFELKI)
-        // ==========================================
+       <!DOCTYPE html>
+<html lang="pl" translate="no" class="notranslate">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>EduKasia AI - Multimedialny Kombajn SPE</title>
+    <!-- Biblioteki -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #1e1b4b; /* Ciepły, śliwkowy mrok */
+            color: #f8fafc; 
+            scroll-behavior: smooth; 
+            overflow-x: hidden;
+        }
+        
+        /* Magiczne Aury - Bardzo ciepłe i kobiece kolory */
+        .aura-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            z-index: -1;
+            animation: float 15s infinite ease-in-out alternate;
+            pointer-events: none;
+        }
+        .aura-1 { top: -10%; left: -10%; width: 60vw; height: 600px; background: radial-gradient(circle, #f43f5e, transparent 70%); }
+        .aura-2 { top: 40%; right: -10%; width: 50vw; height: 600px; background: radial-gradient(circle, #8b5cf6, transparent 70%); animation-delay: -5s; }
+        .aura-3 { bottom: -10%; left: 20%; width: 60vw; height: 600px; background: radial-gradient(circle, #fbbf24, transparent 70%); animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -50px) scale(1.05); }
+            100% { transform: translate(-30px, 30px) scale(0.95); }
+        }
+
+        .glass-panel { 
+            background: rgba(30, 27, 75, 0.5); 
+            backdrop-filter: blur(24px); 
+            -webkit-backdrop-filter: blur(24px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+        .glass-nav { 
+            background: rgba(30, 27, 75, 0.8); 
+            backdrop-filter: blur(24px); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+        
+        .text-gradient { 
+            background: linear-gradient(135deg, #f43f5e 0%, #a855f7 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e1b4b; border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #f43f5e; border-radius: 8px; }
+        
+        .btn-bounce:active { transform: scale(0.95); }
+
+        /* Karta sukcesu */
+        .success-card {
+            background: linear-gradient(135deg, #ffffff 0%, #fdf2f8 100%);
+            border: 8px solid #fbcfe8;
+            box-shadow: 0 25px 50px -12px rgba(244, 63, 94, 0.25);
+            color: #4c1d95;
+            position: relative;
+            overflow: hidden;
+        }
+        .success-card::before {
+            content: '✨ 🌟 🎈 🎉';
+            position: absolute;
+            top: -10px;
+            left: 0;
+            width: 100%;
+            font-size: 2rem;
+            text-align: center;
+            opacity: 0.3;
+            letter-spacing: 20px;
+        }
+
+        /* Przyciski AAC */
+        .aac-btn {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: all 0.2s ease;
+        }
+        .aac-btn:hover, .aac-btn:active {
+            background: rgba(244, 63, 94, 0.2);
+            border-color: #f43f5e;
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef } = React;
+
+        function App() {
+            const [isAuthenticated, setIsAuthenticated] = useState(false);
+            const [passwordInput, setPasswordInput] = useState('');
+            const SECRET_PIN = "kasia123"; // TUTAJ ZMIEŃ HASŁO DLA ŻONY
+
+            const [activeTab, setActiveTab] = useState('aac'); // 'aac', 'sukces', 'bajka'
+            
+            // Stan dla AAC
+            const [customText, setCustomText] = useState('');
+            const aacButtons = [
+                { id: 1, label: 'Chcę przerwę', emoji: '⏸️' },
+                { id: 2, label: 'Toaleta', emoji: '🚽' },
+                { id: 3, label: 'Pić', emoji: '💧' },
+                { id: 4, label: 'Jeść', emoji: '🍎' },
+                { id: 5, label: 'Pomocy', emoji: '🆘' },
+                { id: 6, label: 'Boli mnie', emoji: '🩹' },
+                { id: 7, label: 'Stop', emoji: '🛑' },
+                { id: 8, label: 'Koniec', emoji: '✅' },
+                { id: 9, label: 'Jestem zły', emoji: '😠' },
+                { id: 10, label: 'Jestem wesoły', emoji: '😊' },
+                { id: 11, label: 'Tak', emoji: '👍' },
+                { id: 12, label: 'Nie', emoji: '👎' }
+            ];
+
+            // Stan dla Dziennika Sukcesów
+            const [successName, setSuccessName] = useState('');
+            const [successAction, setSuccessAction] = useState('');
+            const [showSuccessCard, setShowSuccessCard] = useState(false);
+
+            // Stan dla Magicznej Bajki
+            const [storyProblem, setStoryProblem] = useState('');
+            const [generatedStory, setGeneratedStory] = useState('');
+            const [generatedImage, setGeneratedImage] = useState('');
+            const [isGeneratingStory, setIsGeneratingStory] = useState(false);
+            const [storyError, setStoryError] = useState('');
+
+            // --- FUNKCJE ---
+
+            // Syntezator mowy (Web Speech API) - darmowy, działa natychmiast na tablecie
+            const speak = (text) => {
+                if ('speechSynthesis' in window) {
+                    // Przerwij poprzednie mówienie
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'pl-PL';
+                    utterance.rate = 0.9; // Nieco wolniej, spokojniej
+                    utterance.pitch = 1.1; // Nieco wyższy, przyjazny ton
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    alert("Twoja przeglądarka nie obsługuje czytania na głos. Spróbuj Chrome lub Safari.");
+                }
+            };
+
+            const handleSuccessGenerate = () => {
+                if(successName && successAction) setShowSuccessCard(true);
+            };
+
+            const generateStoryAndImage = async () => {
+                if (!storyProblem.trim()) {
+                    setStoryError('Wpisz problem ucznia (np. boi się nożyczek).');
+                    return;
+                }
+
+                setIsGeneratingStory(true);
+                setStoryError('');
+                setGeneratedStory('');
+                setGeneratedImage('');
+
+                try {
+                    const apiKey = ""; // Klucz wstrzykiwany
+                    
+                    // 1. GENEROWANIE TEKSTU (Krótka bajka)
+                    const textUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                    const textPrompt = `Napisz krótką (max 4 zdania), bardzo prostą i radosną historyjkę terapeutyczną dla dziecka ze spektrum autyzmu. 
+Problem dziecka: ${storyProblem}. 
+Historyjka ma pokazywać, że sytuacja jest bezpieczna i kończy się sukcesem. Ostatnie zdanie to pochwała.`;
+
+                    const textPayload = {
+                        contents: [{ parts: [{ text: textPrompt }] }],
+                        generationConfig: { temperature: 0.7 }
+                    };
+
+                    const textResponse = await fetch(textUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(textPayload) });
+                    if (!textResponse.ok) throw new Error("Błąd generowania tekstu");
+                    const textData = await textResponse.json();
+                    const story = textData.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    // 2. GENEROWANIE OBRAZKA (Imagen 4.0)
+                    const imgUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
+                    // Tłumaczymy prompt dla pewności na angielski w tle, by uzyskać lepszy obrazek (prosty prompt)
+                    const imgPrompt = `Cute vector 2D illustration for children book, a happy child resolving this problem: ${storyProblem}. Bright colors, simple background, therapeutic and calming.`;
+                    
+                    const imgPayload = {
+                        instances: { prompt: imgPrompt },
+                        parameters: { sampleCount: 1 }
+                    };
+
+                    const imgResponse = await fetch(imgUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(imgPayload) });
+                    if (!imgResponse.ok) throw new Error("Błąd generowania obrazka (upewnij się, że Imagen 4.0 jest włączony w API)");
+                    const imgData = await imgResponse.json();
+                    const base64Image = imgData.predictions?.[0]?.bytesBase64Encoded;
+                    
+                    if (story && base64Image) {
+                        setGeneratedStory(story);
+                        setGeneratedImage(`data:image/png;base64,${base64Image}`);
+                    } else {
+                        throw new Error("Pusta odpowiedź z serwerów AI");
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    setStoryError('Uruchamiam tryb awaryjny (Brak połączenia z siecią lub klucza API dla Grafiki).');
+                    // Fallback
+                    setTimeout(() => {
+                        setGeneratedStory(`Mały żółw bardzo nie lubił, gdy było głośno. Kiedy usłyszał hałas, założył na uszy swoje magiczne słuchawki. Nagle zrobiło się cicho i bezpiecznie, a żółw znów mógł się bawić. Jesteś dzielny jak mały żółw!`);
+                        setGeneratedImage('https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?q=80&w=400&auto=format&fit=crop'); // Placeholder cute turtle
+                        setIsGeneratingStory(false);
+                    }, 1500);
+                } finally {
+                    if(!storyError) setIsGeneratingStory(false);
+                }
+            };
+
+            if (!isAuthenticated) {
+                return (
+                    <div className="min-h-screen relative flex items-center justify-center p-4">
+                        <div className="aura-blob aura-1"></div>
+                        <div className="aura-blob aura-2"></div>
+                        
+                        <div className="glass-panel p-10 rounded-3xl max-w-md w-full text-center shadow-[0_0_40px_rgba(244,63,94,0.2)] border border-rose-500/30 fade-in relative z-10">
+                            <div className="w-20 h-20 bg-rose-500/20 text-rose-400 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl border border-rose-500/50">
+                                🔒
+                            </div>
+                            <h2 className="text-3xl font-black text-white mb-2">EduKasia <span className="text-rose-400">PRO</span></h2>
+                            <p className="text-slate-400 text-sm mb-8 font-medium">Narzędzie prywatne. Podaj tajny PIN od męża, aby odblokować.</p>
+                            
+                            <input 
+                                type="password" 
+                                value={passwordInput}
+                                onChange={(e) => setPasswordInput(e.target.value)}
+                                onKeyPress={(e) => { if (e.key === 'Enter' && passwordInput === SECRET_PIN) setIsAuthenticated(true); }}
+                                placeholder="Wpisz PIN..."
+                                className="w-full bg-slate-900/80 border border-slate-600 text-center text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-rose-500 outline-none mb-4 text-xl tracking-widest"
+                            />
+                            
+                            <button 
+                                onClick={() => { if (passwordInput === SECRET_PIN) setIsAuthenticated(true); else alert('Nieprawidłowy PIN!'); }}
+                                className="w-full bg-gradient-to-r from-rose-600 to-fuchsia-600 hover:from-rose-500 hover:to-fuchsia-500 text-white font-black py-4 rounded-xl shadow-lg transition-all transform hover:scale-105 btn-bounce"
+                            >
+                                Odblokuj Dostęp
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen relative flex flex-col">
+                    <div className="aura-blob aura-1"></div>
+                    <div className="aura-blob aura-2"></div>
+                    <div className="aura-blob aura-3"></div>
+
+                    {/* NAWIGACJA */}
+                    <nav className="fixed top-0 w-full z-50 glass-nav">
+                        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/20">
+                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                </div>
+                                <span className="text-xl font-extrabold tracking-tight text-white hidden sm:block">EduKasia<span className="text-rose-400">PRO</span></span>
+                            </div>
+                            
+                            <div className="flex items-center gap-2 sm:gap-4">
+                                <a href="index.html" className="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition-colors bg-slate-800/80 hover:bg-slate-700 px-4 py-2.5 rounded-xl border border-slate-600">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                                    Wróć do EduBox
+                                </a>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <main className="flex-grow pt-32 pb-20 px-4 sm:px-6">
+                        <div className="max-w-4xl mx-auto">
+                            
+                            <div className="text-center mb-10 fade-in">
+                                <div className="inline-flex items-center gap-2 bg-rose-900/40 border border-rose-400/30 px-5 py-2 rounded-full text-[10px] font-black text-rose-300 uppercase tracking-widest mb-4 shadow-lg backdrop-blur-sm">
+                                    Stworzone Specjalnie dla Ciebie ❤️
+                                </div>
+                                <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">
+                                    Multimedialny Asystent <span className="text-gradient">Wychowawcy.</span>
+                                </h1>
+                                <p className="text-slate-300 text-lg max-w-2xl mx-auto font-medium">
+                                    Zestaw narzędzi na żywo. Od komunikatora po generowanie wesołych kartek dla rodziców. Używaj na tablecie lub telefonie.
+                                </p>
+                            </div>
+
+                            {/* Taby */}
+                            <div className="flex flex-col sm:flex-row gap-3 mb-8 fade-in" style={{animationDelay: '0.1s'}}>
+                                <button onClick={() => setActiveTab('aac')} className={`flex-1 p-5 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 border-2 ${activeTab === 'aac' ? 'bg-indigo-600/30 border-indigo-500 text-white shadow-[0_0_20px_rgba(99,102,241,0.3)]' : 'glass-panel border-slate-700/50 text-slate-400 hover:border-slate-500'}`}>
+                                    <span className="text-2xl">🗣️</span> Mówiący Tablet
+                                </button>
+                                <button onClick={() => setActiveTab('sukces')} className={`flex-1 p-5 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 border-2 ${activeTab === 'sukces' ? 'bg-rose-600/30 border-rose-500 text-white shadow-[0_0_20px_rgba(244,63,94,0.3)]' : 'glass-panel border-slate-700/50 text-slate-400 hover:border-slate-500'}`}>
+                                    <span className="text-2xl">🏆</span> Karta Sukcesu
+                                </button>
+                                <button onClick={() => setActiveTab('bajka')} className={`flex-1 p-5 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 border-2 ${activeTab === 'bajka' ? 'bg-amber-600/30 border-amber-500 text-white shadow-[0_0_20px_rgba(245,158,11,0.3)]' : 'glass-panel border-slate-700/50 text-slate-400 hover:border-slate-500'}`}>
+                                    <span className="text-2xl">🎨</span> Magiczny Komiks
+                                </button>
+                            </div>
+
+                            {/* WIDOK: MÓWIĄCY TABLET (AAC) */}
+                            {activeTab === 'aac' && (
+                                <div className="glass-panel p-6 sm:p-8 rounded-[2rem] fade-in border border-indigo-500/30">
+                                    <div className="text-center mb-8">
+                                        <h2 className="text-2xl font-black text-indigo-400 mb-2">Komunikator AAC (Na żywo)</h2>
+                                        <p className="text-slate-400 text-sm">Kliknij obrazek, a tablet wypowie słowo na głos (upewnij się, że masz włączony dźwięk).</p>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-8">
+                                        {aacButtons.map(btn => (
+                                            <button 
+                                                key={btn.id} 
+                                                onClick={() => speak(btn.label)}
+                                                className="aac-btn aspect-square rounded-2xl flex flex-col items-center justify-center gap-3 p-2 shadow-lg"
+                                            >
+                                                <span className="text-5xl drop-shadow-md">{btn.emoji}</span>
+                                                <span className="text-white font-bold text-sm tracking-wide text-center">{btn.label}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    <div className="border-t border-slate-700 pt-6 flex flex-col sm:flex-row gap-4">
+                                        <input 
+                                            type="text" 
+                                            value={customText}
+                                            onChange={(e) => setCustomText(e.target.value)}
+                                            placeholder="Wpisz dowolne słowo lub zdanie..."
+                                            className="flex-1 bg-slate-900 border border-slate-600 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 outline-none"
+                                        />
+                                        <button 
+                                            onClick={() => { if(customText) speak(customText); }}
+                                            className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl flex items-center justify-center gap-2 transition-all btn-bounce shadow-[0_0_20px_rgba(79,70,229,0.4)]"
+                                        >
+                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                                            Czytaj na głos
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* WIDOK: KARTA SUKCESU */}
+                            {activeTab === 'sukces' && (
+                                <div className="glass-panel p-6 sm:p-8 rounded-[2rem] fade-in border border-rose-500/30">
+                                    <div className="text-center mb-8">
+                                        <h2 className="text-2xl font-black text-rose-400 mb-2">Dziennik Sukcesów (Dla Rodziców)</h2>
+                                        <p className="text-slate-400 text-sm">Ocieplaj relacje. Wygeneruj radosną kartkę z sukcesem dziecka i wyślij rodzicowi.</p>
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                                        <div className="flex-1">
+                                            <label className="block text-slate-300 font-bold mb-2 text-sm">Imię dziecka:</label>
+                                            <input 
+                                                type="text" 
+                                                value={successName}
+                                                onChange={(e) => {setSuccessName(e.target.value); setShowSuccessCard(false);}}
+                                                placeholder="Np. Staś"
+                                                className="w-full bg-slate-900 border border-slate-600 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-rose-500 outline-none"
+                                            />
+                                        </div>
+                                        <div className="flex-[2]">
+                                            <label className="block text-slate-300 font-bold mb-2 text-sm">Co dobrego się wydarzyło?</label>
+                                            <input 
+                                                type="text" 
+                                                value={successAction}
+                                                onChange={(e) => {setSuccessAction(e.target.value); setShowSuccessCard(false);}}
+                                                placeholder="Np. dzisiaj po raz pierwszy sam zjadł zupę!"
+                                                className="w-full bg-slate-900 border border-slate-600 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-rose-500 outline-none"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {!showSuccessCard ? (
+                                        <div className="flex justify-center">
+                                            <button 
+                                                onClick={handleSuccessGenerate}
+                                                disabled={!successName || !successAction}
+                                                className="bg-rose-600 hover:bg-rose-500 disabled:bg-slate-700 text-white font-bold px-10 py-4 rounded-xl transition-all btn-bounce shadow-[0_0_20px_rgba(244,63,94,0.4)]"
+                                            >
+                                                Stwórz Kartkę Sukcesu
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="fade-in flex flex-col items-center">
+                                            {/* Wygenerowana Karta */}
+                                            <div className="success-card w-full max-w-sm rounded-3xl p-8 text-center mt-4">
+                                                <div className="text-6xl mb-4 relative z-10 drop-shadow-md">🏆</div>
+                                                <h3 className="text-3xl font-black mb-2 relative z-10 text-rose-600">Sukces Dnia!</h3>
+                                                <p className="text-xl font-bold mb-4 relative z-10 text-slate-800">Uczeń: {successName}</p>
+                                                <div className="bg-white/80 backdrop-blur rounded-2xl p-4 relative z-10 shadow-inner">
+                                                    <p className="text-lg font-medium text-slate-700 leading-snug">
+                                                        "Wielkie brawa! {successName} {successAction}"
+                                                    </p>
+                                                </div>
+                                                <p className="mt-6 text-sm font-bold text-rose-400 relative z-10 uppercase tracking-widest">Duma Przedszkola</p>
+                                            </div>
+                                            
+                                            <p className="mt-6 text-emerald-400 font-bold text-sm bg-emerald-900/30 px-4 py-2 rounded-lg border border-emerald-500/30 flex items-center gap-2">
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                                Zrób zrzut ekranu (screen) na telefonie i wyślij rodzicowi!
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* WIDOK: MAGICZNY KOMIKS */}
+                            {activeTab === 'bajka' && (
+                                <div className="glass-panel p-6 sm:p-8 rounded-[2rem] fade-in border border-amber-500/30">
+                                    <div className="text-center mb-8">
+                                        <h2 className="text-2xl font-black text-amber-400 mb-2">Generator Obrazków i Bajek Terapeutycznych</h2>
+                                        <p className="text-slate-400 text-sm">Opisz lęk lub trudność dziecka. AI wygeneruje 3 uspokajające zdania oraz narysuje piękny obrazek z morałem.</p>
+                                    </div>
+
+                                    <div className="mb-6">
+                                        <label className="block text-slate-300 font-bold mb-3 text-sm">Co się dzieje? (Problem):</label>
+                                        <textarea 
+                                            value={storyProblem}
+                                            onChange={(e) => setStoryProblem(e.target.value)}
+                                            placeholder="Np. Krzyś bardzo boi się obcinania paznokci."
+                                            className="w-full h-24 bg-slate-900 border border-slate-600 text-white rounded-xl p-4 focus:ring-2 focus:ring-amber-500 outline-none custom-scrollbar"
+                                        ></textarea>
+                                    </div>
+
+                                    {storyError && <div className="mb-6 p-4 bg-red-900/30 border border-red-500/50 rounded-xl text-red-400 text-sm text-center">{storyError}</div>}
+
+                                    <div className="flex justify-center mb-8">
+                                        <button 
+                                            onClick={generateStoryAndImage}
+                                            disabled={isGeneratingStory || !storyProblem.trim()}
+                                            className={`px-10 py-4 rounded-xl font-bold text-white transition-all flex items-center justify-center gap-2 btn-bounce
+                                                ${isGeneratingStory ? 'bg-slate-700 cursor-not-allowed' : 'bg-amber-600 hover:bg-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.4)]'}`}
+                                        >
+                                            {isGeneratingStory ? '✨ AI Maluje Obrazek i Pisze Bajkę (ok. 15s)...' : 'Stwórz Magiczną Bajkę'}
+                                        </button>
+                                    </div>
+
+                                    {/* Wynik Bajki */}
+                                    {generatedStory && generatedImage && (
+                                        <div className="fade-in bg-slate-900/80 p-6 sm:p-8 rounded-3xl border border-amber-500/50 flex flex-col md:flex-row gap-8 items-center shadow-xl">
+                                            <div className="w-full md:w-1/2 aspect-square rounded-2xl overflow-hidden border-4 border-amber-400/50 shadow-2xl relative">
+                                                <img src={generatedImage} alt="Bajka wygenerowana przez AI" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                                            </div>
+                                            <div className="w-full md:w-1/2 flex flex-col justify-center">
+                                                <h3 className="text-2xl font-black text-white mb-4 flex items-center gap-2">
+                                                    <span className="text-amber-400">📖</span> Twoja Historyjka:
+                                                </h3>
+                                                <p className="text-slate-200 text-lg leading-relaxed font-serif italic bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                                                    {generatedStory}
+                                                </p>
+                                                <button onClick={() => speak(generatedStory)} className="mt-6 bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all w-fit">
+                                                    <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                                                    Przeczytaj na głos dla dziecka
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                </div>
+                            )}
+
+                        </div>
+                    </main>
+
+                    <footer className="py-6 border-t border-slate-800/50 text-center text-sm font-bold text-slate-500 uppercase tracking-widest mt-auto">
+                        Specjalny projekt z sercem ❤️ EduBox AI
+                    </footer>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>============================
         const APPS = [
             { 
                 title: 'Przedszkolne SOS AI', 

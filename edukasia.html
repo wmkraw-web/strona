@@ -81,11 +81,7 @@
 
         function App() {
             // =========================================================================
-            // USTAWIENIA DLA CIEBIE (MĘŻA)
-            // 1. Wklej tutaj swój wygenerowany klucz z Google AI Studio
-            const GLOBAL_API_KEY = "TUTAJ_WKLEJ_SWOJ_KLUCZ_Z_GOOGLE"; 
-            
-            // 2. Hasło dla Kasi (lub klientów)
+            // TYLKO TO HASŁO ZMIENIASZ W PLIKU HTML (Klucz API jest bezpieczny na Vercelu)
             const SECRET_PIN = "kasia123"; 
             // =========================================================================
 
@@ -124,11 +120,15 @@
             const [isGeneratingStory, setIsGeneratingStory] = useState(false);
             const [storyError, setStoryError] = useState('');
 
+            // --- FUNKCJE POMOCNICZE ---
             const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
                 for (let i = 0; i < retries; i++) {
                     try {
                         const response = await fetch(url, options);
-                        if (!response.ok) throw new Error(`Status API: ${response.status}`);
+                        if (!response.ok) {
+                            const errData = await response.json().catch(() => ({}));
+                            throw new Error(errData.error || `Status API: ${response.status}`);
+                        }
                         return await response.json();
                     } catch (e) {
                         if (i === retries - 1) throw e;
@@ -148,19 +148,48 @@
                 }
             };
 
-            const getApiKey = () => {
-                // Pozwala na działanie w środowisku testowym (pusty klucz wstrzykuje domyślny), 
-                // ale jeśli podasz swój klucz, użyje Twojego.
-                return (GLOBAL_API_KEY === "TUTAJ_WKLEJ_SWOJ_KLUCZ_Z_GOOGLE") ? "" : GLOBAL_API_KEY;
+            // ==================================================================================
+            // BEZPIECZNY KONTROLER API - Automatycznie wykrywa środowisko (Vercel vs Podgląd)
+            // ==================================================================================
+            const secureApiCall = async (payload, endpointType) => {
+                let url;
+                let fetchOptions;
+
+                // Sprawdzamy czy strona działa u Ciebie na produkcji/hostingu
+                const isProduction = window.location.hostname.includes('vercel.app') || 
+                                     window.location.hostname !== '' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+
+                if (isProduction) {
+                    // JESTEŚ NA VERCELU: Łączy się z bezpiecznym, ukrytym plikiem api/gemini.js
+                    url = '/api/gemini';
+                    fetchOptions = {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ payload, type: endpointType })
+                    };
+                } else {
+                    // JESTEŚ W PODGLĄDZIE (Lokalnie): Używa wstrzykiwanego klucza testowego środowiska
+                    const apiKey = ""; 
+                    url = endpointType === 'text' 
+                        ? `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`
+                        : `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
+                    fetchOptions = {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    };
+                }
+
+                return await fetchWithRetry(url, fetchOptions);
             };
 
+            // --- AKCJE GŁÓWNE OPARTE O BEZPIECZNE POŁĄCZENIE ---
             const generateSos = async () => {
                 if (!sosInput.trim()) { setSosError('Opisz krótko sytuację w klasie.'); return; }
+                
                 setIsGeneratingSos(true); setSosError(''); setSosResult(''); setSosSources([]);
 
                 try {
-                    const apiKey = getApiKey();
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                     const payload = {
                         contents: [{ parts: [{ text: `Rozwiąż problem: ${sosInput}` }] }],
                         systemInstruction: { parts: [{ text: PROMPTS[`sos_${sosMode}`] }] },
@@ -168,7 +197,7 @@
                     };
                     if (useWebSearch) payload.tools = [{ google_search: {} }];
 
-                    const data = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    const data = await secureApiCall(payload, 'text');
                     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
                     
                     if (text) {
@@ -185,9 +214,9 @@
                             setSosSources(extractedSources);
                         }
                         setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-                    } else throw new Error("Pusta odpowiedź API.");
+                    } else throw new Error("Pusta odpowiedź z API.");
                 } catch (err) {
-                    setSosError('Błąd połączenia z siecią. Upewnij się, że masz internet lub poprawny klucz API.');
+                    setSosError('Błąd połączenia: ' + err.message);
                 } finally {
                     setIsGeneratingSos(false);
                 }
@@ -195,20 +224,20 @@
 
             const handleSuccessGenerate = async () => {
                 if (!successName.trim() || !successAction.trim()) return;
+                
                 setIsGeneratingSuccess(true); setShowSuccessCard(false); setSuccessText('');
                 try {
-                    const apiKey = getApiKey();
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                     const payload = {
                         contents: [{ parts: [{ text: `Dziecko o imieniu ${successName} osiągnęło sukces: ${successAction}. Napisz bardzo radosną, krótką (max 3 zdania) pochwałę/dyplomik dla rodziców. Zacznij od 'Wielkie brawa!'. Dodaj urocze emotikony.` }] }],
                         systemInstruction: { parts: [{ text: "Jesteś pełnym ciepła wychowawcą przedszkolnym." }] },
                         generationConfig: { temperature: 0.7 }
                     };
-                    const data = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    
+                    const data = await secureApiCall(payload, 'text');
                     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
                     if (text) { setSuccessText(text); setShowSuccessCard(true); } else throw new Error();
                 } catch (err) {
-                    alert("Błąd generowania. Sprawdź połączenie.");
+                    alert("Błąd generowania. Serwer niedostępny lub brak poprawnego klucza w zmiennych środowiskowych Vercela.");
                 } finally {
                     setIsGeneratingSuccess(false);
                 }
@@ -216,27 +245,25 @@
 
             const generateStoryAndImage = async () => {
                 if (!storyProblem.trim()) { setStoryError('Wpisz problem ucznia.'); return; }
+                
                 setIsGeneratingStory(true); setStoryError(''); setGeneratedStory(''); setGeneratedImage('');
 
                 try {
-                    const apiKey = getApiKey();
-                    const textUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                    // 1. TEKST
                     const textPayload = { contents: [{ parts: [{ text: `Napisz radosną, uspokajającą rymowankę (max 4 zdania) dla dziecka ze spektrum autyzmu. Dziecko: ${storyProblem}. Zakończ pochwałą.` }] }], generationConfig: { temperature: 0.7 } };
-                    const textResponse = await fetch(textUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(textPayload) });
-                    const textData = await textResponse.json();
+                    const textData = await secureApiCall(textPayload, 'text');
                     const story = textData.candidates?.[0]?.content?.parts?.[0]?.text;
 
-                    const imgUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
+                    // 2. OBRAZEK
                     const imgPayload = { instances: { prompt: `Cute 2D illustration for children book, a happy child resolving this problem: ${storyProblem}. Bright colors, therapeutic, calming.` }, parameters: { sampleCount: 1 } };
-                    const imgResponse = await fetch(imgUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(imgPayload) });
-                    const imgData = await imgResponse.json();
+                    const imgData = await secureApiCall(imgPayload, 'image');
                     const base64Image = imgData.predictions?.[0]?.bytesBase64Encoded;
                     
                     if (story && base64Image) {
                         setGeneratedStory(story); setGeneratedImage(`data:image/png;base64,${base64Image}`);
                     } else throw new Error();
                 } catch (err) {
-                    setStoryError('Wystąpił problem. Prawdopodobnie nie podpięto klucza API z dostępem do generatora obrazów.');
+                    setStoryError('Błąd połączenia z serwerem. Upewnij się, że poprawnie skonfigurowałeś zmienne Vercel.');
                 } finally {
                     setIsGeneratingStory(false);
                 }
@@ -260,7 +287,7 @@
                             />
                             <button 
                                 onClick={() => { if (passwordInput === SECRET_PIN) setIsAuthenticated(true); else alert('Zły PIN!'); }}
-                                className="w-full bg-gradient-to-r from-rose-600 to-fuchsia-600 hover:from-rose-500 hover:to-fuchsia-500 text-white font-black py-4 rounded-xl transition-all transform hover:scale-105 btn-bounce text-lg"
+                                className="w-full bg-gradient-to-r from-rose-600 to-fuchsia-600 hover:from-rose-500 hover:to-fuchsia-500 text-white font-black py-4 rounded-xl transition-all transform hover:scale-105 btn-bounce text-lg shadow-[0_10px_20px_rgba(244,63,94,0.3)]"
                             >
                                 Odblokuj System
                             </button>
@@ -282,15 +309,21 @@
                                 </div>
                                 <span className="text-xl font-extrabold tracking-tight text-white hidden sm:block">EduKasia<span className="text-rose-400">PRO</span></span>
                             </div>
-                            <a href="index.html" className="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition-colors bg-slate-800 hover:bg-slate-700 px-4 py-2.5 rounded-xl border border-slate-600">
-                                Wyloguj / Zamknij
-                            </a>
+                            <div className="flex items-center gap-2">
+                                <div className="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-full border border-emerald-500/50 flex items-center gap-2 hidden md:flex">
+                                    <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div> Zalogowano bezpiecznie
+                                </div>
+                                <button onClick={() => setIsAuthenticated(false)} className="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition-colors bg-slate-800 hover:bg-slate-700 px-4 py-2.5 rounded-xl border border-slate-600">
+                                    Wyjdź (Zablokuj)
+                                </button>
+                            </div>
                         </div>
                     </nav>
 
                     <main className="flex-grow pt-28 pb-20 px-4 sm:px-6 print:pt-0 print:pb-0">
                         <div className="max-w-4xl mx-auto">
                             
+                            {/* Pasek Zakładek */}
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8 fade-in print-hidden">
                                 <button onClick={() => setActiveTab('sos')} className={`p-4 rounded-2xl font-bold flex flex-col items-center gap-2 border-2 transition-all ${activeTab === 'sos' ? 'bg-blue-600/30 border-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.3)]' : 'glass-panel border-slate-700/50 text-slate-400 hover:border-slate-500 hover:text-white'}`}>
                                     <span className="text-2xl">🚨</span> <span className="text-xs sm:text-sm">Porady & Sieć</span>
@@ -321,7 +354,7 @@
                                         <label className="text-sm font-bold text-white cursor-pointer">Przeszukaj darmowy Internet 🌍 (Omija płatne artykuły)</label>
                                     </div>
 
-                                    {sosError && <div className="mb-4 text-red-400 text-sm font-bold">{sosError}</div>}
+                                    {sosError && <div className="mb-4 p-4 bg-red-900/40 border border-red-500/50 rounded-xl text-red-400 text-sm font-bold text-center">{sosError}</div>}
                                     <button onClick={generateSos} disabled={isGeneratingSos || !sosInput} className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black py-4 rounded-xl shadow-lg btn-bounce disabled:opacity-50">
                                         {isGeneratingSos ? 'Szukam rozwiązania...' : 'Ratuj Sytuację!'}
                                     </button>
@@ -351,6 +384,12 @@
                                             </button>
                                         ))}
                                     </div>
+                                    <div className="border-t border-slate-700 pt-6 flex flex-col sm:flex-row gap-4">
+                                        <input type="text" value={customText} onChange={(e) => setCustomText(e.target.value)} placeholder="Wpisz dowolne słowo dla ucznia..." className="flex-1 bg-slate-900 border border-slate-600 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 outline-none" />
+                                        <button onClick={() => { if(customText) speak(customText); }} className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl transition-all btn-bounce flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(79,70,229,0.4)]">
+                                            🔊 Czytaj na głos
+                                        </button>
+                                    </div>
                                 </div>
                             )}
 
@@ -359,8 +398,8 @@
                                 <div className="glass-panel p-6 sm:p-8 rounded-[2rem] fade-in border border-rose-500/30">
                                     <h2 className="text-3xl font-black text-rose-400 mb-6 text-center print-hidden">Dziennik Sukcesów 🏆</h2>
                                     <div className="flex flex-col sm:flex-row gap-4 mb-6 print-hidden">
-                                        <input type="text" value={successName} onChange={(e) => {setSuccessName(e.target.value); setShowSuccessCard(false);}} placeholder="Imię (np. Staś)" className="flex-1 bg-slate-900 border border-slate-600 text-white rounded-xl px-4 py-3" />
-                                        <input type="text" value={successAction} onChange={(e) => {setSuccessAction(e.target.value); setShowSuccessCard(false);}} placeholder="Co się udało? (np. zjadł zupę)" className="flex-[2] bg-slate-900 border border-slate-600 text-white rounded-xl px-4 py-3" />
+                                        <input type="text" value={successName} onChange={(e) => {setSuccessName(e.target.value); setShowSuccessCard(false);}} placeholder="Imię (np. Staś)" className="flex-1 bg-slate-900 border border-slate-600 text-white rounded-xl px-4 py-3 outline-none focus:border-rose-500" />
+                                        <input type="text" value={successAction} onChange={(e) => {setSuccessAction(e.target.value); setShowSuccessCard(false);}} placeholder="Co się udało? (np. zjadł zupę)" className="flex-[2] bg-slate-900 border border-slate-600 text-white rounded-xl px-4 py-3 outline-none focus:border-rose-500" />
                                     </div>
                                     {!showSuccessCard ? (
                                         <button onClick={handleSuccessGenerate} disabled={!successName || !successAction || isGeneratingSuccess} className="w-full bg-rose-600 text-white font-black py-4 rounded-xl disabled:bg-slate-700 print-hidden">{isGeneratingSuccess ? '✨ Układam dedykację...' : 'Generuj E-Kartkę'}</button>

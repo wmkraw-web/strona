@@ -71,6 +71,15 @@
         }
 
         .source-link:hover { color: #f472b6; text-decoration: underline; }
+
+        /* Style do wydruku Kartki Sukcesu */
+        @media print {
+            body { background-color: white !important; color: black !important; }
+            .print-hidden { display: none !important; }
+            .glass-panel { background: transparent !important; border: none !important; box-shadow: none !important; backdrop-filter: none !important; }
+            .success-card { border: 4px solid #fbcfe8 !important; box-shadow: none !important; transform: scale(1.1); margin: 2cm auto; }
+            * { text-shadow: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -142,7 +151,9 @@ Podziel poradę na:
             // ==========================================
             const [successName, setSuccessName] = useState('');
             const [successAction, setSuccessAction] = useState('');
+            const [successText, setSuccessText] = useState('');
             const [showSuccessCard, setShowSuccessCard] = useState(false);
+            const [isGeneratingSuccess, setIsGeneratingSuccess] = useState(false);
 
             // ==========================================
             // STAN DLA: Magiczna Bajka
@@ -245,6 +256,38 @@ Podziel poradę na:
                     }, 1000);
                 } finally {
                     if(!sosError) setIsGeneratingSos(false);
+                }
+            };
+
+            // --- GENEROWANIE KARTKI SUKCESU ---
+            const handleSuccessGenerate = async () => {
+                if (!successName.trim() || !successAction.trim()) return;
+                setIsGeneratingSuccess(true);
+                setShowSuccessCard(false);
+                setSuccessText('');
+                
+                try {
+                    const apiKey = ""; 
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                    const payload = {
+                        contents: [{ parts: [{ text: `Dziecko o imieniu ${successName} osiągnęło sukces: ${successAction}. Napisz bardzo radosną, krótką (max 3 zdania) pochwałę/dyplomik dla rodziców. Zacznij od 'Wielkie brawa!'. Dodaj urocze emotikony.` }] }],
+                        systemInstruction: { parts: [{ text: "Jesteś pełnym ciepła wychowawcą przedszkolnym." }] },
+                        generationConfig: { temperature: 0.7 }
+                    };
+                    
+                    const data = await fetchWithRetry(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    
+                    if (text) {
+                        setSuccessText(text);
+                        setShowSuccessCard(true);
+                    } else throw new Error("Pusta odpowiedź API.");
+                } catch (err) {
+                    console.error("Błąd generowania sukcesu:", err);
+                    setSuccessText(`Wielkie brawa! 🏆\nTwój wspaniały przedszkolak ${successName} zrobił dziś coś niesamowitego: ${successAction}. Pękamy z dumy i cieszymy się każdym takim krokiem! 💖`);
+                    setShowSuccessCard(true);
+                } finally {
+                    setIsGeneratingSuccess(false);
                 }
             };
 
@@ -471,12 +514,12 @@ Podziel poradę na:
                             {/* ============================================================ */}
                             {activeTab === 'sukces' && (
                                 <div className="glass-panel p-6 sm:p-8 rounded-[2rem] fade-in border border-rose-500/30">
-                                    <div className="text-center mb-8">
+                                    <div className="text-center mb-8 print-hidden">
                                         <h2 className="text-3xl font-black text-rose-400 mb-2">Dziennik Sukcesów 🏆</h2>
-                                        <p className="text-slate-400 text-sm">Zrób zrzut ekranu tej kartki i wyślij rodzicowi, żeby ocieplić relacje.</p>
+                                        <p className="text-slate-400 text-sm">Wydrukuj radosną kartkę z sukcesem dziecka dla rodzica lub wyślij mu screena.</p>
                                     </div>
 
-                                    <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                                    <div className="flex flex-col sm:flex-row gap-4 mb-6 print-hidden">
                                         <div className="flex-1">
                                             <input type="text" value={successName} onChange={(e) => {setSuccessName(e.target.value); setShowSuccessCard(false);}} placeholder="Imię dziecka (np. Staś)" className="w-full bg-slate-900 border border-slate-600 text-white rounded-xl px-4 py-3 outline-none focus:border-rose-500" />
                                         </div>
@@ -486,7 +529,11 @@ Podziel poradę na:
                                     </div>
 
                                     {!showSuccessCard ? (
-                                        <button onClick={handleSuccessGenerate} disabled={!successName || !successAction} className="w-full bg-rose-600 hover:bg-rose-500 text-white font-black py-4 rounded-xl transition-all btn-bounce disabled:bg-slate-700">Generuj E-Kartkę</button>
+                                        <div className="print-hidden">
+                                            <button onClick={handleSuccessGenerate} disabled={!successName || !successAction || isGeneratingSuccess} className="w-full bg-rose-600 hover:bg-rose-500 text-white font-black py-4 rounded-xl transition-all btn-bounce disabled:bg-slate-700">
+                                                {isGeneratingSuccess ? '✨ Układam radosną dedykację...' : 'Generuj E-Kartkę'}
+                                            </button>
+                                        </div>
                                     ) : (
                                         <div className="fade-in flex flex-col items-center">
                                             <div className="success-card w-full max-w-sm rounded-3xl p-8 text-center mt-4">
@@ -494,8 +541,17 @@ Podziel poradę na:
                                                 <h3 className="text-3xl font-black mb-2 relative z-10 text-rose-600">Sukces Dnia!</h3>
                                                 <p className="text-xl font-bold mb-4 relative z-10 text-slate-800">Uczeń: {successName}</p>
                                                 <div className="bg-white/80 backdrop-blur rounded-2xl p-4 relative z-10 shadow-inner">
-                                                    <p className="text-lg font-medium text-slate-700 leading-snug">"Wielkie brawa! {successName} {successAction}"</p>
+                                                    <p className="text-lg font-medium text-slate-700 leading-snug whitespace-pre-wrap">{successText}</p>
                                                 </div>
+                                            </div>
+
+                                            <div className="flex flex-col sm:flex-row gap-4 mt-8 w-full max-w-sm print-hidden">
+                                                <button onClick={() => window.print()} className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-3 rounded-xl transition-all btn-bounce flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                                                    🖨️ Wydrukuj
+                                                </button>
+                                                <button onClick={() => { setShowSuccessCard(false); setSuccessName(''); setSuccessAction(''); }} className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold px-4 py-3 rounded-xl transition-all btn-bounce">
+                                                    Nowa kartka
+                                                </button>
                                             </div>
                                         </div>
                                     )}

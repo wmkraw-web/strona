@@ -133,6 +133,15 @@
         // ==========================================
         const APPS = [
             { 
+                title: 'Przedszkolne SOS AI', 
+                desc: 'Koło ratunkowe dla Wychowawców SPE! Opisz trudne zachowanie dziecka lub roszczeniowego rodzica, a AI natychmiast poda metody uspokojenia i darmowe artykuły w sieci.', 
+                url: 'edusos.html', 
+                badge: 'PRZEDSZKOLE SPE',
+                badgeColor: 'bg-pink-600 text-white border border-pink-400',
+                icon: <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></>,
+                color: 'text-pink-400'
+            },
+            { 
                 title: 'EduDostosowania AI', 
                 desc: 'Kreator Dostosowań Wymagań Edukacyjnych. Wybierz przedmiot i diagnozę PPP (np. ADHD, dysleksja), a system wygeneruje prawnie wiążący dokument do IPET.', 
                 url: 'edudostosowania.html', 
@@ -326,7 +335,7 @@
         ];
 
         const RECOMMENDATIONS = [
-            { name: 'Chmurka AI', url: 'https://chmurka.ai/', icon: '☁️', desc: 'Obrazy, filmy, dialogi, wszystko w jednym miejscu.' },
+            { name: 'Chmurka AI', url: 'https://chmurka.ai/', icon: '☁️', desc: 'Przyjazny polski asystent AI do tekstów.' },
             { name: 'ChatGPT', url: 'https://chat.openai.com/', icon: '🤖', desc: 'Najpotężniejszy model językowy.' },
             { name: 'Suno AI', url: 'https://suno.com/', icon: '🎵', desc: 'Twórz piosenki na zajęcia z AI.' }
         ];
@@ -439,7 +448,29 @@
                 setIsTyping(true);
 
                 try {
-                    const systemPrompt = `Jesteś EduBotem - oficjalnym asystentem EduBox AI. Znasz polskie Prawo Oświatowe i pomagasz nauczycielom dobierać aplikacje. Odsyłasz do aktów prawnych MEN/ISAP. Zawsze bądź uprzejmy i proś o kawę (https://buycoffee.to/magiccolor) na rozwój serwerów.`;
+                    const systemPrompt = `Jesteś EduBotem - oficjalnym, inteligentnym asystentem platformy EduBox AI. 
+Twoją misją jest pomoc polskim nauczycielom. Jesteś WYBITNYM EKSPERTEM od polskiego Prawa Oświatowego.
+
+Znasz wszystkie aplikacje EduBox AI i potrafisz doradzić:
+- Przedszkolne SOS AI (Wsparcie dla wychowawców przedszkoli, szybkie reakcje na zachowania, NVC z rodzicem)
+- EduDostosowania AI (Kreator oficjalnych dostosowań wymagań edukacyjnych po diagnozie PPP)
+- EduSprawdzian Maker AI (Gotowe testy z grupą A i B oraz kluczem)
+- EduZastępstwo 999 (Gotowe lekcje na ratunek, bez przygotowania)
+- EduKorektor AI (Ocenianie Kształtujące z prac uczniów)
+- EduBiurokrata AI (Protokoły z zebrań, zgody rodziców i notatki służbowe)
+- EduOcena AI (Pisze oceny opisowe na świadectwa z suwaków)
+- EduDialog AI (Wiadomości na Librusa, opinie dla PPP z trudnymi rodzicami/uczniami)
+- EduGry AI (Generator Bingo, Ja mam kto ma)
+- EduWizualizator PRO (plany dnia, piktogramy AAC, tablice Najpierw-Potem)
+- EduTerapia PRO (Historyjki społeczne, TUS, zabawy sensoryczne)
+- Asystent Pedagoga (IPET, WOPFU, opinie o uczniu)
+- EduMotywator AI (Karty wyjścia, misje domowe zamiast zadań)
+- Kreator Awansu AI (sprawozdania z planu rozwoju, opinie dyrektora)
+
+Zawsze gdy uczeń pyta o kwestie prawne, podaj DOKŁADNĄ nazwę Ustawy lub Rozporządzenia oraz jej Dziennik Ustaw (Dz.U.). 
+Następnie ZAWSZE postaraj się podać link do tej ustawy w ISAP.
+Bądź uprzejmy i jeśli to możliwe, przypomnij, że system działa dzięki "wirtualnym kawom". Link do kawy to: https://buycoffee.to/magiccolor
+Nie używaj markdown w linkach. Podawaj czyste URL.`;
 
                     const response = await fetch('/api/chat', {
                         method: 'POST',
@@ -494,14 +525,19 @@
         // KOMPONENT GŁÓWNY (KARTY APLIKACJI)
         // ==========================================
         const AppCard = ({ app }) => {
+            // Dodajemy dynamiczny "Glow" do kafelków zależny od ich koloru
+            const colorBase = app.color.split('-')[1] || 'slate';
             return (
                 <a href={app.url} target={app.url.startsWith('http') ? "_blank" : "_self"} className="app-card glass-panel rounded-[2.5rem] p-8 flex flex-col h-full relative overflow-hidden group">
                     {app.badge && <div className={`absolute top-0 right-0 ${app.badgeColor || 'bg-blue-600 text-white'} text-[10px] font-black px-4 py-2 rounded-bl-2xl uppercase tracking-widest z-10`}>{app.badge}</div>}
                     
-                    {/* Delikatna poświata w tle karty na hover */}
-                    <div className={`absolute -inset-10 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity blur-2xl -z-10`}></div>
+                    {/* Kolorowa poświata najechania (Vibrant Glow) */}
+                    <div className={`absolute -inset-10 opacity-0 group-hover:opacity-20 transition-opacity blur-2xl -z-10 bg-${colorBase}-500`}></div>
+                    
+                    {/* Świecący pasek na górze dla ożywienia */}
+                    <div className={`absolute top-0 left-0 w-full h-1 opacity-50 group-hover:opacity-100 transition-opacity bg-${colorBase}-500`}></div>
 
-                    <div className={`w-16 h-16 bg-slate-900 border border-slate-700 ${app.color} rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-lg group-hover:shadow-[0_0_30px_currentColor]`}>
+                    <div className={`w-16 h-16 bg-slate-900 border border-slate-700 ${app.color} rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-lg group-hover:shadow-[0_0_20px_currentColor]`}>
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{app.icon}</svg>
                     </div>
                     

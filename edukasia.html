@@ -82,7 +82,7 @@
         function App() {
             // =========================================================================
             // TYLKO TO HASŁO ZMIENIASZ W PLIKU HTML (Klucz API jest bezpieczny na Vercelu)
-            const SECRET_PIN = "kasia123"; 
+            const SECRET_PIN = "KAWA2024"; 
             // =========================================================================
 
             const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -291,6 +291,20 @@
                             >
                                 Odblokuj System
                             </button>
+
+                            {/* SEKCJA Z KAWĄ DODANA TUTAJ */}
+                            <div className="mt-8 pt-6 border-t border-slate-700/50">
+                                <p className="text-slate-400 text-xs mb-3 font-medium">Nie masz dostępu? Zdobądź kod PIN wspierając projekt!</p>
+                                <a 
+                                    href="https://buycoffee.to/magiccolor" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm btn-bounce hover:border-amber-500/50 hover:text-amber-400 shadow-md"
+                                >
+                                    <span className="text-lg">☕</span> Postaw kawę i odbierz kod
+                                </a>
+                            </div>
+                            
                         </div>
                     </div>
                 );

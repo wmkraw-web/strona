@@ -124,6 +124,15 @@
         // ==========================================
         const APPS = [
             { 
+                title: 'EduSprawdzian Maker AI', 
+                desc: 'Generuj sprawdziany w 10 sekund! Wklej notatkę, a AI utworzy gotowy do druku test (Grupa A i Grupa B) oraz pełny Klucz Odpowiedzi.', 
+                url: 'edusprawdzian.html', 
+                badge: 'NOWY HIT',
+                badgeColor: 'bg-cyan-600 text-white',
+                icon: <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></>,
+                color: 'text-cyan-400'
+            },
+            { 
                 title: 'EduZastępstwo 999', 
                 desc: 'Ratunkowy Generator Lekcji "Zero-Prep". Zastępstwo za 5 minut? Wybierz wiek i zdobądź scenariusz z grami i zagadkami bez przygotowań.', 
                 url: 'eduzastepstwo.html', 
@@ -143,7 +152,7 @@
             },
             { 
                 title: 'EduBiurokrata AI', 
-                desc: 'Kreator Urzędowych Pism. Wklej 3 słowa, a AI napisze profesjonalny protokół, notatkę służbową lub sprawozdanie.', 
+                desc: 'Kreator Urzędowych Pism. Wklej 3 słowa, a AI napisze profesjonalny protokół, notatkę służbową, sprawozdanie lub formularz zgody rodziców.', 
                 url: 'edubiurokrata.html', 
                 badge: 'ZRÓB TO ZA MNIE',
                 badgeColor: 'bg-amber-500 text-amber-950',
@@ -163,7 +172,7 @@
                 title: 'EduOcena AI', 
                 desc: 'Kreator Ocen Opisowych. Wyklikaj umiejętności ucznia z suwaków, a AI napisze profesjonalne, wyczerpujące podsumowanie na świadectwo!', 
                 url: 'eduocena.html', 
-                badge: 'NOWOŚĆ NA MAJ',
+                badge: 'HIT NA MAJ',
                 badgeColor: 'bg-violet-600 text-white',
                 icon: <><path d="M12 22h6a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v3"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M5 17a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M7 16.5 8 22l-3-1-3 1 1-5.5"/></>,
                 color: 'text-violet-400'
@@ -430,10 +439,12 @@ Twoją misją jest pomoc polskim nauczycielom. Jesteś WYBITNYM EKSPERTEM od pol
 
 Twoje zadania:
 1. Znasz wszystkie aplikacje EduBox AI i potrafisz doradzić, której użyć:
+- EduSprawdzian Maker AI (Gotowe testy z grupą A i B oraz kluczem)
 - EduZastępstwo 999 (Gotowe lekcje na ratunek, bez przygotowania)
 - EduKorektor AI (Ocenianie Kształtujące z prac uczniów)
-- EduBiurokrata AI (Protokoły z zebrań i notatki służbowe)
+- EduBiurokrata AI (Protokoły z zebrań, zgody rodziców i notatki służbowe)
 - EduOcena AI (Pisze oceny opisowe na świadectwa z suwaków)
+- EduDialog AI (Wiadomości na Librusa, opinie dla PPP z trudnymi rodzicami/uczniami)
 - EduGry AI (Generator Bingo, Ja mam kto ma)
 - EduWizualizator PRO (plany dnia, piktogramy AAC, tablice Najpierw-Potem)
 - EduTerapia PRO (Historyjki społeczne, TUS, zabawy sensoryczne)
@@ -443,11 +454,12 @@ Twoje zadania:
 - Edukacja 2025 AI (scenariusze obywatelskie i zdrowotne)
 - EduKarty AI (karty pracy)
 - EduGenerator (dyplomy, girlandy)
+
 2. PRAWO OŚWIATOWE: Znasz Kartę Nauczyciela, rozporządzenia MEN o pomocy psychologiczno-pedagogicznej (PPP), zasady tworzenia IPET i WOPFU, awans zawodowy itd. 
    KRYTYCZNA ZASADA: Zawsze gdy uczeń pyta o kwestie prawne, podaj DOKŁADNĄ nazwę Ustawy lub Rozporządzenia oraz jej Dziennik Ustaw (Dz.U.). 
    Następnie ZAWSZE postaraj się podać pełny, poprawny link do tej ustawy w Internetowym Systemie Aktów Prawnych (ISAP), np. https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=WDU... 
    Jeśli nie znasz dokładnego linku, wklej link do wyszukiwarki ISAP: https://isap.sejm.gov.pl/isap.nsf/ByYear.xsp i poinstruuj użytkownika, by wyszukał "Tekst jednolity" danej ustawy.
-3. Jesteś uprzejmy, pomocny i entuzjastyczny. Jeśli padnie pytanie o płatności, przypomnij, że system działa dzięki dobrowolnym "wirtualnym kawom", a kod odblokowujący to "KAWA2024".
+3. Jesteś uprzejmy, pomocny i entuzjastyczny. Jeśli padnie pytanie o płatności, przypomnij, że system działa dzięki dobrowolnym "wirtualnym kawom", a kod odblokowujący to "KAWA2024". Link do kawy to: https://buycoffee.to/magiccolor
 4. Odpowiadaj w czystym tekście. KRYTYCZNE: NIGDY NIE UŻYWAJ ZNAKÓW MARKDOWN DLA LINKÓW (np. [tekst](url)). Linki wklejaj jako ZWYKŁY TEKST, ZAWSZE zaczynając od https:// i od nowej linii. Oznaczaj ważne pojęcia pogrubieniem używając gwiazdek (**tekst**).`;
 
                     const response = await fetch('/api/chat', {
@@ -586,7 +598,7 @@ Twoje zadania:
                                 <span className="text-gradient">więcej edukacji.</span>
                             </h1>
                             <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
-                                Zautomatyzuj biurokrację dzięki Sztucznej Inteligencji. EduBox AI to narzędzia piszące scenariusze, plany pracy dla SPE, oceny opisowe i dokumentację IPET w 5 sekund. Odzyskaj czas na to, co naprawdę ważne – na pracę z uczniem.
+                                Zautomatyzuj biurokrację dzięki Sztucznej Inteligencji. EduBox AI to narzędzia piszące testy, scenariusze i urzędowe pisma w 5 sekund. Odzyskaj czas na to, co naprawdę ważne – na pracę z uczniem.
                             </p>
                             <div className="flex flex-col sm:flex-row justify-center items-center gap-5">
                                 <a href="#narzedzia" className="bg-blue-600 text-white px-10 py-5 rounded-full font-black text-lg hover:bg-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all btn-bounce active:scale-95 flex items-center gap-2">

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google" content="notranslate">
-    <title>EduKasia AI - Multimedialny Kombajn SPE</title>
+    <title>EduKasia PRO - Osobisty Asystent SPE</title>
     <!-- Biblioteki -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -14,13 +14,13 @@
     <style>
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #1e1b4b; /* Ciepły, śliwkowy mrok */
+            background-color: #1e1b4b; /* Śliwkowy mrok */
             color: #f8fafc; 
             scroll-behavior: smooth; 
             overflow-x: hidden;
         }
         
-        /* Magiczne Aury - Bardzo ciepłe i kobiece kolory */
+        /* Magiczne Aury */
         .aura-blob {
             position: absolute;
             border-radius: 50%;
@@ -32,7 +32,7 @@
         }
         .aura-1 { top: -10%; left: -10%; width: 60vw; height: 600px; background: radial-gradient(circle, #f43f5e, transparent 70%); }
         .aura-2 { top: 40%; right: -10%; width: 50vw; height: 600px; background: radial-gradient(circle, #8b5cf6, transparent 70%); animation-delay: -5s; }
-        .aura-3 { bottom: -10%; left: 20%; width: 60vw; height: 600px; background: radial-gradient(circle, #fbbf24, transparent 70%); animation-delay: -10s; }
+        .aura-3 { bottom: -10%; left: 20%; width: 60vw; height: 600px; background: radial-gradient(circle, #3b82f6, transparent 70%); animation-delay: -10s; }
 
         @keyframes float {
             0% { transform: translate(0, 0) scale(1); }
@@ -41,21 +41,15 @@
         }
 
         .glass-panel { 
-            background: rgba(30, 27, 75, 0.5); 
+            background: rgba(30, 27, 75, 0.6); 
             backdrop-filter: blur(24px); 
             -webkit-backdrop-filter: blur(24px); 
             border: 1px solid rgba(255, 255, 255, 0.1); 
         }
         .glass-nav { 
-            background: rgba(30, 27, 75, 0.8); 
+            background: rgba(30, 27, 75, 0.85); 
             backdrop-filter: blur(24px); 
             border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
-        }
-        
-        .text-gradient { 
-            background: linear-gradient(135deg, #f43f5e 0%, #a855f7 100%); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
         }
 
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -63,6 +57,8 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #f43f5e; border-radius: 8px; }
         
         .btn-bounce:active { transform: scale(0.95); }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Karta sukcesu */
         .success-card {
@@ -73,29 +69,8 @@
             position: relative;
             overflow: hidden;
         }
-        .success-card::before {
-            content: '✨ 🌟 🎈 🎉';
-            position: absolute;
-            top: -10px;
-            left: 0;
-            width: 100%;
-            font-size: 2rem;
-            text-align: center;
-            opacity: 0.3;
-            letter-spacing: 20px;
-        }
 
-        /* Przyciski AAC */
-        .aac-btn {
-            background: rgba(255,255,255,0.05);
-            border: 2px solid rgba(255,255,255,0.1);
-            transition: all 0.2s ease;
-        }
-        .aac-btn:hover, .aac-btn:active {
-            background: rgba(244, 63, 94, 0.2);
-            border-color: #f43f5e;
-            transform: scale(0.98);
-        }
+        .source-link:hover { color: #f472b6; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -104,10 +79,50 @@
     <script type="text/babel">
         const { useState, useRef } = React;
 
+        // ==========================================
+        // PROMPTY DLA AI
+        // ==========================================
+        const PROMPTS = {
+            sos_zachowanie: `Jesteś pedagogiem specjalnym i terapeutą integracji sensorycznej (SI).
+Przeanalizuj opisane zachowanie dziecka (np. autyzm, ADHD) i podaj natychmiastowe rozwiązanie.
+Odpowiedź podziel na:
+1. 🧠 POTENCJALNA PRZYCZYNA: Funkcja zachowania (ucieczka, stymulacja, przebodźcowanie).
+2. 🚨 SZYBKA REAKCJA: 3 punkty, co zrobić tu i teraz, by uspokoić dziecko.
+3. 🛠️ DZIAŁANIE NA JUTRO: Jak zapobiec temu w przyszłości.`,
+
+            sos_rodzic: `Jesteś psychologiem i mediatorem (NVC). 
+Nauczyciel ma problem we współpracy z rodzicem (roszczeniowym lub bezradnym).
+Podziel poradę na:
+1. 💡 PERSPEKTYWA RODZICA: Wyjaśnij z czego wynika postawa rodzica (lęk, mechanizmy obronne).
+2. 🗣️ GOTOWE ZDANIA: Podaj 3 gotowe sformułowania do użycia przez nauczyciela w rozmowie (język korzyści, bez ataku).
+3. 🚧 STRATEGIA: Jak ustalić granice.`
+        };
+
         function App() {
-            const [activeTab, setActiveTab] = useState('aac'); // 'aac', 'sukces', 'bajka'
-            
-            // Stan dla AAC
+            // --- BLOKADA NA PIN ---
+            const [isAuthenticated, setIsAuthenticated] = useState(false);
+            const [passwordInput, setPasswordInput] = useState('');
+            const SECRET_PIN = "kasia123"; // <--- TUTAJ ZMIENIASZ HASŁO DLA ŻONY
+
+            // --- ZARZĄDZANIE WIDOKAMI ---
+            // 'sos' (Problemy), 'aac' (Tablet), 'sukces' (Kartki), 'bajka' (Obrazki)
+            const [activeTab, setActiveTab] = useState('sos'); 
+            const resultRef = useRef(null);
+
+            // ==========================================
+            // STAN DLA: SOS (Problemy i Sieć)
+            // ==========================================
+            const [sosMode, setSosMode] = useState('zachowanie');
+            const [sosInput, setSosInput] = useState('');
+            const [useWebSearch, setUseWebSearch] = useState(true);
+            const [sosResult, setSosResult] = useState('');
+            const [sosSources, setSosSources] = useState([]);
+            const [isGeneratingSos, setIsGeneratingSos] = useState(false);
+            const [sosError, setSosError] = useState('');
+
+            // ==========================================
+            // STAN DLA: AAC (Mówiący Tablet)
+            // ==========================================
             const [customText, setCustomText] = useState('');
             const aacButtons = [
                 { id: 1, label: 'Chcę przerwę', emoji: '⏸️' },
@@ -119,110 +134,205 @@
                 { id: 7, label: 'Stop', emoji: '🛑' },
                 { id: 8, label: 'Koniec', emoji: '✅' },
                 { id: 9, label: 'Jestem zły', emoji: '😠' },
-                { id: 10, label: 'Jestem wesoły', emoji: '😊' },
-                { id: 11, label: 'Tak', emoji: '👍' },
-                { id: 12, label: 'Nie', emoji: '👎' }
+                { id: 10, label: 'Jestem wesoły', emoji: '😊' }
             ];
 
-            // Stan dla Dziennika Sukcesów
+            // ==========================================
+            // STAN DLA: Sukces
+            // ==========================================
             const [successName, setSuccessName] = useState('');
             const [successAction, setSuccessAction] = useState('');
             const [showSuccessCard, setShowSuccessCard] = useState(false);
 
-            // Stan dla Magicznej Bajki
+            // ==========================================
+            // STAN DLA: Magiczna Bajka
+            // ==========================================
             const [storyProblem, setStoryProblem] = useState('');
             const [generatedStory, setGeneratedStory] = useState('');
             const [generatedImage, setGeneratedImage] = useState('');
             const [isGeneratingStory, setIsGeneratingStory] = useState(false);
             const [storyError, setStoryError] = useState('');
 
-            // --- FUNKCJE ---
+            // --- FUNKCJE POMOCNICZE ---
 
-            // Syntezator mowy (Web Speech API) - darmowy, działa natychmiast na tablecie
+            // Exponential Backoff do API
+            const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
+                for (let i = 0; i < retries; i++) {
+                    try {
+                        const response = await fetch(url, options);
+                        if (!response.ok) throw new Error(`Status API: ${response.status}`);
+                        return await response.json();
+                    } catch (e) {
+                        if (i === retries - 1) throw e;
+                        await new Promise(res => setTimeout(res, delay * Math.pow(2, i)));
+                    }
+                }
+            };
+
+            // Mówienie tekstu (Web Speech API)
             const speak = (text) => {
                 if ('speechSynthesis' in window) {
-                    // Przerwij poprzednie mówienie
                     window.speechSynthesis.cancel();
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.lang = 'pl-PL';
-                    utterance.rate = 0.9; // Nieco wolniej, spokojniej
-                    utterance.pitch = 1.1; // Nieco wyższy, przyjazny ton
+                    utterance.rate = 0.9;
+                    utterance.pitch = 1.1;
                     window.speechSynthesis.speak(utterance);
-                } else {
-                    alert("Twoja przeglądarka nie obsługuje czytania na głos. Spróbuj Chrome lub Safari.");
                 }
             };
 
-            const handleSuccessGenerate = () => {
-                if(successName && successAction) setShowSuccessCard(true);
-            };
-
-            const generateStoryAndImage = async () => {
-                if (!storyProblem.trim()) {
-                    setStoryError('Wpisz problem ucznia (np. boi się nożyczek).');
+            // --- GENEROWANIE SOS (Z wyszukiwaniem Google!) ---
+            const generateSos = async () => {
+                if (!sosInput.trim()) {
+                    setSosError('Opisz krótko sytuację w klasie.');
                     return;
                 }
 
-                setIsGeneratingStory(true);
-                setStoryError('');
-                setGeneratedStory('');
-                setGeneratedImage('');
+                setIsGeneratingSos(true);
+                setSosError('');
+                setSosResult('');
+                setSosSources([]);
 
                 try {
-                    const apiKey = ""; // Klucz wstrzykiwany
+                    const apiKey = ""; 
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                     
-                    // 1. GENEROWANIE TEKSTU (Krótka bajka)
-                    const textUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-                    const textPrompt = `Napisz krótką (max 4 zdania), bardzo prostą i radosną historyjkę terapeutyczną dla dziecka ze spektrum autyzmu. 
-Problem dziecka: ${storyProblem}. 
-Historyjka ma pokazywać, że sytuacja jest bezpieczna i kończy się sukcesem. Ostatnie zdanie to pochwała.`;
-
-                    const textPayload = {
-                        contents: [{ parts: [{ text: textPrompt }] }],
-                        generationConfig: { temperature: 0.7 }
+                    const payload = {
+                        contents: [{ parts: [{ text: `Rozwiąż problem: ${sosInput}` }] }],
+                        systemInstruction: { parts: [{ text: PROMPTS[`sos_${sosMode}`] }] },
+                        generationConfig: { temperature: 0.5 }
                     };
 
+                    // AKTYWACJA GOOGLE SEARCH GROUNDING
+                    if (useWebSearch) {
+                        payload.tools = [{ google_search: {} }];
+                    }
+
+                    const data = await fetchWithRetry(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    
+                    if (text) {
+                        setSosResult(text);
+                        
+                        if (useWebSearch && data.candidates[0].groundingMetadata?.groundingAttributions) {
+                            const attributions = data.candidates[0].groundingMetadata.groundingAttributions;
+                            const extractedSources = [];
+                            const seenUris = new Set();
+                            attributions.forEach(attr => {
+                                const web = attr.web;
+                                if (web && web.uri && !seenUris.has(web.uri)) {
+                                    seenUris.add(web.uri);
+                                    extractedSources.push({ title: web.title || web.uri, uri: web.uri });
+                                }
+                            });
+                            setSosSources(extractedSources);
+                        }
+                        setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+                    } else throw new Error("Pusta odpowiedź API.");
+
+                } catch (err) {
+                    console.error("Błąd SOS:", err);
+                    setSosError('Błąd połączenia. Uruchamiam tryb awaryjny (Demo).');
+                    setTimeout(() => {
+                        setSosResult("🧠 POTENCJALNA PRZYCZYNA:\nZachowanie dziecka wynika najpewniej z przebodźcowania i funkcji ucieczkowej.\n\n🚨 SZYBKA REAKCJA:\n1. Obniż ton głosu.\n2. Usuń dystraktory z otoczenia.\n3. Użyj wizualnej planszy 'Przerwa'.\n\n🛠️ DZIAŁANIE NA JUTRO:\nWprowadź strefę wyciszenia (namiot sensoryczny).");
+                        setSosSources([{ title: "Darmowy artykuł z sieci: Jak wyciszyć ucznia z autyzmem", uri: "https://www.google.com/search?q=wyciszanie+ucznia+autyzm" }]);
+                        setIsGeneratingSos(false);
+                    }, 1000);
+                } finally {
+                    if(!sosError) setIsGeneratingSos(false);
+                }
+            };
+
+            // --- GENEROWANIE BAJKI I OBRAZKA ---
+            const generateStoryAndImage = async () => {
+                if (!storyProblem.trim()) { setStoryError('Wpisz problem ucznia.'); return; }
+                setIsGeneratingStory(true); setStoryError(''); setGeneratedStory(''); setGeneratedImage('');
+
+                try {
+                    const apiKey = ""; 
+                    // 1. TEKST
+                    const textUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                    const textPayload = {
+                        contents: [{ parts: [{ text: `Napisz radosną, uspokajającą rymowankę (max 4 zdania) dla dziecka ze spektrum autyzmu. Dziecko: ${storyProblem}. Zakończ pochwałą.` }] }],
+                        generationConfig: { temperature: 0.7 }
+                    };
                     const textResponse = await fetch(textUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(textPayload) });
-                    if (!textResponse.ok) throw new Error("Błąd generowania tekstu");
                     const textData = await textResponse.json();
                     const story = textData.candidates?.[0]?.content?.parts?.[0]?.text;
 
-                    // 2. GENEROWANIE OBRAZKA (Imagen 4.0)
+                    // 2. OBRAZEK
                     const imgUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
-                    // Tłumaczymy prompt dla pewności na angielski w tle, by uzyskać lepszy obrazek (prosty prompt)
-                    const imgPrompt = `Cute vector 2D illustration for children book, a happy child resolving this problem: ${storyProblem}. Bright colors, simple background, therapeutic and calming.`;
-                    
                     const imgPayload = {
-                        instances: { prompt: imgPrompt },
+                        instances: { prompt: `Cute 2D illustration for children book, a happy child resolving this problem: ${storyProblem}. Bright colors, therapeutic, calming.` },
                         parameters: { sampleCount: 1 }
                     };
-
                     const imgResponse = await fetch(imgUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(imgPayload) });
-                    if (!imgResponse.ok) throw new Error("Błąd generowania obrazka (upewnij się, że Imagen 4.0 jest włączony w API)");
                     const imgData = await imgResponse.json();
                     const base64Image = imgData.predictions?.[0]?.bytesBase64Encoded;
                     
                     if (story && base64Image) {
                         setGeneratedStory(story);
                         setGeneratedImage(`data:image/png;base64,${base64Image}`);
-                    } else {
-                        throw new Error("Pusta odpowiedź z serwerów AI");
-                    }
-
+                    } else throw new Error("Błąd z AI");
                 } catch (err) {
-                    console.error(err);
-                    setStoryError('Uruchamiam tryb awaryjny (Brak połączenia z siecią lub klucza API dla Grafiki).');
-                    // Fallback
+                    setStoryError('Uruchamiam tryb awaryjny (Błąd sieci lub limitów).');
                     setTimeout(() => {
-                        setGeneratedStory(`Mały żółw bardzo nie lubił, gdy było głośno. Kiedy usłyszał hałas, założył na uszy swoje magiczne słuchawki. Nagle zrobiło się cicho i bezpiecznie, a żółw znów mógł się bawić. Jesteś dzielny jak mały żółw!`);
-                        setGeneratedImage('https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?q=80&w=400&auto=format&fit=crop'); // Placeholder cute turtle
+                        setGeneratedStory("Jeżyk schował się pod kocyk, bo tam cisza i w sam raz. Kiedy burza już ustała, wyszedł znowu bawić nas! Jesteś dzielny!");
+                        setGeneratedImage('https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?q=80&w=400&auto=format&fit=crop'); 
                         setIsGeneratingStory(false);
-                    }, 1500);
+                    }, 1000);
                 } finally {
                     if(!storyError) setIsGeneratingStory(false);
                 }
             };
 
+
+            // ==========================================
+            // EKRAN LOGOWANIA (BLOKADA PIN)
+            // ==========================================
+            if (!isAuthenticated) {
+                return (
+                    <div className="min-h-screen relative flex items-center justify-center p-4">
+                        <div className="aura-blob aura-1"></div>
+                        <div className="aura-blob aura-2"></div>
+                        
+                        <div className="glass-panel p-10 rounded-3xl max-w-md w-full text-center shadow-[0_0_50px_rgba(244,63,94,0.2)] border border-rose-500/30 fade-in relative z-10">
+                            <div className="w-24 h-24 bg-rose-500/20 text-rose-400 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl border border-rose-500/50 shadow-inner">
+                                👩‍🏫
+                            </div>
+                            <h2 className="text-4xl font-black text-white mb-2">EduKasia <span className="text-rose-400">PRO</span></h2>
+                            <p className="text-slate-400 text-sm mb-8 font-medium bg-slate-900/50 p-3 rounded-xl border border-slate-700">
+                                Ten "kombajn" zawiera płatne funkcje wyszukiwania i generowania obrazów AI. Wpisz PIN od męża, aby odblokować.
+                            </p>
+                            
+                            <input 
+                                type="password" 
+                                value={passwordInput}
+                                onChange={(e) => setPasswordInput(e.target.value)}
+                                onKeyPress={(e) => { if (e.key === 'Enter' && passwordInput === SECRET_PIN) setIsAuthenticated(true); }}
+                                placeholder="Wpisz PIN..."
+                                className="w-full bg-slate-900 border border-slate-600 text-center text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-rose-500 outline-none mb-6 text-2xl tracking-[0.5em] font-bold"
+                            />
+                            
+                            <button 
+                                onClick={() => { if (passwordInput === SECRET_PIN) setIsAuthenticated(true); else alert('Nieprawidłowy PIN! Spróbuj ponownie.'); }}
+                                className="w-full bg-gradient-to-r from-rose-600 to-fuchsia-600 hover:from-rose-500 hover:to-fuchsia-500 text-white font-black py-4 rounded-xl shadow-[0_10px_20px_rgba(244,63,94,0.3)] transition-all transform hover:scale-105 btn-bounce text-lg"
+                            >
+                                Otwórz System
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            // ==========================================
+            // GŁÓWNY WIDOK APLIKACJI
+            // ==========================================
             return (
                 <div className="min-h-screen relative flex flex-col">
                     <div className="aura-blob aura-1"></div>
@@ -233,206 +343,201 @@ Historyjka ma pokazywać, że sytuacja jest bezpieczna i kończy się sukcesem. 
                     <nav className="fixed top-0 w-full z-50 glass-nav">
                         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/20">
+                                <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-lg">
                                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                                 </div>
                                 <span className="text-xl font-extrabold tracking-tight text-white hidden sm:block">EduKasia<span className="text-rose-400">PRO</span></span>
                             </div>
-                            
-                            <div className="flex items-center gap-2 sm:gap-4">
-                                <a href="index.html" className="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition-colors bg-slate-800/80 hover:bg-slate-700 px-4 py-2.5 rounded-xl border border-slate-600">
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                                    Wróć do EduBox
+                            <div className="flex items-center gap-2">
+                                <div className="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-full border border-emerald-500/50 flex items-center gap-2 hidden md:flex">
+                                    <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div> Zalogowano bezpiecznie
+                                </div>
+                                <a href="index.html" className="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-300 hover:text-white transition-colors bg-slate-800 hover:bg-slate-700 px-4 py-2.5 rounded-xl border border-slate-600">
+                                    Wyjdź
                                 </a>
                             </div>
                         </div>
                     </nav>
 
-                    <main className="flex-grow pt-32 pb-20 px-4 sm:px-6">
+                    <main className="flex-grow pt-28 pb-20 px-4 sm:px-6">
                         <div className="max-w-4xl mx-auto">
                             
-                            <div className="text-center mb-10 fade-in">
-                                <div className="inline-flex items-center gap-2 bg-rose-900/40 border border-rose-400/30 px-5 py-2 rounded-full text-[10px] font-black text-rose-300 uppercase tracking-widest mb-4 shadow-lg backdrop-blur-sm">
-                                    Stworzone Specjalnie dla Ciebie ❤️
+                            {/* Pasek Zakładek (Nawigacja Głównej Aplikacji) */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8 fade-in">
+                                <button onClick={() => setActiveTab('sos')} className={`p-4 rounded-2xl font-bold flex flex-col items-center gap-2 border-2 transition-all ${activeTab === 'sos' ? 'bg-blue-600/30 border-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.3)]' : 'glass-panel border-slate-700/50 text-slate-400 hover:border-slate-500 hover:text-white'}`}>
+                                    <span className="text-2xl">🚨</span> <span className="text-xs sm:text-sm">Porady & Sieć</span>
+                                </button>
+                                <button onClick={() => setActiveTab('aac')} className={`p-4 rounded-2xl font-bold flex flex-col items-center gap-2 border-2 transition-all ${activeTab === 'aac' ? 'bg-indigo-600/30 border-indigo-500 text-white shadow-[0_0_20px_rgba(99,102,241,0.3)]' : 'glass-panel border-slate-700/50 text-slate-400 hover:border-slate-500 hover:text-white'}`}>
+                                    <span className="text-2xl">🗣️</span> <span className="text-xs sm:text-sm">Komunikator AAC</span>
+                                </button>
+                                <button onClick={() => setActiveTab('sukces')} className={`p-4 rounded-2xl font-bold flex flex-col items-center gap-2 border-2 transition-all ${activeTab === 'sukces' ? 'bg-rose-600/30 border-rose-500 text-white shadow-[0_0_20px_rgba(244,63,94,0.3)]' : 'glass-panel border-slate-700/50 text-slate-400 hover:border-slate-500 hover:text-white'}`}>
+                                    <span className="text-2xl">🏆</span> <span className="text-xs sm:text-sm">Kartki dla Rodziców</span>
+                                </button>
+                                <button onClick={() => setActiveTab('bajka')} className={`p-4 rounded-2xl font-bold flex flex-col items-center gap-2 border-2 transition-all ${activeTab === 'bajka' ? 'bg-amber-600/30 border-amber-500 text-white shadow-[0_0_20px_rgba(245,158,11,0.3)]' : 'glass-panel border-slate-700/50 text-slate-400 hover:border-slate-500 hover:text-white'}`}>
+                                    <span className="text-2xl">🎨</span> <span className="text-xs sm:text-sm">Magiczny Obrazek</span>
+                                </button>
+                            </div>
+
+                            {/* ============================================================ */}
+                            {/* WIDOK 1: SOS (Problemy + Szukanie w Sieci)                   */}
+                            {/* ============================================================ */}
+                            {activeTab === 'sos' && (
+                                <div className="glass-panel p-6 sm:p-8 rounded-[2rem] fade-in border border-blue-500/30">
+                                    <h2 className="text-3xl font-black text-blue-400 mb-2">Przedszkolne SOS 🚨</h2>
+                                    <p className="text-slate-400 text-sm mb-6">Opisz problem (zachowanie lub rodzica). System AI wymyśli rozwiązanie i wyciągnie darmowe linki z Google.</p>
+
+                                    <div className="flex gap-4 mb-6">
+                                        <button onClick={() => setSosMode('zachowanie')} className={`flex-1 py-3 rounded-xl font-bold transition-all ${sosMode === 'zachowanie' ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400'}`}>Kryzys Dziecka</button>
+                                        <button onClick={() => setSosMode('rodzic')} className={`flex-1 py-3 rounded-xl font-bold transition-all ${sosMode === 'rodzic' ? 'bg-fuchsia-600 text-white' : 'bg-slate-800 text-slate-400'}`}>Trudny Rodzic</button>
+                                    </div>
+
+                                    <textarea 
+                                        value={sosInput} onChange={(e) => setSosInput(e.target.value)}
+                                        placeholder={sosMode === 'zachowanie' ? "Np. Krzyś rzuca klockami, gdy mówię 'koniec zabawy'." : "Np. Matka twierdzi, że to inne dzieci prowokują jej syna."}
+                                        className="w-full h-32 bg-slate-900 border border-slate-600 text-white rounded-2xl p-5 focus:ring-2 focus:ring-blue-500 outline-none mb-4 custom-scrollbar"
+                                    ></textarea>
+
+                                    {/* Suwak z Groundingiem */}
+                                    <div className="flex items-center gap-3 bg-slate-900/50 p-4 rounded-xl border border-slate-700 mb-6">
+                                        <div className="relative inline-block w-12 align-middle select-none transition duration-200 ease-in">
+                                            <input type="checkbox" name="toggle" id="toggle" checked={useWebSearch} onChange={(e) => setUseWebSearch(e.target.checked)} className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-slate-700 appearance-none cursor-pointer transition-transform duration-300 ease-in-out" style={{ transform: useWebSearch ? 'translateX(100%)' : 'translateX(0)', borderColor: useWebSearch ? '#3b82f6' : '#334155' }}/>
+                                            <label htmlFor="toggle" className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${useWebSearch ? 'bg-blue-500' : 'bg-slate-700'}`}></label>
+                                        </div>
+                                        <div>
+                                            <label htmlFor="toggle" className="text-sm font-bold text-white cursor-pointer">Przeszukaj darmowy Internet 🌍</label>
+                                            <span className="text-[10px] text-slate-400 block">System ominie płatne kursy i znajdzie bezpłatne artykuły blogowe.</span>
+                                        </div>
+                                    </div>
+
+                                    {sosError && <div className="mb-4 text-red-400 text-sm font-bold">{sosError}</div>}
+
+                                    <button onClick={generateSos} disabled={isGeneratingSos || !sosInput} className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black py-4 rounded-xl shadow-lg transition-all btn-bounce">
+                                        {isGeneratingSos ? 'Szukam rozwiązania i linków...' : 'Ratuj Sytuację!'}
+                                    </button>
+
+                                    {/* Wyniki SOS */}
+                                    {sosResult && (
+                                        <div ref={resultRef} className="mt-8">
+                                            <div className="bg-slate-900 p-6 rounded-2xl border border-blue-500/30 mb-6">
+                                                <h3 className="text-xl font-bold text-blue-400 mb-4">Kroki Działania:</h3>
+                                                <div className="text-slate-200 whitespace-pre-wrap">{sosResult}</div>
+                                            </div>
+
+                                            {useWebSearch && sosSources.length > 0 && (
+                                                <div className="bg-indigo-900/30 p-6 rounded-2xl border border-indigo-500/30">
+                                                    <h3 className="text-lg font-bold text-indigo-400 mb-3 flex items-center gap-2">🌍 Darmowe Źródła z Sieci:</h3>
+                                                    <ul className="space-y-2">
+                                                        {sosSources.map((s, i) => (
+                                                            <li key={i}><a href={s.uri} target="_blank" rel="noreferrer" className="text-slate-300 hover:text-white underline source-link text-sm">➡️ {s.title}</a></li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
-                                <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">
-                                    Multimedialny Asystent <span className="text-gradient">Wychowawcy.</span>
-                                </h1>
-                                <p className="text-slate-300 text-lg max-w-2xl mx-auto font-medium">
-                                    Zestaw narzędzi na żywo. Od komunikatora po generowanie wesołych kartek dla rodziców. Używaj na tablecie lub telefonie.
-                                </p>
-                            </div>
+                            )}
 
-                            {/* Taby */}
-                            <div className="flex flex-col sm:flex-row gap-3 mb-8 fade-in" style={{animationDelay: '0.1s'}}>
-                                <button onClick={() => setActiveTab('aac')} className={`flex-1 p-5 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 border-2 ${activeTab === 'aac' ? 'bg-indigo-600/30 border-indigo-500 text-white shadow-[0_0_20px_rgba(99,102,241,0.3)]' : 'glass-panel border-slate-700/50 text-slate-400 hover:border-slate-500'}`}>
-                                    <span className="text-2xl">🗣️</span> Mówiący Tablet
-                                </button>
-                                <button onClick={() => setActiveTab('sukces')} className={`flex-1 p-5 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 border-2 ${activeTab === 'sukces' ? 'bg-rose-600/30 border-rose-500 text-white shadow-[0_0_20px_rgba(244,63,94,0.3)]' : 'glass-panel border-slate-700/50 text-slate-400 hover:border-slate-500'}`}>
-                                    <span className="text-2xl">🏆</span> Karta Sukcesu
-                                </button>
-                                <button onClick={() => setActiveTab('bajka')} className={`flex-1 p-5 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 border-2 ${activeTab === 'bajka' ? 'bg-amber-600/30 border-amber-500 text-white shadow-[0_0_20px_rgba(245,158,11,0.3)]' : 'glass-panel border-slate-700/50 text-slate-400 hover:border-slate-500'}`}>
-                                    <span className="text-2xl">🎨</span> Magiczny Komiks
-                                </button>
-                            </div>
-
-                            {/* WIDOK: MÓWIĄCY TABLET (AAC) */}
+                            {/* ============================================================ */}
+                            {/* WIDOK 2: MÓWIĄCY TABLET (AAC)                                */}
+                            {/* ============================================================ */}
                             {activeTab === 'aac' && (
                                 <div className="glass-panel p-6 sm:p-8 rounded-[2rem] fade-in border border-indigo-500/30">
                                     <div className="text-center mb-8">
-                                        <h2 className="text-2xl font-black text-indigo-400 mb-2">Komunikator AAC (Na żywo)</h2>
-                                        <p className="text-slate-400 text-sm">Kliknij obrazek, a tablet wypowie słowo na głos (upewnij się, że masz włączony dźwięk).</p>
+                                        <h2 className="text-3xl font-black text-indigo-400 mb-2">Komunikator AAC 🗣️</h2>
+                                        <p className="text-slate-400 text-sm">Kliknij obrazek, a tablet wypowie słowo (wymaga włączonego dźwięku).</p>
                                     </div>
                                     
                                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-8">
                                         {aacButtons.map(btn => (
-                                            <button 
-                                                key={btn.id} 
-                                                onClick={() => speak(btn.label)}
-                                                className="aac-btn aspect-square rounded-2xl flex flex-col items-center justify-center gap-3 p-2 shadow-lg"
-                                            >
-                                                <span className="text-5xl drop-shadow-md">{btn.emoji}</span>
-                                                <span className="text-white font-bold text-sm tracking-wide text-center">{btn.label}</span>
+                                            <button key={btn.id} onClick={() => speak(btn.label)} className="bg-slate-800/50 hover:bg-indigo-600/30 border border-slate-700 hover:border-indigo-500 aspect-square rounded-2xl flex flex-col items-center justify-center gap-3 p-2 shadow-lg transition-all active:scale-95">
+                                                <span className="text-5xl">{btn.emoji}</span>
+                                                <span className="text-white font-bold text-sm tracking-wide">{btn.label}</span>
                                             </button>
                                         ))}
                                     </div>
 
                                     <div className="border-t border-slate-700 pt-6 flex flex-col sm:flex-row gap-4">
-                                        <input 
-                                            type="text" 
-                                            value={customText}
-                                            onChange={(e) => setCustomText(e.target.value)}
-                                            placeholder="Wpisz dowolne słowo lub zdanie..."
-                                            className="flex-1 bg-slate-900 border border-slate-600 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 outline-none"
-                                        />
-                                        <button 
-                                            onClick={() => { if(customText) speak(customText); }}
-                                            className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl flex items-center justify-center gap-2 transition-all btn-bounce shadow-[0_0_20px_rgba(79,70,229,0.4)]"
-                                        >
-                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
-                                            Czytaj na głos
+                                        <input type="text" value={customText} onChange={(e) => setCustomText(e.target.value)} placeholder="Wpisz dowolne słowo dla ucznia..." className="flex-1 bg-slate-900 border border-slate-600 text-white rounded-xl px-5 py-4 focus:ring-2 focus:ring-indigo-500 outline-none" />
+                                        <button onClick={() => { if(customText) speak(customText); }} className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl transition-all btn-bounce flex items-center gap-2 shadow-[0_0_20px_rgba(79,70,229,0.4)]">
+                                            🔊 Czytaj na głos
                                         </button>
                                     </div>
                                 </div>
                             )}
 
-                            {/* WIDOK: KARTA SUKCESU */}
+                            {/* ============================================================ */}
+                            {/* WIDOK 3: KARTA SUKCESU DLA RODZICA                           */}
+                            {/* ============================================================ */}
                             {activeTab === 'sukces' && (
                                 <div className="glass-panel p-6 sm:p-8 rounded-[2rem] fade-in border border-rose-500/30">
                                     <div className="text-center mb-8">
-                                        <h2 className="text-2xl font-black text-rose-400 mb-2">Dziennik Sukcesów (Dla Rodziców)</h2>
-                                        <p className="text-slate-400 text-sm">Ocieplaj relacje. Wygeneruj radosną kartkę z sukcesem dziecka i wyślij rodzicowi.</p>
+                                        <h2 className="text-3xl font-black text-rose-400 mb-2">Dziennik Sukcesów 🏆</h2>
+                                        <p className="text-slate-400 text-sm">Zrób zrzut ekranu tej kartki i wyślij rodzicowi, żeby ocieplić relacje.</p>
                                     </div>
 
-                                    <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                                    <div className="flex flex-col sm:flex-row gap-4 mb-6">
                                         <div className="flex-1">
-                                            <label className="block text-slate-300 font-bold mb-2 text-sm">Imię dziecka:</label>
-                                            <input 
-                                                type="text" 
-                                                value={successName}
-                                                onChange={(e) => {setSuccessName(e.target.value); setShowSuccessCard(false);}}
-                                                placeholder="Np. Staś"
-                                                className="w-full bg-slate-900 border border-slate-600 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-rose-500 outline-none"
-                                            />
+                                            <input type="text" value={successName} onChange={(e) => {setSuccessName(e.target.value); setShowSuccessCard(false);}} placeholder="Imię dziecka (np. Staś)" className="w-full bg-slate-900 border border-slate-600 text-white rounded-xl px-4 py-3 outline-none focus:border-rose-500" />
                                         </div>
                                         <div className="flex-[2]">
-                                            <label className="block text-slate-300 font-bold mb-2 text-sm">Co dobrego się wydarzyło?</label>
-                                            <input 
-                                                type="text" 
-                                                value={successAction}
-                                                onChange={(e) => {setSuccessAction(e.target.value); setShowSuccessCard(false);}}
-                                                placeholder="Np. dzisiaj po raz pierwszy sam zjadł zupę!"
-                                                className="w-full bg-slate-900 border border-slate-600 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-rose-500 outline-none"
-                                            />
+                                            <input type="text" value={successAction} onChange={(e) => {setSuccessAction(e.target.value); setShowSuccessCard(false);}} placeholder="Co się udało? (np. zjadł sam zupę)" className="w-full bg-slate-900 border border-slate-600 text-white rounded-xl px-4 py-3 outline-none focus:border-rose-500" />
                                         </div>
                                     </div>
 
                                     {!showSuccessCard ? (
-                                        <div className="flex justify-center">
-                                            <button 
-                                                onClick={handleSuccessGenerate}
-                                                disabled={!successName || !successAction}
-                                                className="bg-rose-600 hover:bg-rose-500 disabled:bg-slate-700 text-white font-bold px-10 py-4 rounded-xl transition-all btn-bounce shadow-[0_0_20px_rgba(244,63,94,0.4)]"
-                                            >
-                                                Stwórz Kartkę Sukcesu
-                                            </button>
-                                        </div>
+                                        <button onClick={handleSuccessGenerate} disabled={!successName || !successAction} className="w-full bg-rose-600 hover:bg-rose-500 text-white font-black py-4 rounded-xl transition-all btn-bounce disabled:bg-slate-700">Generuj E-Kartkę</button>
                                     ) : (
                                         <div className="fade-in flex flex-col items-center">
-                                            {/* Wygenerowana Karta */}
                                             <div className="success-card w-full max-w-sm rounded-3xl p-8 text-center mt-4">
                                                 <div className="text-6xl mb-4 relative z-10 drop-shadow-md">🏆</div>
                                                 <h3 className="text-3xl font-black mb-2 relative z-10 text-rose-600">Sukces Dnia!</h3>
                                                 <p className="text-xl font-bold mb-4 relative z-10 text-slate-800">Uczeń: {successName}</p>
                                                 <div className="bg-white/80 backdrop-blur rounded-2xl p-4 relative z-10 shadow-inner">
-                                                    <p className="text-lg font-medium text-slate-700 leading-snug">
-                                                        "Wielkie brawa! {successName} {successAction}"
-                                                    </p>
+                                                    <p className="text-lg font-medium text-slate-700 leading-snug">"Wielkie brawa! {successName} {successAction}"</p>
                                                 </div>
-                                                <p className="mt-6 text-sm font-bold text-rose-400 relative z-10 uppercase tracking-widest">Duma Przedszkola</p>
                                             </div>
-                                            
-                                            <p className="mt-6 text-emerald-400 font-bold text-sm bg-emerald-900/30 px-4 py-2 rounded-lg border border-emerald-500/30 flex items-center gap-2">
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                                Zrób zrzut ekranu (screen) na telefonie i wyślij rodzicowi!
-                                            </p>
                                         </div>
                                     )}
                                 </div>
                             )}
 
-                            {/* WIDOK: MAGICZNY KOMIKS */}
+                            {/* ============================================================ */}
+                            {/* WIDOK 4: MAGICZNA BAJKA (TEKST + OBRAZEK AI)                 */}
+                            {/* ============================================================ */}
                             {activeTab === 'bajka' && (
                                 <div className="glass-panel p-6 sm:p-8 rounded-[2rem] fade-in border border-amber-500/30">
                                     <div className="text-center mb-8">
-                                        <h2 className="text-2xl font-black text-amber-400 mb-2">Generator Obrazków i Bajek Terapeutycznych</h2>
-                                        <p className="text-slate-400 text-sm">Opisz lęk lub trudność dziecka. AI wygeneruje 3 uspokajające zdania oraz narysuje piękny obrazek z morałem.</p>
+                                        <h2 className="text-3xl font-black text-amber-400 mb-2">Magiczny Komiks AI 🎨</h2>
+                                        <p className="text-slate-400 text-sm">Opisz lęk dziecka, a AI w 15s narysuje piękny obrazek z morałem.</p>
                                     </div>
 
-                                    <div className="mb-6">
-                                        <label className="block text-slate-300 font-bold mb-3 text-sm">Co się dzieje? (Problem):</label>
-                                        <textarea 
-                                            value={storyProblem}
-                                            onChange={(e) => setStoryProblem(e.target.value)}
-                                            placeholder="Np. Krzyś bardzo boi się obcinania paznokci."
-                                            className="w-full h-24 bg-slate-900 border border-slate-600 text-white rounded-xl p-4 focus:ring-2 focus:ring-amber-500 outline-none custom-scrollbar"
-                                        ></textarea>
-                                    </div>
+                                    <textarea 
+                                        value={storyProblem} onChange={(e) => setStoryProblem(e.target.value)}
+                                        placeholder="Np. Krzyś boi się obcinania paznokci..."
+                                        className="w-full h-24 bg-slate-900 border border-slate-600 text-white rounded-xl p-4 focus:ring-2 focus:ring-amber-500 outline-none mb-4"
+                                    ></textarea>
 
-                                    {storyError && <div className="mb-6 p-4 bg-red-900/30 border border-red-500/50 rounded-xl text-red-400 text-sm text-center">{storyError}</div>}
+                                    {storyError && <div className="mb-4 text-red-400 text-sm">{storyError}</div>}
 
-                                    <div className="flex justify-center mb-8">
-                                        <button 
-                                            onClick={generateStoryAndImage}
-                                            disabled={isGeneratingStory || !storyProblem.trim()}
-                                            className={`px-10 py-4 rounded-xl font-bold text-white transition-all flex items-center justify-center gap-2 btn-bounce
-                                                ${isGeneratingStory ? 'bg-slate-700 cursor-not-allowed' : 'bg-amber-600 hover:bg-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.4)]'}`}
-                                        >
-                                            {isGeneratingStory ? '✨ AI Maluje Obrazek i Pisze Bajkę (ok. 15s)...' : 'Stwórz Magiczną Bajkę'}
-                                        </button>
-                                    </div>
+                                    <button onClick={generateStoryAndImage} disabled={isGeneratingStory || !storyProblem} className="w-full bg-amber-600 hover:bg-amber-500 text-white font-black py-4 rounded-xl shadow-lg transition-all btn-bounce disabled:bg-slate-700">
+                                        {isGeneratingStory ? '✨ Generuję tekst i maluję obrazek...' : 'Stwórz Magiczną Bajkę z Obrazkiem'}
+                                    </button>
 
-                                    {/* Wynik Bajki */}
                                     {generatedStory && generatedImage && (
-                                        <div className="fade-in bg-slate-900/80 p-6 sm:p-8 rounded-3xl border border-amber-500/50 flex flex-col md:flex-row gap-8 items-center shadow-xl">
-                                            <div className="w-full md:w-1/2 aspect-square rounded-2xl overflow-hidden border-4 border-amber-400/50 shadow-2xl relative">
-                                                <img src={generatedImage} alt="Bajka wygenerowana przez AI" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                                        <div className="mt-8 bg-slate-900 p-6 rounded-3xl border border-amber-500/50 flex flex-col md:flex-row gap-6 items-center fade-in">
+                                            <div className="w-full md:w-1/2 aspect-square rounded-2xl overflow-hidden border-4 border-amber-400 shadow-2xl">
+                                                <img src={generatedImage} alt="Bajka AI" className="w-full h-full object-cover" />
                                             </div>
                                             <div className="w-full md:w-1/2 flex flex-col justify-center">
-                                                <h3 className="text-2xl font-black text-white mb-4 flex items-center gap-2">
-                                                    <span className="text-amber-400">📖</span> Twoja Historyjka:
-                                                </h3>
-                                                <p className="text-slate-200 text-lg leading-relaxed font-serif italic bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
-                                                    {generatedStory}
-                                                </p>
-                                                <button onClick={() => speak(generatedStory)} className="mt-6 bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all w-fit">
-                                                    <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
-                                                    Przeczytaj na głos dla dziecka
+                                                <h3 className="text-xl font-black text-white mb-4">📖 Historyjka:</h3>
+                                                <p className="text-slate-200 text-lg leading-relaxed font-serif italic mb-6">{generatedStory}</p>
+                                                <button onClick={() => speak(generatedStory)} className="bg-amber-600 hover:bg-amber-500 text-white px-6 py-3 rounded-xl font-bold flex justify-center items-center gap-2 btn-bounce">
+                                                    🔊 Przeczytaj na głos
                                                 </button>
                                             </div>
                                         </div>
                                     )}
-
                                 </div>
                             )}
 
@@ -440,7 +545,7 @@ Historyjka ma pokazywać, że sytuacja jest bezpieczna i kończy się sukcesem. 
                     </main>
 
                     <footer className="py-6 border-t border-slate-800/50 text-center text-sm font-bold text-slate-500 uppercase tracking-widest mt-auto">
-                        Specjalny projekt z sercem ❤️ EduBox AI
+                        Prywatny moduł EduKasia PRO - Ochrona na Kod PIN 🔒
                     </footer>
                 </div>
             );
